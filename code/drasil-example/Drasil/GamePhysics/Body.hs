@@ -42,6 +42,7 @@ import Drasil.GamePhysics.TMods (cpTMods, t1NewtonSL_new, t2NewtonTL_new,
   t3NewtonLUG_new, t4ChaslesThm_new, t5NewtonSLR_new)
 import Drasil.GamePhysics.Unitals (cpSymbolsAll, cpOutputConstraints,
   inputSymbols, outputSymbols, cpInputConstraints, gamephySymbols)
+import Drasil.GamePhysics.GenDefs(generalDefinitions)
 
 import qualified Data.Drasil.Concepts.PhysicalProperties as CPP (ctrOfMass, 
   dimension)
@@ -85,7 +86,7 @@ mkSRS = RefSec (RefProg intro [TUnits, tsymb tableOfSymbols, TAandA]) :
           [ Assumptions
           , TMs ([Label]++ stdFields) [t1NewtonSL_new, t2NewtonTL_new, t3NewtonLUG_new, 
             t4ChaslesThm_new, t5NewtonSLR_new]
-          , GDs [] [] HideDerivation -- No Gen Defs for Gamephysics
+          , GDs ([Label, Units] ++ stdFields) generalDefinitions ShowDerivation
           , IMs ([Label, Input, Output, InConstraints, OutConstraints] ++ stdFields) [im1_new, im2_new, im3_new] ShowDerivation
           , DDs ([Label, Symbol, Units] ++ stdFields) cpDDefs ShowDerivation
           , Constraints EmptyS dataConstraintUncertainty (S "FIXME") [inDataConstTbl cpInputConstraints, outDataConstTbl cpOutputConstraints]

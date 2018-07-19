@@ -1,5 +1,5 @@
 module Drasil.GamePhysics.TMods (cpTMods, t1NewtonSL_new, t2NewtonTL_new, 
-t3NewtonLUG_new, t4ChaslesThm_new, t5NewtonSLR_new) where
+t3NewtonLUG_new, t4ChaslesThm_new, t5NewtonSLR_new, newtonSL) where
 
 import Language.Drasil
 import Prelude hiding (id)

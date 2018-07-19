@@ -7,7 +7,7 @@ import qualified Data.Drasil.Quantities.Physics as QP (acceleration,
   angularAccel, angularDisplacement, angularVelocity, displacement, distance, 
   force, gravitationalAccel, gravitationalConst, impulseS, impulseV, 
   linearAccel, linearDisplacement, linearVelocity, momentOfInertia, position, 
-  restitutionCoef, time, torque, velocity)
+  restitutionCoef, time, torque, velocity, position)
 import qualified Data.Drasil.Quantities.Math as QM (euclidNorm, normalVect, 
   orientation, perpVect, pi_, unitVect)
 import qualified Data.Drasil.Quantities.PhysicalProperties as QPP (len, mass)
@@ -60,8 +60,8 @@ cpUnits = [QP.acceleration, QP.angularAccel, QP.gravitationalAccel,
   perpLen_A, perpLen_B, force_i, torque_i, time_c, vel_A, vel_B, mass_A, mass_B,
   angVel_A, angVel_B, force_1, force_2, mass_1, mass_2, dispUnit, 
   dispNorm, sqrDist, vel_O, r_OB, massIRigidBody, contDisp_A, contDisp_B, 
-  momtInert_A, momtInert_B, timeT, initTime,  
-  momtInert_k, pointOfCollision, contDisp_k, collisionImpulse]
+  momtInert_A, momtInert_B, timeT, initTime, deltaV, vel_1, vel_2,
+  momtInert_k, pointOfCollision, contDisp_k, collisionImpulse, deltaP]
 
 -----------------------
 -- PARAMETRIZED HACK --
@@ -124,7 +124,7 @@ iVect, jVect, normalVect, force_1, force_2, force_i, mass_1, mass_2, dispUnit,
   pos_CM, mass_i, pos_i, acc_i, mTot, vel_i, torque_i, time_c, initRelVel, 
   mass_A, mass_B, massIRigidBody, normalLen, contDisp_A, contDisp_B, 
   perpLen_A, momtInert_A, perpLen_B, momtInert_B, timeT, initTime, 
-  momtInert_k, pointOfCollision, contDisp_k, collisionImpulse :: UnitalChunk
+  momtInert_k, pointOfCollision, contDisp_k, collisionImpulse, deltaP, deltaV :: UnitalChunk
 
 -- FIXME: parametrized hack
 iVect = ucFromDQD ivec
@@ -166,6 +166,15 @@ pos_CM = ucs "p_CM" (nounPhraseSP $
   "body's particles") 
   "FIXME: Define this or remove the need for definitions" 
   (sub (eqSymb QP.position) (Atomic "CM")) metre Real
+
+
+deltaP = uc' "deltaP" (nounPhraseSP "change in momentum of the body")
+  "hange in momentum of the body"
+  (Concat [cDelta, (eqSymb QP.position)]) impulseU
+
+deltaV = uc' "deltaV" (nounPhraseSP "change in velocity of the body")
+  "change in velocity of the body"
+  (Concat [cDelta, (eqSymb QP.velocity)]) velU
 
 --FIXME: parametrized hack
 mass_i = ucFromDQD massi
@@ -258,6 +267,8 @@ mass_2      = ucFromDQD (massParam "2" "second")
 vel_A       = ucFromDQD (velParam "A" cA)
 vel_B       = ucFromDQD (velParam "B" cB)
 vel_O       = ucFromDQD (velParam "origin" cO)
+vel_1       = ucFromDQD (velParam "1" (Atomic "1"))
+vel_2       = ucFromDQD (velParam "2" (Atomic "2"))
 angVel_A    = ucFromDQD (angParam "A" cA)
 angVel_B    = ucFromDQD (angParam "B" cB)
 perpLen_A   = ucFromDQD (perpParam "A" $ eqSymb contDisp_A)

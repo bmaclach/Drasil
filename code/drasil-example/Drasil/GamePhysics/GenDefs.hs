@@ -4,66 +4,98 @@
 -- so it is not actually 'plugged in'.  The definitions in here
 -- may not type check anymore!
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%
-module Drasil.GamePhysics.GDefs (cpGDefs) where
+module Drasil.GamePhysics.GenDefs (generalDefinitions) where
+
+import Prelude hiding (sin, cos, tan)
 
 import Language.Drasil
+import Drasil.DocLang (refA)
+
+import Data.Drasil.SentenceStructures (foldlSent, foldlSentCol)
 import Data.Drasil.Concepts.Physics (rigidBody)
 import Data.Drasil.Quantities.PhysicalProperties (mass)
-import Data.Drasil.Utils (foldlSent)
+import Data.Drasil.Units.Physics(impulseU)
+import Drasil.GamePhysics.Unitals
+import Data.Drasil.Quantities.Physics(force, impulseV, time, acceleration,
+  velocity)
+import Drasil.GamePhysics.TMods(newtonSL)
+import Data.Drasil.Utils (unwrap, weave)
 
 ----- General Models -----
-
-cpGDefs :: [RelationConcept]
---cpGDefs = []
+generalDefinitions :: [GenDefn]
+generalDefinitions = [gd' impulseGDef (Just impulseU) impulseDeriv "impulse" [impulseDesc],
+  gd' conservationOfMomentGDef (Nothing :: Maybe DerUChunk) conservationOfMomentDeriv
+   "conservOfMoment" [conservationOfMomentDesc]]
 
 impulseGDef :: RelationConcept
 impulseGDef = makeRC "impulse" (nounPhraseSP "Impulse") 
   impulseDesc impulseRel
 
 impulseRel :: Relation
-impulseRel = (C impulseS) := (Integral C force) -- replace with proper Expr
+impulseRel = sy impulseV $= (int_all (eqSymb time) (sy force)) $= sy deltaP $= (sy mass)*(sy deltaV)
 
 impulseDesc :: Sentence
-impulseDesc = foldlSent [S "An", (phrase impulseS), (getS impulseS), 
-  S "occurs when a", (phrase force), (getS force), 
-  S "acts over an interval of", (phrase time)]
+impulseDesc = foldlSent [S "An", phrase impulseV, ch impulseV, 
+  S "occurs when a", phrase force, ch force, 
+  S "acts over an interval of", phrase time]
 
 --[impulseS, force, changeInMomentum, mass, changeInVelocity]
 
-impulseDeriv :: Sentence
-impulseDeriv = foldlSent [S "Newton's second law of motion (ref to T1)", 
-  S "states" +: S "(expr1)", 
-  S "rearranging" +: S "(expr2)", 
-  S "Integrating the right side" +: S "(expr3)",
-  ]
+impulseDeriv :: Derivation
+impulseDeriv = (weave [impulseDeriv_sentences, map E impulseDeriv_eqns])
+
+impulseDeriv_sentences :: [Sentence]
+impulseDeriv_sentences = map foldlSentCol [gd1_desc1, gd1_desc2, gd1_desc3]
+
+gd1_desc1 :: [Sentence]
+gd1_desc1 = [S "Newton's second law of motion" +:+ (makeRef $ reldefn newtonSL) 
+  +:+ S "states"]
+
+gd1_desc2 :: [Sentence]
+gd1_desc2 = [S "Rearranging"]
+
+gd1_desc3 :: [Sentence]
+gd1_desc3 = [S "Integrating the right hand side"]
+
+impulseDeriv_eqns :: [Expr]
+impulseDeriv_eqns = [gd1_eq1, gd1_eq2, gd1_eq3]
+
+gd1_eq1 :: Expr
+gd1_eq1 = sy force $= (sy mass)*(sy acceleration) $= (sy acceleration)*(deriv (sy velocity) time)
+
+gd1_eq2 :: Expr
+gd1_eq2 = (int_all (eqSymb time) (sy force)) $= (sy mass)*(int_all (eqSymb time) (sy force))
+
+gd1_eq3 :: Expr
+gd1_eq3 = (int_all (eqSymb time) (sy force)) $= (sy mass)*(sy vel_2) - (sy mass)*(sy vel_1)
+  $= (sy mass)*(sy deltaV)
 
 conservationOfMomentGDef :: RelationConcept
 conservationOfMomentGDef = makeRC "conservOfMoment" (nounPhraseSP "Conservation of Momentum") 
   conservationOfMomentDesc conservationOfMomentRel
 
 conservationOfMomentRel :: Relation
-conservationOfMomentRel = (UnaryOp (Summation Nothing
-C mass_i)) --
+conservationOfMomentRel = sy impulseV $= (int_all (eqSymb time) (sy force))
 
 conservationOfMomentDesc :: Sentence
 conservationOfMomentDesc = foldlSent [S "In an isolated system,",
-  S "where the sum of external", (phrase impulseS), S "acting on the system is zero,",
-  S "the total momentum of the bodies is constant (conserved)",
+  S "where the sum of external", phrase impulseV, S "acting on the system is zero,",
+  S "the total momentum of the bodies is constant (conserved)"
   ]
 
 --[mass, initialVelocity, finalVelocity]
 
-conservationOfMomentDeriv :: Sentence
-conservationOfMomentDeriv = foldlSent [S "When bodies collide, they exert",
+conservationOfMomentDeriv :: Derivation
+conservationOfMomentDeriv = [S "When bodies collide, they exert",
   S "an equal (force) on each other in opposite directions" +:+.
   S "This is Newton's third law:",
   S "(expr1)",
   S "The objects collide with each other for the exact same amount of", 
-  (phrase time), (getS time),
-  S "The above equation is equal to the", (phrase impulseS), 
+  phrase time, ch time,
+  S "The above equation is equal to the", phrase impulseV, 
   S "(GD1 ref)",
   S "(expr2)",
-  S "The", (phrase impulseS), S "is equal to the change in momentum:",
+  S "The", phrase impulseV, S "is equal to the change in momentum:",
   S "(expr3)",
   S "Substituting 2*ref to 2* into 1*ref to 1* yields:",
   S "(expr4)",
@@ -74,7 +106,7 @@ conservationOfMomentDeriv = foldlSent [S "When bodies collide, they exert",
   ]
 
 
-accelerationDueToGravityGDef :: RelationConcept
+{--accelerationDueToGravityGDef :: RelationConcept
 accelerationDueToGravityGDef = makeRC "accelDueToGrav" 
   (nounPhraseSP "Acceleration due to gravity") 
   accelerationDueToGravityDesc accelerationDueToGravityRel
@@ -185,4 +217,4 @@ momentOfInertiaDesc = foldlSent []
 
 momentOfInertiaRel :: Relation
 momentOfInertiaRel = FCall (C thFluxVect) [C QP.time] := C htTransCoeff :*
-  FCall (C temp_diff) [C QP.time] -- replace with proper Expr
+  FCall (C temp_diff) [C QP.time] -- replace with proper Expr--}

@@ -141,6 +141,7 @@ executable chipmunkdocs
     , Drasil.GamePhysics.DataDefs
     , Drasil.GamePhysics.TMods
     , Drasil.GamePhysics.Unitals
+    , Drasil.GamePhysics.GenDefs
     , Drasil.GamePhysics.IMods
     , Drasil.GamePhysics.References
   Build-Depends:
