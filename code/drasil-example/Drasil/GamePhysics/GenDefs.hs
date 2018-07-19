@@ -18,7 +18,7 @@ import Data.Drasil.Units.Physics(impulseU)
 import Drasil.GamePhysics.Unitals
 import Data.Drasil.Quantities.Physics(force, impulseV, time, acceleration,
   velocity)
-import Drasil.GamePhysics.TMods(newtonSL)
+import Drasil.GamePhysics.TMods(newtonSL, newtonTL)
 import Data.Drasil.Utils (unwrap, weave)
 
 ----- General Models -----
@@ -64,10 +64,10 @@ gd1_eq1 :: Expr
 gd1_eq1 = sy force $= (sy mass)*(sy acceleration) $= (sy acceleration)*(deriv (sy velocity) time)
 
 gd1_eq2 :: Expr
-gd1_eq2 = (int_all (eqSymb time) (sy force)) $= (sy mass)*(int_all (eqSymb time) (sy force))
+gd1_eq2 = int_all (eqSymb time) (sy force) $= (sy mass)*(int_all (eqSymb time) (sy force))
 
 gd1_eq3 :: Expr
-gd1_eq3 = (int_all (eqSymb time) (sy force)) $= (sy mass)*(sy vel_2) - (sy mass)*(sy vel_1)
+gd1_eq3 = int_all (eqSymb time) (sy force) $= (sy mass)*(sy vel_2) - (sy mass)*(sy vel_1)
   $= (sy mass)*(sy deltaV)
 
 conservationOfMomentGDef :: RelationConcept
@@ -75,36 +75,72 @@ conservationOfMomentGDef = makeRC "conservOfMoment" (nounPhraseSP "Conservation 
   conservationOfMomentDesc conservationOfMomentRel
 
 conservationOfMomentRel :: Relation
-conservationOfMomentRel = sy impulseV $= (int_all (eqSymb time) (sy force))
+conservationOfMomentRel = (defsum (Atomic "k") (str "0") (str "n"))
+ ((sy mass_k)*(sy vel_ik)) $= (defsum (Atomic "k") (str "0") (str "n"))
+ ((sy mass_k)*(sy vel_fk))
 
 conservationOfMomentDesc :: Sentence
-conservationOfMomentDesc = foldlSent [S "In an isolated system,",
-  S "where the sum of external", phrase impulseV, S "acting on the system is zero,",
+conservationOfMomentDesc = foldlSent [S "In an isolated system," `sC`
+  S "where the sum of external impulses acting on the system is zero" `sC`
   S "the total momentum of the bodies is constant (conserved)"
   ]
-
---[mass, initialVelocity, finalVelocity]
-
 conservationOfMomentDeriv :: Derivation
-conservationOfMomentDeriv = [S "When bodies collide, they exert",
-  S "an equal (force) on each other in opposite directions" +:+.
-  S "This is Newton's third law:",
-  S "(expr1)",
-  S "The objects collide with each other for the exact same amount of", 
-  phrase time, ch time,
-  S "The above equation is equal to the", phrase impulseV, 
-  S "(GD1 ref)",
-  S "(expr2)",
-  S "The", phrase impulseV, S "is equal to the change in momentum:",
-  S "(expr3)",
-  S "Substituting 2*ref to 2* into 1*ref to 1* yields:",
-  S "(expr4)",
-  S "Expanding and rearranging the above formula gives",
-  S "(expr5)",
-  S "Generalizing for multiple (k) colliding objects:",
-  S "(expr6)"
-  ]
+conservationOfMomentDeriv = (weave [conservationOfMomentDeriv_sentences,
+ map E conservationOfMomentDeriv_eqns])
 
+conservationOfMomentDeriv_sentences :: [Sentence]
+conservationOfMomentDeriv_sentences = map foldlSentCol [gd2_desc1, gd2_desc2, gd2_desc3,
+  gd2_desc4, gd2_desc5, gd2_desc6, gd2_desc7]
+
+gd2_desc1 :: [Sentence]
+gd2_desc1 = [S "When bodies collide, they exert an equal (force) on each other in opposite directions.",
+  S "This is Newton's third law" +:+ (makeRef $ reldefn newtonTL)]
+
+gd2_desc2 :: [Sentence]
+gd2_desc2 = [S "The objects collide with each other for the exact same amount of", phrase time, ch time]
+
+gd2_desc3 :: [Sentence]
+gd2_desc3 = [S "The above equation is equal to the impulse (GD1)"]
+
+gd2_desc4 :: [Sentence]
+gd2_desc4 = [S "The impulse is equal to the change in momentum"]
+
+gd2_desc5 :: [Sentence]
+gd2_desc5 = [S "Substituting 2 into 1 yields"]
+
+gd2_desc6 :: [Sentence]
+gd2_desc6 = [S "Expanding and rearranging the above formula gives"]
+
+gd2_desc7 :: [Sentence]
+gd2_desc7 = [S "Generalizing for multiple (k) colliding objects"]
+
+conservationOfMomentDeriv_eqns :: [Expr]
+conservationOfMomentDeriv_eqns = [gd2_eq1, gd2_eq2, gd2_eq3, gd2_eq4, gd2_eq5
+  , gd2_eq6, gd2_eq7]
+
+gd2_eq1 :: Expr
+gd2_eq1 = sy force_1 $= negate (sy force_2)
+
+gd2_eq2 :: Expr
+gd2_eq2 = (sy force_1)*(sy mass) $= (negate (sy force_2))*(sy mass)
+
+gd2_eq3 :: Expr
+gd2_eq3 = (sy force_1)*(sy mass) $= int_all (eqSymb time) (sy force_1) $= sy impulseV
+
+gd2_eq4 :: Expr
+gd2_eq4 = sy impulseV $= sy deltaP $= (sy mass)*(sy deltaV)
+
+gd2_eq5 :: Expr
+gd2_eq5 = (sy mass)*(sy deltaV1) $= (negate (sy mass)*(sy deltaV2))
+
+gd2_eq6 :: Expr
+gd2_eq6 = (sy mass_1)*(sy vel_i1) + (sy mass_2)*(sy vel_i2) $= 
+  (sy mass_1)*(sy vel_f1) + (sy mass_2)*(sy vel_f2)
+
+gd2_eq7 :: Expr
+gd2_eq7 = (defsum (Atomic "k") (str "0") (str "n"))
+ ((sy mass_k)*(sy vel_ik)) $= (defsum (Atomic "k") (str "0") (str "n"))
+ ((sy mass_k)*(sy vel_fk))
 
 {--accelerationDueToGravityGDef :: RelationConcept
 accelerationDueToGravityGDef = makeRC "accelDueToGrav" 

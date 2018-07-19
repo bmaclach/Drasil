@@ -58,10 +58,11 @@ cpUnits = [QP.acceleration, QP.angularAccel, QP.gravitationalAccel,
   QP.time, QP.angularDisplacement, pos_CM, pos_i, mass_i, mTot, acc_i, vel_i,
   QP.linearDisplacement, QP.linearVelocity, QP.linearAccel, initRelVel, normalLen,
   perpLen_A, perpLen_B, force_i, torque_i, time_c, vel_A, vel_B, mass_A, mass_B,
-  angVel_A, angVel_B, force_1, force_2, mass_1, mass_2, dispUnit, 
+  angVel_A, angVel_B, force_1, force_2, mass_1, mass_2, dispUnit, mass_k, vel_ik,
   dispNorm, sqrDist, vel_O, r_OB, massIRigidBody, contDisp_A, contDisp_B, 
-  momtInert_A, momtInert_B, timeT, initTime, deltaV, vel_1, vel_2,
-  momtInert_k, pointOfCollision, contDisp_k, collisionImpulse, deltaP]
+  momtInert_A, momtInert_B, timeT, initTime, deltaV, vel_1, vel_2, vel_fk,
+  momtInert_k, pointOfCollision, contDisp_k, collisionImpulse, deltaP, deltaV1,
+  deltaV2, vel_f1, vel_f2, vel_i1, vel_i2]
 
 -----------------------
 -- PARAMETRIZED HACK --
@@ -122,9 +123,10 @@ rigidParam n w = dqdEL
 iVect, jVect, normalVect, force_1, force_2, force_i, mass_1, mass_2, dispUnit, 
   dispNorm, sqrDist, vel_A, vel_B, vel_O, r_OB, angVel_A, angVel_B,
   pos_CM, mass_i, pos_i, acc_i, mTot, vel_i, torque_i, time_c, initRelVel, 
-  mass_A, mass_B, massIRigidBody, normalLen, contDisp_A, contDisp_B, 
-  perpLen_A, momtInert_A, perpLen_B, momtInert_B, timeT, initTime, 
-  momtInert_k, pointOfCollision, contDisp_k, collisionImpulse, deltaP, deltaV :: UnitalChunk
+  mass_A, mass_B, massIRigidBody, normalLen, contDisp_A, contDisp_B, vel_fk,
+  perpLen_A, momtInert_A, perpLen_B, momtInert_B, timeT, initTime, mass_k, vel_ik,
+  momtInert_k, pointOfCollision, contDisp_k, collisionImpulse, deltaP, deltaV,
+  deltaV1, deltaV2, vel_f1, vel_f2, vel_i1, vel_i2 :: UnitalChunk
 
 -- FIXME: parametrized hack
 iVect = ucFromDQD ivec
@@ -175,6 +177,14 @@ deltaP = uc' "deltaP" (nounPhraseSP "change in momentum of the body")
 deltaV = uc' "deltaV" (nounPhraseSP "change in velocity of the body")
   "change in velocity of the body"
   (Concat [cDelta, (eqSymb QP.velocity)]) velU
+
+deltaV1 = uc' "deltaV1" (nounPhraseSP "change in velocity of the body")
+  "change in velocity of the body"
+  (Concat [cDelta, (eqSymb vel_1)]) velU
+
+deltaV2 = uc' "deltaV2" (nounPhraseSP "change in velocity of the body")
+  "change in velocity of the body"
+  (Concat [cDelta, (eqSymb vel_1)]) velU
 
 --FIXME: parametrized hack
 mass_i = ucFromDQD massi
@@ -266,6 +276,12 @@ mass_1      = ucFromDQD (massParam "1" "first")
 mass_2      = ucFromDQD (massParam "2" "second")
 vel_A       = ucFromDQD (velParam "A" cA)
 vel_B       = ucFromDQD (velParam "B" cB)
+vel_i1      = ucFromDQD (velParam "initial" (Atomic "i1"))
+vel_i2      = ucFromDQD (velParam "initial" (Atomic "i2"))
+vel_ik      = ucFromDQD (velParam "initial" (Atomic "ik"))
+vel_fk      = ucFromDQD (velParam "final" (Atomic "fk"))
+vel_f1      = ucFromDQD (velParam "final" (Atomic "f1"))
+vel_f2      = ucFromDQD (velParam "final" (Atomic "f2"))
 vel_O       = ucFromDQD (velParam "origin" cO)
 vel_1       = ucFromDQD (velParam "1" (Atomic "1"))
 vel_2       = ucFromDQD (velParam "2" (Atomic "2"))
@@ -280,6 +296,7 @@ contDisp_B  = ucFromDQD (contParam "B" "B")
 contDisp_k  = ucFromDQD (contParam "k" "k")
 mass_A      = ucFromDQD (rigidParam "A" cA)
 mass_B      = ucFromDQD (rigidParam "B" cB)
+mass_k      = ucFromDQD (rigidParam "k" lK)
 
 --------------------------
 -- CHUNKS WITHOUT UNITS --
