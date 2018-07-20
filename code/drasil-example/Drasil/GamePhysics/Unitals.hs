@@ -62,7 +62,7 @@ cpUnits = [QP.acceleration, QP.angularAccel, QP.gravitationalAccel,
   dispNorm, sqrDist, vel_O, r_OB, massIRigidBody, contDisp_A, contDisp_B, 
   momtInert_A, momtInert_B, timeT, initTime, deltaV, vel_1, vel_2, vel_fk,
   momtInert_k, pointOfCollision, contDisp_k, collisionImpulse, deltaP, deltaV1,
-  deltaV2, vel_f1, vel_f2, vel_i1, vel_i2]
+  deltaV2, vel_f1, vel_f2, vel_i1, vel_i2, force_g]
 
 -----------------------
 -- PARAMETRIZED HACK --
@@ -126,7 +126,7 @@ iVect, jVect, normalVect, force_1, force_2, force_i, mass_1, mass_2, dispUnit,
   mass_A, mass_B, massIRigidBody, normalLen, contDisp_A, contDisp_B, vel_fk,
   perpLen_A, momtInert_A, perpLen_B, momtInert_B, timeT, initTime, mass_k, vel_ik,
   momtInert_k, pointOfCollision, contDisp_k, collisionImpulse, deltaP, deltaV,
-  deltaV1, deltaV2, vel_f1, vel_f2, vel_i1, vel_i2 :: UnitalChunk
+  deltaV1, deltaV2, vel_f1, vel_f2, vel_i1, vel_i2, force_g :: UnitalChunk
 
 -- FIXME: parametrized hack
 iVect = ucFromDQD ivec
@@ -272,6 +272,7 @@ force_i = ucFromDQD theforce
 
 force_1     = ucFromDQD (forceParam "1" "first")
 force_2     = ucFromDQD (forceParam "2" "second")
+force_g     = ucFromDQD (forceParam "g" "gravity")
 mass_1      = ucFromDQD (massParam "1" "first")
 mass_2      = ucFromDQD (massParam "2" "second")
 vel_A       = ucFromDQD (velParam "A" cA)

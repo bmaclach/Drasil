@@ -14,10 +14,10 @@ import Drasil.DocLang (refA)
 import Data.Drasil.SentenceStructures (foldlSent, foldlSentCol)
 import Data.Drasil.Concepts.Physics (rigidBody)
 import Data.Drasil.Quantities.PhysicalProperties (mass)
-import Data.Drasil.Units.Physics(impulseU)
+import Data.Drasil.Units.Physics(impulseU, accelU)
 import Drasil.GamePhysics.Unitals
 import Data.Drasil.Quantities.Physics(force, impulseV, time, acceleration,
-  velocity)
+  velocity, gravitationalAccel)
 import Drasil.GamePhysics.TMods(newtonSL, newtonTL)
 import Data.Drasil.Utils (unwrap, weave)
 
@@ -25,6 +25,8 @@ import Data.Drasil.Utils (unwrap, weave)
 generalDefinitions :: [GenDefn]
 generalDefinitions = [gd' impulseGDef (Just impulseU) impulseDeriv "impulse" [impulseDesc],
   gd' conservationOfMomentGDef (Nothing :: Maybe DerUChunk) conservationOfMomentDeriv
+   "conservOfMoment" [conservationOfMomentDesc],
+  gd' accelerationDueToGravityGDef (Just accelU) conservationOfMomentDeriv
    "conservOfMoment" [conservationOfMomentDesc]]
 
 impulseGDef :: RelationConcept
@@ -142,48 +144,75 @@ gd2_eq7 = (defsum (Atomic "k") (str "0") (str "n"))
  ((sy mass_k)*(sy vel_ik)) $= (defsum (Atomic "k") (str "0") (str "n"))
  ((sy mass_k)*(sy vel_fk))
 
-{--accelerationDueToGravityGDef :: RelationConcept
-accelerationDueToGravityGDef = makeRC "accelDueToGrav" 
-  (nounPhraseSP "Acceleration due to gravity") 
+accelerationDueToGravityGDef :: RelationConcept
+accelerationDueToGravityGDef = makeRC "accelDueToGrav" (nounPhraseSP "Acceleration due to gravity") 
   accelerationDueToGravityDesc accelerationDueToGravityRel
 
 accelerationDueToGravityRel :: Relation
-accelerationDueToGravityRel = FCall (C thFluxVect) [C QP.time] := C htTransCoeff :*
-  FCall (C temp_diff) [C QP.time] -- replace with proper Expr
+accelerationDueToGravityRel = sy force_g $= (sy mass)*(sy gravitationalAccel)
 
 accelerationDueToGravityDesc :: Sentence
 accelerationDueToGravityDesc = foldlSent [S ""]
 
--- [gravitationalAccel, mass, gravitationalConst]
+accelerationDueToGravityDeriv :: Derivation
+accelerationDueToGravityDeriv = (weave [conservationOfMomentDeriv_sentences,
+ map E conservationOfMomentDeriv_eqns])
 
-accelerationDueToGravityDeriv :: Sentence
-accelerationDueToGravityDeriv = foldlSent [S "From Newton's law of universal",
-  S "gravitation (T3 ref), we have:",
-  S "(expr1)",
-  S "Equation 3 **ref to 3** governs the gravitational attraction between two",
-  S "bodies. Suppose that one of the bodies is significantly more massive than",
-  S "other, so that we concern ourselves with the force the massive body exerts",
-  S "on the lighter body" +:+. S "Further suppose that the coordinate system is",
-  S "chosen such that this force acts on a line which lies along one of the",
-  S "principle axes (A2 ref)" +:+. S "Then our unit vector", S "(expr2)", S "for",
-  S "the x or y axes (A3 ref), respectively"
-  S "Given the above assumptions, let M and m be the", (phrase mass), 
-  S "of the massive and",
-  S "light body, respectively" +:+. S "Using 3 **ref to 3** and equating this",
-  S "with Newton's second law (T1 ref) for the force experienced by the light",
-  S "body, we get:",
-  S "(expr3)",
-  S "where", (getS gravitationalConst), S "is", (phrase gravitationalAccel) 
-  S "Dividing 4 **ref to 4**",
-  S "by m, and resolving this into separate x and y components:",
-  S "(expr4)",
-  S "(expr5)",
-  S "Thus:",
-  S "(expr6)"
-  ]
+accelerationDueToGravityDeriv_sentences :: [Sentence]
+accelerationDueToGravityDeriv_sentences = map foldlSentCol [gd3_desc1, gd3_desc2, gd3_desc3,
+  gd3_desc4, gd3_desc5, gd3_desc6, gd3_desc7]
 
+gd3_desc1 :: [Sentence]
+gd3_desc1 = [S "When bodies collide, they exert an equal (force) on each other in opposite directions.",
+  S "This is Newton's third law" +:+ (makeRef $ reldefn newtonTL)]
 
-relativeVelocityInCollisionsGDef :: RelationConcept
+gd3_desc2 :: [Sentence]
+gd3_desc2 = [S "The objects collide with each other for the exact same amount of", phrase time, ch time]
+
+gd3_desc3 :: [Sentence]
+gd3_desc3 = [S "The above equation is equal to the impulse (GD1)"]
+
+gd3_desc4 :: [Sentence]
+gd3_desc4 = [S "The impulse is equal to the change in momentum"]
+
+gd3_desc5 :: [Sentence]
+gd3_desc5 = [S "Substituting 2 into 1 yields"]
+
+gd3_desc6 :: [Sentence]
+gd3_desc6 = [S "Expanding and rearranging the above formula gives"]
+
+gd3_desc7 :: [Sentence]
+gd3_desc7 = [S "Generalizing for multiple (k) colliding objects"]
+
+accelerationDueToGravityDeriv_eqns :: [Expr]
+accelerationDueToGravityDeriv_eqns = [gd3_eq1, gd2_eq2, gd2_eq3, gd2_eq4, gd2_eq5
+  , gd2_eq6, gd2_eq7]
+
+gd2_eq1 :: Expr
+gd2_eq1 = sy force_1 $= negate (sy force_2)
+
+gd2_eq2 :: Expr
+gd2_eq2 = (sy force_1)*(sy mass) $= (negate (sy force_2))*(sy mass)
+
+gd2_eq3 :: Expr
+gd2_eq3 = (sy force_1)*(sy mass) $= int_all (eqSymb time) (sy force_1) $= sy impulseV
+
+gd2_eq4 :: Expr
+gd2_eq4 = sy impulseV $= sy deltaP $= (sy mass)*(sy deltaV)
+
+gd2_eq5 :: Expr
+gd2_eq5 = (sy mass)*(sy deltaV1) $= (negate (sy mass)*(sy deltaV2))
+
+gd2_eq6 :: Expr
+gd2_eq6 = (sy mass_1)*(sy vel_i1) + (sy mass_2)*(sy vel_i2) $= 
+  (sy mass_1)*(sy vel_f1) + (sy mass_2)*(sy vel_f2)
+
+gd2_eq7 :: Expr
+gd2_eq7 = (defsum (Atomic "k") (str "0") (str "n"))
+ ((sy mass_k)*(sy vel_ik)) $= (defsum (Atomic "k") (str "0") (str "n"))
+ ((sy mass_k)*(sy vel_fk))
+
+{--relativeVelocityInCollisionsGDef :: RelationConcept
 relativeVelocityInCollisionsGDef = makeRC "relVeloInColl"
   (nounPhraseSP "Relative velocity in collision")
   relativeVelocityInCollisionsDesc relativeVelocityInCollisionsRel
