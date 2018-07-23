@@ -26,8 +26,8 @@ generalDefinitions :: [GenDefn]
 generalDefinitions = [gd' impulseGDef (Just impulseU) impulseDeriv "impulse" [impulseDesc],
   gd' conservationOfMomentGDef (Nothing :: Maybe DerUChunk) conservationOfMomentDeriv
    "conservOfMoment" [conservationOfMomentDesc],
-  gd' accelerationDueToGravityGDef (Just accelU) conservationOfMomentDeriv
-   "conservOfMoment" [conservationOfMomentDesc]]
+  gd accelerationDueToGravityGDef (Just accelU) accelerationDueToGravityDeriv
+   "conservOfMoment"]
 
 impulseGDef :: RelationConcept
 impulseGDef = makeRC "impulse" (nounPhraseSP "Impulse") 
@@ -152,7 +152,7 @@ accelerationDueToGravityRel :: Relation
 accelerationDueToGravityRel = sy force_g $= (sy mass)*(sy gravitationalAccel)
 
 accelerationDueToGravityDesc :: Sentence
-accelerationDueToGravityDesc = foldlSent [S ""]
+accelerationDueToGravityDesc = S ""
 
 accelerationDueToGravityDeriv :: Derivation
 accelerationDueToGravityDeriv = (weave [conservationOfMomentDeriv_sentences,
@@ -163,20 +163,30 @@ accelerationDueToGravityDeriv_sentences = map foldlSentCol [gd3_desc1, gd3_desc2
   gd3_desc4, gd3_desc5, gd3_desc6, gd3_desc7]
 
 gd3_desc1 :: [Sentence]
-gd3_desc1 = [S "When bodies collide, they exert an equal (force) on each other in opposite directions.",
-  S "This is Newton's third law" +:+ (makeRef $ reldefn newtonTL)]
+gd3_desc1 = [S "From Newton's law of universal gravitation (T3)" `sC` (makeRef $ reldefn newtonTL),
+  S "we have:"]
 
 gd3_desc2 :: [Sentence]
-gd3_desc2 = [S "The objects collide with each other for the exact same amount of", phrase time, ch time]
+gd3_desc2 = [S "Equation 3 governs the gravitational attraction between two bodies." +:+ 
+  S "Suppose that one of the bodies is significantly more massive than the other" `sC` 
+  S "so that we concern ourselves with the force the massive body exerts on the lighter body." +:+
+  S "Further suppose that the coordinate system is chosen such that this force" +:+
+  S "acts on a line which lies along one of the principal axes" +:+. S "(A2)" +:+
+  S "Then our unit vector for the x or y axes (A3), respectively."]
 
 gd3_desc3 :: [Sentence]
-gd3_desc3 = [S "The above equation is equal to the impulse (GD1)"]
+gd3_desc3 = [S "Given the above assumptions" `sC` 
+  S "let M and m be the mass of the massive and light body," +:+
+  S "respectively." +:+ S "Using 3 and equating this with Newton's second law" +:+ 
+  (makeRef $ reldefn newtonTL) +:+ S "for the force experienced by the light body" `sC`
+  S "we get"]
 
 gd3_desc4 :: [Sentence]
-gd3_desc4 = [S "The impulse is equal to the change in momentum"]
+gd3_desc4 = [S "where g is gravitational acceleration." +:+ 
+  S "Dividing 4 by m, and resolving this into separate x and y components:"]
 
 gd3_desc5 :: [Sentence]
-gd3_desc5 = [S "Substituting 2 into 1 yields"]
+gd3_desc5 = [S "Thus"]
 
 gd3_desc6 :: [Sentence]
 gd3_desc6 = [S "Expanding and rearranging the above formula gives"]
@@ -188,27 +198,27 @@ accelerationDueToGravityDeriv_eqns :: [Expr]
 accelerationDueToGravityDeriv_eqns = [gd3_eq1, gd2_eq2, gd2_eq3, gd2_eq4, gd2_eq5
   , gd2_eq6, gd2_eq7]
 
-gd2_eq1 :: Expr
-gd2_eq1 = sy force_1 $= negate (sy force_2)
+gd3_eq1 :: Expr
+gd3_eq1 = sy force_1 $= negate (sy force_2)
 
-gd2_eq2 :: Expr
-gd2_eq2 = (sy force_1)*(sy mass) $= (negate (sy force_2))*(sy mass)
+gd3_eq2 :: Expr
+gd3_eq2 = (sy force_1)*(sy mass) $= (negate (sy force_2))*(sy mass)
 
-gd2_eq3 :: Expr
-gd2_eq3 = (sy force_1)*(sy mass) $= int_all (eqSymb time) (sy force_1) $= sy impulseV
+gd3_eq3 :: Expr
+gd3_eq3 = (sy force_1)*(sy mass) $= int_all (eqSymb time) (sy force_1) $= sy impulseV
 
-gd2_eq4 :: Expr
-gd2_eq4 = sy impulseV $= sy deltaP $= (sy mass)*(sy deltaV)
+gd3_eq4 :: Expr
+gd3_eq4 = sy impulseV $= sy deltaP $= (sy mass)*(sy deltaV)
 
-gd2_eq5 :: Expr
-gd2_eq5 = (sy mass)*(sy deltaV1) $= (negate (sy mass)*(sy deltaV2))
+gd3_eq5 :: Expr
+gd3_eq5 = (sy mass)*(sy deltaV1) $= (negate (sy mass)*(sy deltaV2))
 
-gd2_eq6 :: Expr
-gd2_eq6 = (sy mass_1)*(sy vel_i1) + (sy mass_2)*(sy vel_i2) $= 
+gd3_eq6 :: Expr
+gd3_eq6 = (sy mass_1)*(sy vel_i1) + (sy mass_2)*(sy vel_i2) $= 
   (sy mass_1)*(sy vel_f1) + (sy mass_2)*(sy vel_f2)
 
-gd2_eq7 :: Expr
-gd2_eq7 = (defsum (Atomic "k") (str "0") (str "n"))
+gd3_eq7 :: Expr
+gd3_eq7 = (defsum (Atomic "k") (str "0") (str "n"))
  ((sy mass_k)*(sy vel_ik)) $= (defsum (Atomic "k") (str "0") (str "n"))
  ((sy mass_k)*(sy vel_fk))
 
