@@ -246,7 +246,7 @@ orgSecEnd   = S "The" +:+ plural inModel +:+ S "provide the set of" +:+
 -- System Context automatically generated
 sysCtxIntro :: Contents
 sysCtxIntro = foldlSP
-  [makeRef (sysCtxFig1 ^. getLabel) +:+ S "shows the" +:+. phrase sysCont,
+  [mkRefFrmLbl sysCtxFig1 +:+ S "shows the" +:+. phrase sysCont,
    S "A circle represents an external entity outside the" +:+ phrase software
    `sC` S "the", phrase user, S "in this case. A rectangle represents the",
    phrase softwareSys, S "itself" +:+. (sParen $ short ssp),
@@ -330,18 +330,18 @@ phys_sys_desc = SRS.physSyst
    LlC fig_indexconv, LlC fig_forceacting] []
 
 phys_sys_desc_p1 = physSystIntro slope how intrslce slice 
-  (S "slice base") (fig_indexconv ^. getLabel)
+  (S "slice base") (fig_indexconv)
   where how = S "as a series of" +:+ phrase slice +:+. plural element
 
 physSystIntro :: (NamedIdea a, NamedIdea b, NamedIdea c, HasShortName d, Referable d,
-  HasUID d) =>
+  HasLabel d) =>
   a -> Sentence -> b -> c -> Sentence -> d -> Contents
 physSystIntro what how p1 p2 p3 indexref = foldlSP [
   at_start analysis, S "of the", phrase what, S "is performed by looking at",
   plural property, S "of the", phrase what, how, S "Some", plural property,
   S "are", phrase p1, plural property `sC` S "and some are", phrase p2 `sOr`
   p3 +:+. plural property, S "The index convention for referencing which",
-  phrase p1 `sOr` phrase p2, S "is being used is shown in", makeRef indexref]
+  phrase p1 `sOr` phrase p2, S "is being used is shown in", mkRefFrmLbl indexref]
 
 phys_sys_desc_bullets = enumBullet $ map foldlSent_ [
 
@@ -356,7 +356,7 @@ phys_sys_desc_bullets = enumBullet $ map foldlSent_ [
 
 phys_sys_desc_p2 = foldlSP [S "A", phrase fbd, S "of the", 
   plural force, S "acting on the", phrase slice, 
-  S "is displayed in", makeRef (fig_forceacting ^. getLabel)]
+  S "is displayed in", mkRefFrmLbl fig_forceacting]
 
 fig_indexconv :: LabelledContent
 fig_indexconv = llcc (mkLabelRAFig "IndexConvention") $ 

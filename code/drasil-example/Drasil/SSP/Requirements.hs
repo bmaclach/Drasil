@@ -27,7 +27,7 @@ readAndStore, generateCSS, testSlipSrf, prepareSlipS, calculateFS, rankSlope,
 readAndStore = cic "readAndStore" ( foldlSent [
   S "Read the", phrase input_, S "file and store the" +:+. 
   plural datum, S "Necessary", plural inDatum, S "summarized in", 
-  makeRef (sspInputDataTable ^. getLabel)]) "Read-and-Store" funcReqDom
+  mkRefFrmLbl sspInputDataTable]) "Read-and-Store" funcReqDom
 
 generateCSS = cic "generateCSS" ( foldlSent [
   S "Generate potential", plural crtSlpSrf,S "for the", 

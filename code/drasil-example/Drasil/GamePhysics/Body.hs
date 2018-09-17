@@ -249,7 +249,7 @@ organization_of_documents_intro = foldlSent
 
 sysCtxIntro :: Contents
 sysCtxIntro = foldlSP
-  [makeRef (sysCtxFig1 ^. getLabel) +:+ S "shows the" +:+. phrase sysCont,
+  [mkRefFrmLbl sysCtxFig1 +:+ S "shows the" +:+. phrase sysCont,
    S "A circle represents an external entity outside the" +:+ phrase software
    `sC` S "the", phrase user, S "in this case. A rectangle represents the",
    phrase softwareSys, S "itself", (sParen $ short chipmunk) +:+. EmptyS,
@@ -350,7 +350,7 @@ problem_description_intro_param lib app = foldlSent
   (phrase app), S "developers to include", (phrase physics), S "in their" +:+. 
   (plural product_), S "There are a few free" `sC` (phrase openSource) `sAnd` S "high quality",
   (plural lib), S "available to be used for", phrase consumer, plural product_ +:+. 
-  (sParen $ makeRef (off_the_shelf_solutions ^. getLabel)), S "By creating a simple, lightweight, fast and portable",
+  (sParen $ mkRefFrmLbl off_the_shelf_solutions), S "By creating a simple, lightweight, fast and portable",
   (getAcc twoD), (phrase CP.rigidBody), (phrase lib) `sC` (phrase app),
   S "development will be more accessible to the masses" `sAnd` S "higher quality",
   (plural product_), S "will be produced"]
@@ -637,7 +637,7 @@ off_the_shelf_solutions_intro = off_the_shelf_solutions_intro_param problem_desc
 
 off_the_shelf_solutions_intro_param :: NamedIdea n => Section -> n -> Contents
 off_the_shelf_solutions_intro_param problmDescSec lib = mkParagraph $ foldlSentCol 
-  [S "As mentioned in", (makeRef (problmDescSec ^. getLabel)) `sC`
+  [S "As mentioned in", (mkRefFrmLbl problmDescSec) `sC`
   S "there already exist free", (phrase openSource), (phrase game) +:+.
   (plural lib), S "Similar", (getAcc twoD), (plural lib), S "are"]
 
@@ -755,8 +755,8 @@ traceMatTabReqGoalOther = llcc (mkLabelSame "TraceyReqGoalsOther" Tab) $ Table
   (EmptyS:(traceMatTabReqGoalOtherRowHead))
   (makeTMatrix traceMatTabReqGoalOtherColHead traceMatTabReqGoalOtherCol
   traceMatTabReqGoalOtherRow)
-  (showingCxnBw (traceyMatrix) (titleize' requirement +:+ sParen (makeRef $ requirements ^. getLabel)
-  `sC` (titleize' goalStmt) +:+ sParen (makeRef $ problem_description ^. getLabel) `sAnd` S "Other" +:+
+  (showingCxnBw (traceyMatrix) (titleize' requirement +:+ sParen (mkRefFrmLbl requirements)
+  `sC` (titleize' goalStmt) +:+ sParen (mkRefFrmLbl problem_description) `sAnd` S "Other" +:+
   titleize' item)) True
 
 traceMatTabAssumpCol' :: [[String]]
@@ -828,7 +828,7 @@ traceMatTabAssump = llcc (mkLabelSame "TraceyAssumpsOther" Tab) $ Table
   (EmptyS:traceMatTabAssumpRowHead)
   (makeTMatrix traceMatTabAssumpColHead traceMatTabAssumpCol' traceMatTabAssumpRow)
   (showingCxnBw (traceyMatrix) (titleize' assumption +:+ sParen 
-    (makeRef $ problem_description ^. getLabel)
+    (mkRefFrmLbl problem_description)
   `sAnd` S "Other" +:+ titleize' item)) True
 
 traceMatTabDefnModelCol :: [[String]]

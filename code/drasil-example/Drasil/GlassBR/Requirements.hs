@@ -63,7 +63,7 @@ inputGlassPropsDesc, checkInputWithDataConsDesc, outputValsAndKnownQuantsDesc ::
 checkGlassSafetyDesc :: NamedChunk -> Sentence
 
 inputGlassPropsDesc = foldlSent [at_start input_, S "the", plural quantity, S "from",
-  makeRef (inputGlassPropsTable ^. getLabel) `sC` S "which define the" +:+. foldlList Comma List
+  mkRefFrmLbl inputGlassPropsTable `sC` S "which define the" +:+. foldlList Comma List
   [phrase glass +:+ plural dimension, (glassTy ^. defn), S "tolerable" +:+
   phrase probability `sOf` phrase failure, (plural characteristic `ofThe` 
   phrase blast)] +: S "Note", ch plate_len `sAnd` ch plate_width,

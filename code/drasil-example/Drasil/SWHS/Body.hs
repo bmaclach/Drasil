@@ -495,7 +495,7 @@ traceFuncReq = ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10",
 traceFuncReqRef = map makeRef funcReqs
 
 traceData = ["Data Constraints"]
-traceDataRef = [makeRef (dataConTable1 ^. getLabel)] --FIXME: Reference section?
+traceDataRef = [mkRefFrmLbl dataConTable1] --FIXME: Reference section?
 
 traceAssump = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10",
   "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18", "A19"]
@@ -798,7 +798,7 @@ orgDocEnd sp pro = foldlSent_ [S "The", plural inModel,
 --------------------------
 
 systCContents :: CI -> Contents
-systCContents pro = foldlSP [makeRef (sys_context_fig ^. getLabel),
+systCContents pro = foldlSP [mkRefFrmLbl sys_context_fig,
  S "shows the" +:+. phrase sysCont, 
   S "A circle represents an external entity outside the",
   phrase software `sC` S "the", phrase user, S "in this case. A",
@@ -809,7 +809,7 @@ systCContents pro = foldlSP [makeRef (sys_context_fig ^. getLabel),
 
 sys_context_fig :: LabelledContent
 sys_context_fig = llcc (mkLabelRAFig "SysCon") $ fig (foldlSent_
-  [makeRef (sys_context_fig ^. getLabel) +: EmptyS, titleize sysCont])
+  [mkRefFrmLbl sys_context_fig +: EmptyS, titleize sysCont])
   "SystemContextFigure.png"
 
 systCIntro :: CI -> NamedChunk -> Contents
@@ -960,7 +960,7 @@ genDefDeriv1 roc tem = foldlSPCol [S "Detailed derivation of simplified",
   phrase roc, S "of", phrase tem]
 
 genDefDeriv2 :: LabelledContent -> UnitalChunk -> Contents
-genDefDeriv2 t1ct vo = foldlSPCol [S "Integrating", makeRef (t1ct ^. getLabel),
+genDefDeriv2 t1ct vo = foldlSPCol [S "Integrating", mkRefFrmLbl t1ct,
   S "over a", phrase vo, sParen (ch vo) `sC` S "we have"]
 
 genDefDeriv3 = eqUnR' $ 

@@ -322,8 +322,8 @@ makeRef :: (HasShortName l, Referable l, HasUID l) => l -> Sentence
 makeRef r = customRef r (r ^. shortname)
 
 --FIXME: needs design (HasShortName, Referable only possible when HasLabel)
-mkRefFrmLbl :: (HasLabel l, HasShortName l, Referable l, HasUID l) => l -> Sentence
-mkRefFrmLbl r = makeRef r
+mkRefFrmLbl :: (HasLabel l, HasShortName l, Referable l) => l -> Sentence
+mkRefFrmLbl r = makeRef $ r ^. getLabel
 
 --FIXME: should be removed from Examples once sections have labels
 -- | Create a reference with a customized 'ShortName'
