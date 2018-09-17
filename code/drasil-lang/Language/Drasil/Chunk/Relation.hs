@@ -9,12 +9,11 @@ import Control.Lens (makeLenses, (^.))
 import Language.Drasil.Chunk.Concept (ConceptChunk, cw, dccWDS, dccWDS')
 import Language.Drasil.Chunk.ShortName (HasShortName(shortname))
 import Language.Drasil.Classes (HasUID(uid),NamedIdea(term),Idea(getA),
-  Definition(defn), ConceptDomain(cdom), Concept, ExprRelat(relat),
-  HasLabel(getLabel))
+  Definition(defn), ConceptDomain(cdom), Concept, ExprRelat(relat))
 import Language.Drasil.Expr (Relation)
 import Language.Drasil.NounPhrase (NP)
 import Language.Drasil.Spec (Sentence)
-import Language.Drasil.Label.Core (Label)
+import Language.Drasil.Label.Core (Label, HasLabel(getLabel))
 
 data RelationConcept = RC { _conc :: ConceptChunk
                           , _rel :: Relation

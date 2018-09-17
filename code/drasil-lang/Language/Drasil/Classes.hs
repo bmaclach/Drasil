@@ -11,9 +11,6 @@ module Language.Drasil.Classes (
   , HasSpace(typ)
   , HasUnitSymbol(usymb)
   , IsUnit(udefn, getUnits)
-  , HasLabel(getLabel)
-  , MayHaveLabel(getMaybeLabel)
-  , IsLabel
   , UnitEq(uniteq)
   , HasReference(getReferences)
   , CommonIdea(abrv)
@@ -23,7 +20,6 @@ module Language.Drasil.Classes (
   , DefiningExpr(defnExpr)
   , HasDerivation(derivations)
   , HasAdditionalNotes(getNotes)
-  , HasRefAddress(getRefAdd)
   ) where
 
 import Language.Drasil.Chunk.Constrained.Core (Constraint)
@@ -31,7 +27,6 @@ import Language.Drasil.Chunk.Derivation (Derivation)
 import Language.Drasil.Chunk.References (Reference)
 import Language.Drasil.Development.UnitLang(UDefn, USymb)
 import Language.Drasil.Expr (Expr)
-import Language.Drasil.Label.Core (Label, LblType)
 import Language.Drasil.NounPhrase.Core (NP)
 import Language.Drasil.Space (Space)
 import Language.Drasil.Spec (Sentence)
@@ -103,22 +98,7 @@ class Constrained c where
 
 -- | A HasReasVal is a 'Quantity' that could have a reasonable value
 class HasReasVal c where
-  reasVal     :: Lens' c (Maybe Expr)
-
--- | For those things which "have a label"
-class HasLabel c where
-  getLabel      :: Lens' c Label
- 
-class MayHaveLabel c where
-  getMaybeLabel :: c -> Maybe Label
-
--- HasRefAddress is associated with the HasLabel class due to
--- the current definition of a Label
-class HasRefAddress b where
-  getRefAdd :: Lens' b LblType 
-
--- IsLabel is associated with String rendering
-class (HasLabel u, HasUID u) => IsLabel u where
+  reasVal     :: Lens' c (Maybe Expr) 
 
 -----------------------------------------------------
 -- Below are for units only

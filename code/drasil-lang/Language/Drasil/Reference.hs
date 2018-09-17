@@ -20,14 +20,15 @@ import Language.Drasil.Chunk.PhysSystDesc as PD (PhysSystDesc)
 import Language.Drasil.Chunk.ShortName (HasShortName(shortname),
   ShortName(Concat, Deferred), DeferredCtx(FromCC), getStringSN, shortname')
 import Language.Drasil.Chunk.Theory (TheoryModel)
-import Language.Drasil.Classes (ConceptDomain(cdom), HasUID(uid), HasLabel(getLabel), HasRefAddress(getRefAdd))
+import Language.Drasil.Classes (ConceptDomain(cdom), HasUID(uid))
 import Language.Drasil.Document (Section(Section))
 import Language.Drasil.Document.Core (RawContent(..), LabelledContent(..))
 import Language.Drasil.People (People, comparePeople)
 import Language.Drasil.Spec (Sentence((:+:), Ref, S))
 import Language.Drasil.UID (UID)
 import Language.Drasil.Chunk.DataDefinition (DataDefinition)
-import Language.Drasil.Label.Core (Label(..), getAdd)
+import Language.Drasil.Label.Core (Label(..), getAdd, HasLabel(getLabel),
+ HasRefAddress(getRefAdd))
 import Language.Drasil.Label (getDefName, getReqName)
 
 -- | Database for maintaining references.
@@ -317,17 +318,17 @@ assumptionsFromDB am = dropNums $ sortBy (compare `on` snd) assumptions
 -- item exists in our database of referable objects.
 --FIXME: completely shift to being `HasLabel` since customref checks for 
 --  `HasShortName` and `Referable`?
-makeRef :: (HasShortName l, Referable l) => l -> Sentence
+makeRef :: (HasShortName l, Referable l, HasUID l) => l -> Sentence
 makeRef r = customRef r (r ^. shortname)
 
 --FIXME: needs design (HasShortName, Referable only possible when HasLabel)
-mkRefFrmLbl :: (HasLabel l, HasShortName l, Referable l) => l -> Sentence
+mkRefFrmLbl :: (HasLabel l, HasShortName l, Referable l, HasUID l) => l -> Sentence
 mkRefFrmLbl r = makeRef r
 
 --FIXME: should be removed from Examples once sections have labels
 -- | Create a reference with a customized 'ShortName'
-customRef :: (HasShortName l, Referable l) => l -> ShortName -> Sentence
-customRef r n = Ref (fixupRType $ rType r) (refAdd r) (getAcc' (rType r) n)
+customRef :: (HasShortName l, Referable l, HasUID l) => l -> ShortName -> Sentence
+customRef r n = Ref (r ^. uid) (fixupRType $ rType r) (refAdd r) (getAcc' (rType r) n)
   where 
     getAcc' :: RefType -> ShortName -> ShortName
     getAcc' (Def dtp) sn = shortname' $ (getDefName dtp) ++ " " ++ (getStringSN sn)

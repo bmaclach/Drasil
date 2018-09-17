@@ -8,7 +8,7 @@ module Language.Drasil.Chunk.InstanceModel
 import Language.Drasil.Classes (HasUID(uid), NamedIdea(term), Idea(getA),
   Definition(defn),ConceptDomain(cdom), Concept, ExprRelat(relat),
   HasDerivation(derivations), HasReference(getReferences), HasAdditionalNotes(getNotes),
-  HasLabel(getLabel), HasSymbol(symbol), HasSpace(typ))
+  HasSymbol(symbol), HasSpace(typ))
 import Language.Drasil.Chunk.References (Reference)
 import Language.Drasil.Chunk.Derivation (Derivation)
 import Language.Drasil.Chunk.ShortName (HasShortName(shortname))
@@ -22,7 +22,7 @@ import Language.Drasil.Expr (($=))
 import Language.Drasil.Expr.Math (sy)
 import Language.Drasil.Document.GetChunk (vars)
 import Language.Drasil.Spec (Sentence)
-import Language.Drasil.Label.Core (Label)
+import Language.Drasil.Label.Core (Label, HasLabel(getLabel))
 import Language.Drasil.Label (mkLabelSame)
 import Language.Drasil.RefTypes (RefType(..), DType(..))
 

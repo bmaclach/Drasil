@@ -29,10 +29,10 @@ import Language.Drasil.People (People)
 import Language.Drasil.Spec (Sentence)
 import Language.Drasil.UID (UID)
 
-import Language.Drasil.Classes (HasUID(uid), HasLabel(getLabel))
+import Language.Drasil.Classes (HasUID(uid))
 import Language.Drasil.Misc (noSpaces)
 import Language.Drasil.Chunk.ShortName (HasShortName(shortname))
-import Language.Drasil.Label.Core (Label)
+import Language.Drasil.Label.Core (Label, HasLabel(getLabel))
 
 import Control.Lens (Lens', makeLenses)
 

@@ -4,9 +4,9 @@ module Language.Drasil.Document where
 
 import Language.Drasil.Document.Core
 import Language.Drasil.Chunk.ShortName (HasShortName(shortname))
-import Language.Drasil.Classes (HasLabel(getLabel))
 
 import Language.Drasil.Label (Label)
+import Language.Drasil.Label.Core (HasLabel(getLabel))
 import Language.Drasil.Spec (Sentence(..))
 
 import Control.Lens (makeLenses)

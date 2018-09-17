@@ -456,7 +456,7 @@ dataConstraintmkParagraph tableRef (mid:xs) = mkParagraph $
   (dataConstraintClosingSent xs)
 
 dataConstraintIntroSent :: [LabelledContent] -> Sentence
-dataConstraintIntroSent tableRef = foldlSent [(listofTablesToRefs tableRef), 
+dataConstraintIntroSent tableRef = foldlSent [(listofTablesToRefs $ map (^. getLabel) tableRef), 
   S "the", plural Doc.datumConstraint, S "on the", phrase Doc.input_
   `sAnd` phrase Doc.output_ +:+. (plural Doc.variable `sC` S "respectively"), 
   S "The", phrase Doc.column, S "for", phrase Doc.physical, 

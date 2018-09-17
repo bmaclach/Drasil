@@ -7,7 +7,7 @@ module Language.Drasil.Chunk.Theory
 import Language.Drasil.UID (UID)
 import Language.Drasil.Classes (HasUID(uid), NamedIdea(term), Idea(getA),
   Definition(defn), ConceptDomain(cdom), Concept, HasReference(getReferences),
-  HasAdditionalNotes(getNotes), HasLabel(getLabel))
+  HasAdditionalNotes(getNotes))
 import Language.Drasil.Chunk.Concept (ConceptChunk, cw)
 import Language.Drasil.Chunk.Constrained.Core (TheoryConstraint)
 import Language.Drasil.Chunk.Eq (QDefinition)
@@ -15,7 +15,7 @@ import Language.Drasil.Chunk.Quantity (Quantity, QuantityDict, qw)
 import Language.Drasil.Chunk.References (Reference)
 import Language.Drasil.Chunk.ShortName (HasShortName(shortname))
 import Language.Drasil.Spec (Sentence)
-import Language.Drasil.Label.Core (Label)
+import Language.Drasil.Label.Core (Label, HasLabel(getLabel))
 
 import Control.Lens (Lens', view, makeLenses)
 

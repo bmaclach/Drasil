@@ -4,17 +4,17 @@ module Language.Drasil.Label (Label, mkLabelRA',
  getReqName, getDefName) where
 
 import Language.Drasil.Label.Core
-import Language.Drasil.Classes (HasUID(uid), HasRefAddress(getRefAdd))
+import Language.Drasil.Classes (HasUID(uid))
 import Data.Char (isAscii)
 import Language.Drasil.Chunk.ShortName (shortname')
 import Language.Drasil.RefTypes (RefType(..), ReqType(..), DType(..))
 
 import Control.Lens((^.))
 
--- These are orphan instance, unfortunately. But to fix them causes
+{---- These are orphan instance, unfortunately. But to fix them causes
 -- import loops. FIXME
 instance HasUID        Label where uid       = uniqueID
-instance HasRefAddress Label where getRefAdd = lblType
+instance HasRefAddress Label where getRefAdd = lblType--}
 
 -- multiple mkLabel constructors for label creation
 -- id     ==> unique ID for Drasil referencing (i.e. internal)

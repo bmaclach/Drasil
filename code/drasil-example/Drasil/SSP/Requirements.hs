@@ -1,5 +1,7 @@
 module Drasil.SSP.Requirements (sspRequirements, sspInputDataTable) where
 
+import Control.Lens((^.))
+
 import Language.Drasil
 
 import Data.Drasil.Concepts.Computation (inDatum)
@@ -25,7 +27,7 @@ readAndStore, generateCSS, testSlipSrf, prepareSlipS, calculateFS, rankSlope,
 readAndStore = cic "readAndStore" ( foldlSent [
   S "Read the", phrase input_, S "file and store the" +:+. 
   plural datum, S "Necessary", plural inDatum, S "summarized in", 
-  makeRef sspInputDataTable]) "Read-and-Store" funcReqDom
+  makeRef (sspInputDataTable ^. getLabel)]) "Read-and-Store" funcReqDom
 
 generateCSS = cic "generateCSS" ( foldlSent [
   S "Generate potential", plural crtSlpSrf,S "for the", 

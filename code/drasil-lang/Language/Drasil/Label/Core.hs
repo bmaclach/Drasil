@@ -3,6 +3,8 @@
 module Language.Drasil.Label.Core where
 
 import Control.Lens (makeLenses, Lens')
+
+import Language.Drasil.Classes (HasUID(uid))
 import Language.Drasil.UID (UID)
 import Language.Drasil.Chunk.ShortName (ShortName, HasShortName(shortname))
 import Language.Drasil.RefTypes (RefType)
@@ -22,11 +24,28 @@ data Label = Lbl
   }
 makeLenses ''Label
 
+instance HasUID       Label where uid       = uniqueID
 instance HasShortName Label where shortname = sn
+instance HasRefAddress Label where getRefAdd = lblType
 
 -- Label Map --
 class HasLabelTable s where
 	labelTable :: Lens' s LabelMap
+
+-- | For those things which "have a label"
+class HasLabel c where
+  getLabel      :: Lens' c Label
+ 
+class MayHaveLabel c where
+  getMaybeLabel :: c -> Maybe Label
+
+ -- IsLabel is associated with String rendering
+class (HasLabel u, HasUID u) => IsLabel u where
+
+-- HasRefAddress is associated with the HasLabel class due to
+-- the current definition of a Label
+class HasRefAddress b where
+  getRefAdd :: Lens' b LblType
 
 labelLookup :: UID -> LabelMap -> Label
 labelLookup u l = getL $ Map.lookup u l

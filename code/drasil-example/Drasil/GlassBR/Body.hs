@@ -137,7 +137,7 @@ mkSRS = RefSec (RefProg intro [TUnits, tsymb [TSPurpose, SymbOrder], TAandA]) :
           , IMs ([Label, Input, Output, InConstraints, OutConstraints] ++ stdFields) [probOfBreak, calofCapacity, calofDemand] HideDerivation
           , Constraints EmptyS dataConstraintUncertainty
                         (foldlSent [makeRef SRS.valsOfAuxConsLabel, S "gives", (plural value `ofThe` S "specification"), 
-                        plural parameter, S "used in", (makeRef inputDataConstraints)])
+                        plural parameter, S "used in", (makeRef $ inputDataConstraints ^. getLabel)])
                         [inputDataConstraints, outputDataConstraints]
           ]
         )
@@ -319,7 +319,7 @@ orgOfDocIntroEnd = foldl (+:+) EmptyS [(at_start' $ the dataDefn),
   
 sysCtxIntro :: Contents
 sysCtxIntro = foldlSP
-  [makeRef sysCtxFig1 +:+ S "shows the" +:+. phrase sysCont,
+  [makeRef (sysCtxFig1 ^. getLabel) +:+ S "shows the" +:+. phrase sysCont,
    S "A circle represents an external entity outside the" +:+ phrase software
    `sC` S "the", phrase user, S "in this case. A rectangle represents the",
    phrase softwareSys, S "itself", (sParen $ short gLassBR) +:+. EmptyS,
@@ -699,7 +699,7 @@ fig_4 = figureLabel 4 traceyMatrix
 
 appdxIntro = foldlSP [
   S "This", phrase appendix, S "holds the", plural graph,
-  sParen ((makeRef fig_5) `sAnd` (makeRef fig_6)),
+  sParen ((makeRef $ fig_5 ^. getLabel) `sAnd` (makeRef $ fig_6 ^. getLabel)),
   S "used for interpolating", plural value, S "needed in the", plural model]
 
 fig_5 = llcc (mkLabelRAFig "demandVSsod") $ fig (titleize figure +: S "5" +:+ (demandq ^. defn) +:+

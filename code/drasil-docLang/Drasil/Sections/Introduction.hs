@@ -2,6 +2,7 @@ module Drasil.Sections.Introduction (orgSec, introductionSection, purposeOfDoc, 
   charIntRdrF) where
 
 import Language.Drasil
+import Control.Lens ((^.))
 import qualified Drasil.DocLang.SRS as SRS (intro, prpsOfDoc, scpOfReq, charOfIR, orgOfDoc)
 
 import Data.Drasil.Concepts.Computation (algorithm)
@@ -105,13 +106,13 @@ intReaderIntro EmptyS topic2 progName stdrd sectionRef =
   [foldlSP [S "Reviewers of this",
   (phrase documentation), S "should have an understanding of" +:+. topic2 :+:
   stdrd, S "The", (plural user), S "of", (short progName),
-  S "can have a lower level of expertise, as explained in", (makeRef sectionRef)]]
+  S "can have a lower level of expertise, as explained in", (makeRef (sectionRef ^. getLabel))]]
 intReaderIntro topic1 topic2 progName stdrd sectionRef = 
   [foldlSP [S "Reviewers of this",
   (phrase documentation), S "should have a strong knowledge in" +:+. topic1,
   S "The reviewers should also have an understanding of" +:+. topic2 :+:
   stdrd, S "The", (plural user), S "of", (short progName),
-  S "can have a lower level of expertise, as explained in", (makeRef sectionRef)]]
+  S "can have a lower level of expertise, as explained in", (makeRef (sectionRef ^. getLabel))]]
 
 -- | Doc.organization of the document section constructor.  => Sentence -> c -> Section -> Sentence -> Section
 orgSec :: NamedIdea c => Sentence -> c -> Label -> Sentence -> Section

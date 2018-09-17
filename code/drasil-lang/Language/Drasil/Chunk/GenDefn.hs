@@ -6,7 +6,7 @@ module Language.Drasil.Chunk.GenDefn
 import Language.Drasil.Classes (HasUID(uid), NamedIdea(term), Idea(getA),
   Definition(defn), ConceptDomain(cdom), Concept, IsUnit,
   ExprRelat(relat), HasDerivation(derivations), HasReference(getReferences),
-  HasLabel(getLabel), HasAdditionalNotes(getNotes))
+  HasAdditionalNotes(getNotes))
 
 import Language.Drasil.Chunk.Derivation (Derivation)
 import Language.Drasil.Chunk.References (Reference)
@@ -14,7 +14,7 @@ import Language.Drasil.Chunk.Relation (RelationConcept)
 import Language.Drasil.Chunk.ShortName (HasShortName(shortname))
 import Language.Drasil.Development.Unit (unitWrapper, UnitDefn, MayHaveUnit(getUnit))
 import Language.Drasil.Spec (Sentence)
-import Language.Drasil.Label.Core (Label)
+import Language.Drasil.Label.Core (Label, HasLabel(getLabel))
 import Language.Drasil.Label (mkLabelSame)
 import Language.Drasil.RefTypes(RefType(..), DType(..))
 import Control.Lens (makeLenses)

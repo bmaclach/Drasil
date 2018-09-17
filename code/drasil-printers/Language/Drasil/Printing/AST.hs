@@ -39,7 +39,7 @@ data Spec = E Expr
           | Spec :+: Spec -- concat
           | Sy USymb
           | Sp Special
-          | Ref RefType RefAdd Spec ShortName
+          | Ref UID RefType RefAdd Spec ShortName
           | EmptyS
           | Quote Spec    -- quotes are different in different languages
           | HARDNL        -- newline. Temp fix for multi-line descriptions; 

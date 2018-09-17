@@ -12,11 +12,10 @@ import Language.Drasil.Chunk.ShortName (HasShortName(shortname))
 import Language.Drasil.Chunk.SymbolForm (eqSymb)
 import Language.Drasil.Classes (HasUID(uid), NamedIdea(term), Idea(getA),
   HasSymbol(symbol), DefiningExpr(defnExpr), -- ExprRelat(relat), 
-  HasDerivation(derivations), HasReference(getReferences), HasAdditionalNotes(getNotes),
-  HasLabel(getLabel))
+  HasDerivation(derivations), HasReference(getReferences), HasAdditionalNotes(getNotes))
 import Language.Drasil.Development.Unit(MayHaveUnit(getUnit))
 import Language.Drasil.Expr (Expr)
-import Language.Drasil.Label.Core (Label)
+import Language.Drasil.Label.Core (Label, HasLabel(getLabel))
 import Language.Drasil.Label (mkLabelSame)
 import Language.Drasil.RefTypes(RefType(..), DType(..))
 import Language.Drasil.Spec (Sentence(EmptyS))

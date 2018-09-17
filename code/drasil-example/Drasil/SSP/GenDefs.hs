@@ -205,7 +205,7 @@ fNety_rel = inxi fy $= (negate $ inxi slcWght) +
   - (inxi surfHydroForce) * cos (inxi surfAngle) -
   (inxi surfLoad) * cos (inxi impLoadAngle)
 
-fNet_desc :: (HasShortName l, Referable l) => l -> Sentence
+fNet_desc :: (HasShortName l, Referable l, HasUID l) => l -> Sentence
 fNet_desc gd = foldlSent [S "This", phrase equation `andThe` phrase equation, 
   S "in", makeRef gd, S "show the net sum of the",
   plural force, S "acting on a", phrase slice, 

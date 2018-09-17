@@ -2,6 +2,7 @@ module Drasil.NoPCM.GenDefs (rocTempSimp, swhsGDs) where
 
 import Language.Drasil
 
+import Control.Lens((^.))
 import Data.Drasil.Concepts.Math (rOfChng, unit_)
 import Data.Drasil.Concepts.Thermodynamics (temp)
 
@@ -44,7 +45,7 @@ roc_temp_simp_deriv_sentences = map foldlSentCol [
     QT.temp vol [makeRef newA3, makeRef newA4, makeRef newA5],
   genDefDesc5 density mass vol]
 
-genDefDesc1 :: (HasShortName x, Referable x) => x -> UnitalChunk -> [Sentence]
+genDefDesc1 :: (HasShortName x, Referable x, HasUID x) => x -> UnitalChunk -> [Sentence]
 genDefDesc1 t1c vo =
   [S "Integrating", makeRef t1c, S "over a", phrase vo, sParen (ch vo) `sC` S "we have"]
 
