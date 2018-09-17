@@ -208,7 +208,7 @@ module Language.Drasil (
   -- Chunk.Sentence.EmbedSymbol
   , ch
   -- Chunk.Sentence.Extract
-  , sdep, vars',snames, combine
+  , sdep, vars',snames, combine, lnames
   -- Chunk.Expr.Extract
   , names
   -- Document.Extract
@@ -235,7 +235,7 @@ import Language.Drasil.Document.Extract(egetDoc, getDoc)
 import Language.Drasil.Expr.Extract (dep, names', names)
 import Language.Drasil.Expr.Precedence (precA, precB, eprec)
 import Language.Drasil.Sentence.EmbedSymbol(ch)
-import Language.Drasil.Sentence.Extract(sdep,  snames)
+import Language.Drasil.Sentence.Extract(sdep,  snames, lnames)
 import Language.Drasil.Document (section, fig, figWithWidth
   , section''
   , Section(..), SecCons(..) 
