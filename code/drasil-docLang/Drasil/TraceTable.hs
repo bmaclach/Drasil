@@ -1,4 +1,4 @@
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GADTs, TemplateHaskell #-}
 ---------------------------------------------------------------------------
 -- | Start the process of moving away from Document as the main internal
 -- representation of information, to something more informative.
@@ -7,13 +7,41 @@
 -- instead.
 module Drasil.TraceTable where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.),makeLenses)
 import Drasil.DocumentLanguage
 import Language.Drasil
 import qualified Data.Map as Map
 import Data.Maybe (fromMaybe)
 
-type TraceMap = Map.Map Label [Label]
+type TheoryModelMap    = Map.Map TheoryModel [Label]
+type GenDefnMap        = Map.Map GenDefn [Label]
+type DataDefinitionMap = Map.Map DataDefinition [Label]
+type InstanceModelMap  = Map.Map InstanceModel [Label]
+
+data TraceMap = TMap { _ttm :: TheoryModelMap
+                   , _tgd   :: GenDefnMap 
+                   , _tdd   :: DataDefinitionMap
+                   , _tim   :: InstanceModelMap
+                   } --TODO: Expand and add more databases
+makeLenses ''TraceMap
+
+
+theoryModelMap :: [TheoryModel] -> LabelMap -> TheoryModelMap
+theoryModelMap = Map.fromList . map (\x y -> (x, lnames (extractSFromTM x) y))
+
+genDefnMap :: [GenDefn] -> LabelMap -> GenDefnMap
+genDefnMap = Map.fromList . map (\x y -> (x, lnames (extractSFromGD x) y))
+
+dataDefinitionMap :: [DataDefinition] -> LabelMap -> DataDefinitionMap
+dataDefinitionMap = Map.fromList . map (\x y -> (x, lnames (extractSFromDD x) y))
+
+instanceModelMap :: [InstanceModel] -> LabelMap -> InstanceModelMap
+instanceModelMap = Map.fromList . map (\x y -> (x, lnames (extractSFromIM x) y))
+
+traceMap :: [TheoryModel] -> [GenDefn] -> [DataDefinition] -> [InstanceModel]
+ -> LabelMap -> TraceMap
+traceMap s t c u l = TMap (theoryModelMap s l) (genDefnMap t l)
+ (dataDefinitionMap c l) (instanceModelMap u l)
 
 getTraceMapFromDocSec :: [DocSection] -> SSDSec
 getTraceMapFromDocSec ((SSDSec ssd):_)  = ssd
@@ -64,6 +92,13 @@ extractSFromDD d = (fromMaybe [] (d ^. getNotes)) ++ (d ^. derivations)
 
 extractSFromIM :: InstanceModel -> [Sentence]
 extractSFromIM i = (fromMaybe [] (i ^. getNotes)) ++ (i ^. derivations)
+
+getSCSSub :: [DocSection] -> [SCSSub]
+getSCSSub a = getTraceMapFromSolCh $ getTraceMapFromSSDSub $ getTraceMapFromSSDSec
+ $ getTraceMapFromDocSec a
+
+
+
 
 
 
