@@ -118,6 +118,15 @@ getSCSSub :: [DocSection] -> [SCSSub]
 getSCSSub a = getTraceMapFromSolCh $ getTraceMapFromSSDSub $ getTraceMapFromSSDSec
  $ getTraceMapFromDocSec a
 
+generateTraceMap :: [DocSection] -> LabelMap -> TraceMap
+generateTraceMap a lm = mergeMaps [(traceMapsub1 lm (getTraceMapFromTM $ getSCSSub a)), 
+  (traceMap lm (getTraceMapFromGD $ getSCSSub a)), (traceMap lm (getTraceMapFromDD $ getSCSSub a)),
+  (traceMap lm (getTraceMapFromIM $ getSCSSub a))]
+
+mergeMaps :: [TraceMap] -> TraceMap
+mergeMaps (hd1:hd2:tl)      = mergeMaps ((Map.union hd1 hd2):tl)
+mergeMaps (hd1:hd2:[])      = Map.union hd1 hd2
+
 
 
 
