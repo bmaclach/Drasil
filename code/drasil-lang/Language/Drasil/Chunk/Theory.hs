@@ -17,7 +17,7 @@ import Language.Drasil.Chunk.ShortName (HasShortName(shortname))
 import Language.Drasil.Spec (Sentence)
 import Language.Drasil.Label.Core (Label, HasLabel(getLabel))
 
-import Control.Lens (Lens', view, makeLenses)
+import Control.Lens (Lens', view, makeLenses, (^.))
 
 class HasUID t => Theory t where
   valid_context :: Lens' t [TheoryChunk]
@@ -40,7 +40,7 @@ data TheoryChunk = TC { _tid :: UID
                       , _dfun :: [QDefinition]
                       , _ref :: [Reference]
                       }
-makeLenses ''TheoryChunk
+makeLenses ''TheoryChunk 
 
 instance Theory        TheoryChunk where
   valid_context = vctx
@@ -60,7 +60,7 @@ data TheoryModel = TM { _con :: ConceptChunk
                       , _lb :: Label
                       , _notes :: Maybe [Sentence]
                       }
-makeLenses ''TheoryModel
+makeLenses ''TheoryModel 
 
 instance HasUID             TheoryModel where uid = con . uid
 instance NamedIdea          TheoryModel where term = con . term

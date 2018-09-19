@@ -101,7 +101,7 @@ module Language.Drasil (
   -- Chunk.Attributes --FIXME: Changed a lot
   , getSource
   , Derivation, getDerivation, getShortName
-  , Reference
+  , Reference, uidSort
   -- Chunk.ShortName
   , DeferredCtx(..), resolveSN, ShortName, shortname', HasShortName(shortname), getStringSN
   --Citations
@@ -326,7 +326,7 @@ import Language.Drasil.Reference (makeRef, mkRefFrmLbl, ReferenceDB, assumpDB, r
                                  , HasReqRefs, Referable(..), customRef
                                  , HasChangeRefs, changeRefTable, changeLookup
                                  , citationRefTable, citeLookup, RefMap
-                                 , simpleMap)
+                                 , simpleMap, uidSort)
 import Language.Drasil.Symbol (Decoration(..), Symbol(..), sub, sup, vec, hat, 
   prime, sCurlyBrSymb, compsy, Stage(..))
 import Language.Drasil.SymbolAlphabet

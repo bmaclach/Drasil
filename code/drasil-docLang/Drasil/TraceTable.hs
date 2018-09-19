@@ -11,7 +11,9 @@ import Control.Lens ((^.),makeLenses)
 import Drasil.DocumentLanguage
 import Language.Drasil
 import qualified Data.Map as Map
+import Data.List (sortBy)
 import Data.Maybe (fromMaybe)
+import Data.Drasil.SentenceStructures (foldlSent)
 
 type TheoryModelMap    = Map.Map TheoryModel [Label]
 type GenDefnMap        = Map.Map GenDefn [Label]
@@ -26,22 +28,22 @@ data TraceMap = TMap { _ttm :: TheoryModelMap
 makeLenses ''TraceMap
 
 
-theoryModelMap :: [TheoryModel] -> LabelMap -> TheoryModelMap
-theoryModelMap = Map.fromList . map (\x y -> (x, lnames (extractSFromTM x) y))
+theoryModelMap :: LabelMap -> [TheoryModel] -> TheoryModelMap
+theoryModelMap lm = Map.fromList . map (\x -> (x, lnames (extractSFromTM x) lm)) . (sortBy uidSort)
 
-genDefnMap :: [GenDefn] -> LabelMap -> GenDefnMap
-genDefnMap = Map.fromList . map (\x y -> (x, lnames (extractSFromGD x) y))
+genDefnMap :: LabelMap -> [GenDefn] -> GenDefnMap
+genDefnMap lm = Map.fromList . map (\x -> (x, lnames (extractSFromGD x) lm)) . (sortBy uidSort)
 
-dataDefinitionMap :: [DataDefinition] -> LabelMap -> DataDefinitionMap
-dataDefinitionMap = Map.fromList . map (\x y -> (x, lnames (extractSFromDD x) y))
+dataDefinitionMap :: LabelMap -> [DataDefinition] -> DataDefinitionMap
+dataDefinitionMap lm = Map.fromList . map (\x -> (x, lnames (extractSFromDD x) lm)) . (sortBy uidSort)
 
-instanceModelMap :: [InstanceModel] -> LabelMap -> InstanceModelMap
-instanceModelMap = Map.fromList . map (\x y -> (x, lnames (extractSFromIM x) y))
+instanceModelMap :: LabelMap -> [InstanceModel] -> InstanceModelMap
+instanceModelMap lm = Map.fromList . map (\x -> (x, lnames (extractSFromIM x) lm)) . (sortBy uidSort)
 
 traceMap :: [TheoryModel] -> [GenDefn] -> [DataDefinition] -> [InstanceModel]
  -> LabelMap -> TraceMap
-traceMap s t c u l = TMap (theoryModelMap s l) (genDefnMap t l)
- (dataDefinitionMap c l) (instanceModelMap u l)
+traceMap s t c u l = TMap (theoryModelMap l s) (genDefnMap l t)
+ (dataDefinitionMap l c) (instanceModelMap l u)
 
 getTraceMapFromDocSec :: [DocSection] -> SSDSec
 getTraceMapFromDocSec ((SSDSec ssd):_)  = ssd
@@ -81,17 +83,17 @@ getTraceMapFromIM ((IMs _ im _):_)      = im
 getTraceMapFromIM  (hd:tl)              = getTraceMapFromIM tl
 getTraceMapFromIM []                    = []
 
-extractSFromTM :: TheoryModel -> [Sentence]
-extractSFromTM t = fromMaybe [] (t ^. getNotes) 
+extractSFromTM :: TheoryModel -> Sentence
+extractSFromTM t = foldlSent $ fromMaybe [] (t ^. getNotes) 
 
-extractSFromGD :: GenDefn -> [Sentence]
-extractSFromGD g = (fromMaybe [] (g ^. getNotes)) ++ (g ^. derivations)
+extractSFromGD :: GenDefn -> Sentence
+extractSFromGD g =  foldlSent ((fromMaybe [] (g ^. getNotes)) ++ (g ^. derivations))
 
-extractSFromDD :: DataDefinition -> [Sentence]
-extractSFromDD d = (fromMaybe [] (d ^. getNotes)) ++ (d ^. derivations)
+extractSFromDD :: DataDefinition -> Sentence
+extractSFromDD d = foldlSent ((fromMaybe [] (d ^. getNotes)) ++ (d ^. derivations))
 
-extractSFromIM :: InstanceModel -> [Sentence]
-extractSFromIM i = (fromMaybe [] (i ^. getNotes)) ++ (i ^. derivations)
+extractSFromIM :: InstanceModel -> Sentence
+extractSFromIM i = foldlSent ((fromMaybe [] (i ^. getNotes)) ++ (i ^. derivations))
 
 getSCSSub :: [DocSection] -> [SCSSub]
 getSCSSub a = getTraceMapFromSolCh $ getTraceMapFromSSDSub $ getTraceMapFromSSDSec
