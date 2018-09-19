@@ -15,38 +15,6 @@ import Data.List (sortBy)
 import Data.Maybe (fromMaybe)
 import Data.Drasil.SentenceStructures (foldlSent)
 
-
-{--type TheoryModelMap    = Map.Map TheoryModel [Label]
-type GenDefnMap        = Map.Map GenDefn [Label]
-type DataDefinitionMap = Map.Map DataDefinition [Label]
-type InstanceModelMap  = Map.Map InstanceModel [Label]
-
-
-data TraceMap = TMap { _ttm :: TheoryModelMap
-                   , _tgd   :: GenDefnMap 
-                   , _tdd   :: DataDefinitionMap
-                   , _tim   :: InstanceModelMap
-                   } --TODO: Expand and add more databases
-makeLenses ''TraceMap
-
-
-theoryModelMap :: LabelMap -> [TheoryModel] -> TheoryModelMap
-theoryModelMap lm = Map.fromList . map (\x -> (x, lnames (extractSFromTM x) lm)) . (sortBy uidSort)
-
-genDefnMap :: LabelMap -> [GenDefn] -> GenDefnMap
-genDefnMap lm = Map.fromList . map (\x -> (x, lnames (extractSFromGD x) lm)) . (sortBy uidSort)
-
-dataDefinitionMap :: LabelMap -> [DataDefinition] -> DataDefinitionMap
-dataDefinitionMap lm = Map.fromList . map (\x -> (x, lnames (extractSFromDD x) lm)) . (sortBy uidSort)
-
-instanceModelMap :: LabelMap -> [InstanceModel] -> InstanceModelMap
-instanceModelMap lm = Map.fromList . map (\x -> (x, lnames (extractSFromIM x) lm)) . (sortBy uidSort)
-
-traceMap :: [TheoryModel] -> [GenDefn] -> [DataDefinition] -> [InstanceModel]
- -> LabelMap -> TraceMap
-traceMap s t c u l = TMap (theoryModelMap l s) (genDefnMap l t)
- (dataDefinitionMap l c) (instanceModelMap l u)--}
-
 type TraceMap = Map.Map UID [Label]
 
 traceMapsub1 :: (HasUID l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
@@ -101,18 +69,6 @@ extractSFromNotes c = foldlSent $ fromMaybe [] (c ^. getNotes)
 
 extractSFromDeriv :: HasDerivation l => l -> Sentence
 extractSFromDeriv c = foldlSent (c ^. derivations)
-
-{--extractSFromTM :: TheoryModel -> Sentence
-extractSFromTM t = foldlSent $ fromMaybe [] (t ^. getNotes) 
-
-extractSFromGD :: GenDefn -> Sentence
-extractSFromGD g =  foldlSent ((fromMaybe [] (g ^. getNotes)) ++ (g ^. derivations))
-
-extractSFromDD :: DataDefinition -> Sentence
-extractSFromDD d = foldlSent ((fromMaybe [] (d ^. getNotes)) ++ (d ^. derivations))
-
-extractSFromIM :: InstanceModel -> Sentence
-extractSFromIM i = foldlSent ((fromMaybe [] (i ^. getNotes)) ++ (i ^. derivations))--}
 
 getSCSSub :: [DocSection] -> [SCSSub]
 getSCSSub a = getTraceMapFromSolCh $ getTraceMapFromSSDSub $ getTraceMapFromSSDSec
