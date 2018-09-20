@@ -15,7 +15,7 @@ import Data.List (sortBy)
 import Data.Maybe (fromMaybe)
 import Data.Drasil.SentenceStructures (foldlSent)
 
-type TraceMap = Map.Map UID [Label]
+{--type TraceMap = Map.Map UID [Label]--}
 
 traceMapsub1 :: (HasUID l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
 traceMapsub1 lm = Map.fromList . map (\x -> ((x ^. uid), lnames (extractSFromNotes x) lm))

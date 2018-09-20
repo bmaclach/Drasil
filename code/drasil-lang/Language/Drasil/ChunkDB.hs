@@ -4,19 +4,22 @@ module Language.Drasil.ChunkDB
   , HasSymbolTable(..), symbolMap, symbLookup, getUnitLup
   , HasTermTable(..), termLookup
   , HasDefinitionTable(..), conceptMap, defLookup
-  , HasUnitTable(..), unitMap, collectUnits
+  , HasUnitTable(..), unitMap, collectUnits, TraceMap
   ) where
 
 import Control.Lens ((^.), Lens', makeLenses)
 import Data.Maybe (maybeToList)
 import Language.Drasil.UID (UID)
 import Language.Drasil.Classes (Concept, ConceptDomain, HasUID(uid), Idea, 
-    IsUnit)
+    IsUnit, HasDerivation(derivations)
+  , HasAdditionalNotes(getNotes))
 import Language.Drasil.Chunk.NamedIdea (IdeaDict, nw)
 import Language.Drasil.Chunk.Quantity (Quantity, QuantityDict, qw)
 import Language.Drasil.Chunk.Concept (ConceptChunk, cw)
 import Language.Drasil.Development.Unit(UnitDefn, MayHaveUnit(getUnit), unitWrapper)
 import qualified Data.Map as Map
+import Language.Drasil.Label.Core (Label, LabelMap)
+import Language.Drasil.Sentence.Extract(lnames)
 
 -- The misnomers below are not actually a bad thing, we want to ensure data can't
 -- be added to a map if it's not coming from a chunk, and there's no point confusing
@@ -113,3 +116,6 @@ instance HasUnitTable       ChunkDB where unitTable   = cunitDB
 
 collectUnits :: HasSymbolTable s => (HasUID c, Quantity c) => s -> [c] -> [UnitDefn]
 collectUnits m symb = map unitWrapper $ concatMap maybeToList $ map (\x -> getUnitLup x m) symb
+
+
+type TraceMap = Map.Map UID [Label]

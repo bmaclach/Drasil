@@ -15,6 +15,7 @@ import Language.Drasil.Reference (ReferenceDB, citationsFromBibMap,
 import Control.Lens ((^.))
 
 import Language.Drasil.Chunk.DataDefinition (DataDefinition)
+import Language.Drasil.ChunkDB (TraceMap)
 
 -- | Data structure for holding all of the requisite information about a system
 -- to be used in artefact generation
@@ -42,6 +43,7 @@ data SystemInformation where
   , _constants :: [QDefinition]
   , _sysinfodb :: ChunkDB
   , _refdb :: ReferenceDB
+  , _labeldb :: TraceMap
   } -> SystemInformation
   
 -- | for listing QDefs in SystemInformation
