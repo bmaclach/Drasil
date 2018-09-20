@@ -54,7 +54,10 @@ data Block a = Coupled a a [a]
 citeDB :: SystemInformation -> BibRef
 citeDB (SI {_refdb = db}) = citationsFromBibMap (db ^. citationRefTable)
 
-
 -- | Helper for ectracting RefDB
 getRefDB :: SystemInformation -> ReferenceDB
 getRefDB (SI {_refdb = db}) = db
+
+-- | Helper for extracting TraceMap
+getLabelDB :: SystemInformation -> TraceMap
+getLabelDB (SI {_labeldb = db}) = db

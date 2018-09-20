@@ -15,6 +15,7 @@ import Language.Drasil
 import Data.Drasil.Utils (eqUnR)
 
 import Control.Lens ((^.))
+import Data.Drasil.SentenceStructures (foldlSent)
 
 -- | Synonym for a list of 'Field'
 type Fields = [Field]
@@ -84,7 +85,7 @@ mkTMField t _ l@DefiningEquation fs =
   (map tConToExpr (t ^. invariants)))) : fs 
 mkTMField t m l@(Description v u) fs = (show l,
   foldr (\x -> buildDescription v u x m) [] (map tConToExpr (t ^. invariants))) : fs
-mkTMField _ _ l@(RefBy) fs = (show l, fixme) : fs --FIXME: fill this in
+mkTMField t s l@(RefBy) fs = (show l, [helpToRefField t s) : fs --FIXME: fill this in
 mkTMField t _ l@(Source) fs = (show l, map mkParagraph $ t ^. getReferences) : fs
 mkTMField t _ l@(Notes) fs = 
   maybe fs (\ss -> (show l, map mkParagraph ss) : fs) (t ^. getNotes)
@@ -94,6 +95,9 @@ mkTMField _ _ label _ = error $ "Label " ++ show label ++ " not supported " ++
 tConToExpr :: TheoryConstraint -> Expr
 tConToExpr (TCon Invariant x) = x
 tConToExpr (TCon AssumedCon x) = x
+
+helpToRefField :: TheoryModel -> SystemInformation -> Contents
+helpToRefField t s = mkParagraph $ foldlSent $ map makeRef (traceLookup t (getLabelDB s))
 
 -- TODO: buildDescription gets list of constraints to expr and ignores 't'.
 

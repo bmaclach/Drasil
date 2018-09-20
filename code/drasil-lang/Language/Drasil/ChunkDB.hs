@@ -4,7 +4,8 @@ module Language.Drasil.ChunkDB
   , HasSymbolTable(..), symbolMap, symbLookup, getUnitLup
   , HasTermTable(..), termLookup
   , HasDefinitionTable(..), conceptMap, defLookup
-  , HasUnitTable(..), unitMap, collectUnits, TraceMap
+  , HasUnitTable(..), unitMap, collectUnits, TraceMap,
+  traceLookup
   ) where
 
 import Control.Lens ((^.), Lens', makeLenses)
@@ -119,3 +120,7 @@ collectUnits m symb = map unitWrapper $ concatMap maybeToList $ map (\x -> getUn
 
 
 type TraceMap = Map.Map UID [Label]
+
+traceLookup :: (HasUID c) => c -> TraceMap -> [Label]
+traceLookup c m = getT $ Map.lookup (c ^. uid) m
+  where getT = maybe (error $ "References about: " ++ (c ^. uid) ++ " not found in TermMap") id
