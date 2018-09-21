@@ -43,8 +43,8 @@ data InclUnits = IncludeUnits -- In description field (for other symbols)
 
 -- | Create a theoretical model using a list of fields to be displayed, a database of symbols,
 -- and a RelationConcept (called automatically by 'SCSSub' program)
-tmodel :: HasSymbolTable ctx => Fields -> ctx -> TheoryModel -> LabelledContent
-tmodel fs m t = mkRawLC (Definition TM (foldr (mkTMField t m) [] fs)) (t ^. getLabel)
+tmodel :: HasSymbolTable ctx => Fields -> ctx -> TraceMap -> TheoryModel -> LabelledContent
+tmodel fs m tm t = mkRawLC (Definition TM (foldr (mkTMField t m tm) [] fs)) (t ^. getLabel)
 
 -- | Create a data definition using a list of fields, a database of symbols, and a
 -- QDefinition (called automatically by 'SCSSub' program)
@@ -78,26 +78,26 @@ makeDerivationContents s     = UlC $ ulcc $ Paragraph s
 type ModRow = [(String, [Contents])]
 
 -- | Create the fields for a model from a relation concept (used by tmodel)
-mkTMField :: HasSymbolTable ctx => TheoryModel -> ctx -> Field -> ModRow -> ModRow
-mkTMField t _ l@Label fs  = (show l, (mkParagraph $ at_start t):[]) : fs
-mkTMField t _ l@DefiningEquation fs =
+mkTMField :: HasSymbolTable ctx => TheoryModel -> ctx -> TraceMap -> Field -> ModRow -> ModRow
+mkTMField t _ _ l@Label fs  = (show l, (mkParagraph $ at_start t):[]) : fs
+mkTMField t _ _ l@DefiningEquation fs =
   (show l, (map (\x -> LlC $ eqUnR x (modifyLabelEqn (t ^. getLabel))) --FIXME: should this have labels?
   (map tConToExpr (t ^. invariants)))) : fs 
-mkTMField t m l@(Description v u) fs = (show l,
+mkTMField t m _ l@(Description v u) fs = (show l,
   foldr (\x -> buildDescription v u x m) [] (map tConToExpr (t ^. invariants))) : fs
-mkTMField t s l@(RefBy) fs = (show l, [helpToRefField t s) : fs --FIXME: fill this in
-mkTMField t _ l@(Source) fs = (show l, map mkParagraph $ t ^. getReferences) : fs
-mkTMField t _ l@(Notes) fs = 
+mkTMField t _ s l@(RefBy) fs = (show l, [helpToRefField t s]) : fs --FIXME: fill this in
+mkTMField t _ _ l@(Source) fs = (show l, map mkParagraph $ t ^. getReferences) : fs
+mkTMField t _ _ l@(Notes) fs = 
   maybe fs (\ss -> (show l, map mkParagraph ss) : fs) (t ^. getNotes)
-mkTMField _ _ label _ = error $ "Label " ++ show label ++ " not supported " ++
+mkTMField _ _ _ label _ = error $ "Label " ++ show label ++ " not supported " ++
   "for theory models"
 
 tConToExpr :: TheoryConstraint -> Expr
 tConToExpr (TCon Invariant x) = x
 tConToExpr (TCon AssumedCon x) = x
 
-helpToRefField :: TheoryModel -> SystemInformation -> Contents
-helpToRefField t s = mkParagraph $ foldlSent $ map makeRef (traceLookup t (getLabelDB s))
+helpToRefField :: TheoryModel -> TraceMap -> Contents
+helpToRefField t s = mkParagraph $ foldlSent $ map makeRef $ traceLookup t s
 
 -- TODO: buildDescription gets list of constraints to expr and ignores 't'.
 
