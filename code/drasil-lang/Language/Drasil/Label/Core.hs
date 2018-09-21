@@ -2,7 +2,7 @@
 {-# Language FlexibleInstances #-}
 module Language.Drasil.Label.Core where
 
-import Control.Lens (makeLenses, Lens')
+import Control.Lens (makeLenses, Lens', (^.))
 
 import Language.Drasil.Classes (HasUID(uid))
 import Language.Drasil.UID (UID)
@@ -55,3 +55,6 @@ getAdd :: LblType -> String
 getAdd (RefAdd s)   = s
 getAdd (MetaLink s) = s
 getAdd (URI s)      = s
+
+getLabelPair :: Label -> (UID, Label)
+getLabelPair l = (l ^. uid, l)

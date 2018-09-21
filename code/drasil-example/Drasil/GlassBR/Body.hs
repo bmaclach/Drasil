@@ -16,7 +16,7 @@ import Drasil.DocLang (AppndxSec(..), AuxConstntSec(..), DerivationDisplay(..),
   StkhldrSub(Client, Cstmr), TraceabilitySec(TraceabilityProg), 
   TSIntro(SymbOrder, TSPurpose), UCsSec(..), Verbosity(Verbose), 
   dataConstraintUncertainty, goalStmtF, inDataConstTbl, intro, mkDoc, 
-  outDataConstTbl, physSystDesc, termDefnF, traceGIntro, tsymb)
+  outDataConstTbl, physSystDesc, termDefnF, traceGIntro, tsymb, generateTraceMap)
 
 import qualified Drasil.DocLang.SRS as SRS (datConLabel, dataDefnLabel, indPRCaseLabel, 
   referenceLabel, valsOfAuxConsLabel)
@@ -68,7 +68,7 @@ import Drasil.GlassBR.Unitals (aspect_ratio, blast, blastTy, bomb, capacity, cha
   gbInputs, gbOutputs, gBRSpecParamVals, glassGeo, glassTy, glassTypes, glBreakage,
   lateralLoad, load, loadTypes, pb_tol, prob_br, probBreak, sD, sdWithEqn, stressDistFac,
   termsWithAccDefn, termsWithDefsOnly, wtntWithEqn)
-
+import Drasil.GlassBR.Labels (glassLabelMap)
 {--}
 
 gbSymbMap :: ChunkDB
@@ -183,9 +183,13 @@ glassSystInfo = SI {
   _constraints = gbConstrained,
   _constants   = gbConstants,
   _sysinfodb   = gbSymbMap,
-  _refdb       = gbRefDB
+  _refdb       = gbRefDB,
+  _labeldb     = glassBR_label
 }
   --FIXME: All named ideas, not just acronyms.
+
+glassBR_label :: TraceMap
+glassBR_label = generateTraceMap mkSRS glassLabelMap
 
 glassBR_code :: CodeSpec
 glassBR_code = codeSpec glassSystInfo allMods

@@ -123,4 +123,4 @@ type TraceMap = Map.Map UID [Label]
 
 traceLookup :: (HasUID c) => c -> TraceMap -> [Label]
 traceLookup c m = getT $ Map.lookup (c ^. uid) m
-  where getT = maybe (error $ "References about: " ++ (c ^. uid) ++ " not found in TermMap") id
+  where getT = maybe [] id
