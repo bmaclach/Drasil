@@ -10,11 +10,9 @@ import Drasil.GlassBR.Concepts (lResistance)
 import Drasil.GlassBR.IMods (glassBRsymb, calofCapacity, calofDemand, probOfBreak)
 import Drasil.GlassBR.References (astm2009)
 import Drasil.GlassBR.Unitals (demand, demandq, is_safePb, is_safeLR, lRe, pb_tol, prob_br)
-
+import Drasil.GlassBR.Labels (l1, l2)
 -- Labels
-l1, l2 :: Label
-l1 = mkLabelSame "isSafeLR" (Def TM)
-l2 = mkLabelSame "isSafePb" (Def TM)
+
 
 {--}
 

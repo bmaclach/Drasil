@@ -18,10 +18,10 @@ import Data.Drasil.SentenceStructures (foldlSent)
 {--type TraceMap = Map.Map UID [Label]--}
 
 traceMapsub1 :: (HasUID l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
-traceMapsub1 lm = Map.fromList . map (\x -> ((x ^. uid), lnames (extractSFromNotes x) lm))
+traceMapsub1 lm = Map.fromList . map (\x -> ((x ^. uid) ++ "Label", lnames (extractSFromNotes x) lm))
 
 traceMapsub2 :: (HasUID l, HasDerivation l) => LabelMap -> [l] -> TraceMap
-traceMapsub2 lm = Map.fromList . map (\x -> ((x ^. uid), lnames (extractSFromDeriv x) lm))
+traceMapsub2 lm = Map.fromList . map (\x -> ((x ^. uid) ++ "Label", lnames (extractSFromDeriv x) lm))
 
 traceMap :: (HasUID l, HasDerivation l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
 traceMap lm l = Map.union (traceMapsub1 lm l) (traceMapsub2 lm l)
@@ -80,8 +80,7 @@ generateTraceMap a lm = mergeMaps [(traceMapsub1 lm (getTraceMapFromTM $ getSCSS
   (traceMap lm (getTraceMapFromIM $ getSCSSub a))]
 
 mergeMaps :: [TraceMap] -> TraceMap
-mergeMaps (hd1:hd2:tl)      = mergeMaps ((Map.union hd1 hd2):tl)
-mergeMaps (hd1:hd2:[])      = Map.union hd1 hd2
+mergeMaps = foldl Map.union Map.empty
 
 
 
