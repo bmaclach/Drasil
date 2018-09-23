@@ -24,7 +24,7 @@ calOfDemandL   = mkLabelSame "calOfDemand"   (Def Instance)
 
 l1, l2 :: Label
 l1 = mkLabelSame "safetyReqLR" (Def TM)
-l2 = mkLabelSame "isSafePb" (Def TM)
+l2 = mkLabelSame "safetyReqPb" (Def TM)
 
 --LabelMap = Map.Map UID Label
 glassLabelMap :: LabelMap

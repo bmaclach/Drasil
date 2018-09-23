@@ -18,10 +18,10 @@ import Data.Drasil.SentenceStructures (foldlSent)
 {--type TraceMap = Map.Map UID [Label]--}
 
 traceMapsub1 :: (HasUID l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
-traceMapsub1 lm = Map.fromList . map (\x -> ((x ^. uid) ++ "Label", lnames (extractSFromNotes x) lm))
+traceMapsub1 lm = Map.fromList . map (\x -> ((x ^. uid ++ "Label"), lnames' lm (extractSFromNotes x)))
 
 traceMapsub2 :: (HasUID l, HasDerivation l) => LabelMap -> [l] -> TraceMap
-traceMapsub2 lm = Map.fromList . map (\x -> ((x ^. uid) ++ "Label", lnames (extractSFromDeriv x) lm))
+traceMapsub2 lm = Map.fromList . map (\x -> ((x ^. uid ++ "Label"), lnames' lm (extractSFromDeriv x)))
 
 traceMap :: (HasUID l, HasDerivation l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
 traceMap lm l = Map.union (traceMapsub1 lm l) (traceMapsub2 lm l)
@@ -47,7 +47,7 @@ getTraceMapFromSolCh _ = error "No SCSSub found."
 getTraceMapFromTM :: [SCSSub] -> [TheoryModel]
 getTraceMapFromTM ((TMs _ tm):_)      = tm
 getTraceMapFromTM  (hd:tl)            = getTraceMapFromTM tl
-getTraceMapFromTM []                  = []
+getTraceMapFromTM []                  = error "No TM found."
 
 getTraceMapFromGD :: [SCSSub] -> [GenDefn]
 getTraceMapFromGD ((GDs _ gd _):_)      = gd
@@ -64,11 +64,11 @@ getTraceMapFromIM ((IMs _ im _):_)      = im
 getTraceMapFromIM  (hd:tl)              = getTraceMapFromIM tl
 getTraceMapFromIM []                    = []
 
-extractSFromNotes :: HasAdditionalNotes l => l -> Sentence
-extractSFromNotes c = foldlSent $ fromMaybe [] (c ^. getNotes)
+extractSFromNotes :: HasAdditionalNotes l => l -> [Sentence]
+extractSFromNotes c = fromMaybe (error "No sentence collected") (c ^. getNotes)
 
-extractSFromDeriv :: HasDerivation l => l -> Sentence
-extractSFromDeriv c = foldlSent (c ^. derivations)
+extractSFromDeriv :: HasDerivation l => l -> [Sentence]
+extractSFromDeriv c = (c ^. derivations)
 
 getSCSSub :: [DocSection] -> [SCSSub]
 getSCSSub a = getTraceMapFromSolCh $ getTraceMapFromSSDSub $ getTraceMapFromSSDSec

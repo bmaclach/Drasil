@@ -121,6 +121,6 @@ collectUnits m symb = map unitWrapper $ concatMap maybeToList $ map (\x -> getUn
 
 type TraceMap = Map.Map UID [Label]
 
-traceLookup :: (HasUID c) => c -> TraceMap -> [Label]
-traceLookup c m = getT $ Map.lookup (c ^. uid) m
-  where getT = maybe [] id
+traceLookup :: UID -> TraceMap -> [Label]
+traceLookup c m = getT $ Map.lookup c m
+  where getT = maybe (error $ "References related to : " ++ c ++ " not found in TraceMap") id

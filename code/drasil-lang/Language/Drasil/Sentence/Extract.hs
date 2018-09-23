@@ -1,4 +1,4 @@
-module Language.Drasil.Sentence.Extract(sdep, snames, lnames) where
+module Language.Drasil.Sentence.Extract(sdep, snames, lnames, lnames') where
 
 import Data.List (nub)
 import Language.Drasil.Spec(Sentence(..))
@@ -22,14 +22,19 @@ sdep :: Sentence -> [String]
 sdep = nub . snames
 
 -- | Generic traverse of all positions that could lead to labels from sentences
-lnames   :: Sentence -> LabelMap -> [Label]
-lnames (Ch a)        l = []
-lnames (Sy _)        l = []
-lnames (S _)         l = []
-lnames (Sp _)        l = []
-lnames (P _)         l = []
-lnames (Ref u _ _ _) l = [labelLookup u l]
-lnames ((:+:) a b)   l = (lnames a l) ++ (lnames b l)
-lnames (Quote a)     l = lnames a l
-lnames (E a)         l = []
-lnames (EmptyS)      l = []
+lnames   :: LabelMap -> Sentence -> [Label]
+lnames l (Ch a)        = []
+lnames l (Sy _)        = []
+lnames l (S _)         = []
+lnames l (Sp _)        = []
+lnames l (P _)         = []
+lnames l (Ref u _ _ _) = [labelLookup u l]
+lnames l ((:+:) a b)   = (lnames l a) ++ (lnames l a)
+lnames l (Quote a)     = lnames l a
+lnames l (E a)         = []
+lnames l (EmptyS)      = []
+
+lnames'  :: LabelMap -> [Sentence] -> [Label]
+lnames' l (hd:tl) = lnames l hd ++ lnames' l tl
+lnames' l (hd:[]) = lnames l hd
+lnames' l []      = []
