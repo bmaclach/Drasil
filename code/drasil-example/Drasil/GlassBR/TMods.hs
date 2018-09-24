@@ -10,7 +10,7 @@ import Drasil.GlassBR.Concepts (lResistance)
 import Drasil.GlassBR.IMods (glassBRsymb, calofCapacity, calofDemand, probOfBreak)
 import Drasil.GlassBR.References (astm2009)
 import Drasil.GlassBR.Unitals (demand, demandq, is_safePb, is_safeLR, lRe, pb_tol, prob_br)
-import Drasil.GlassBR.Labels (l1, l2)
+import Drasil.GlassBR.Labels (l1, l2, calOfCapacityL, calOfDemandL)
 -- Labels
 
 
@@ -28,7 +28,7 @@ lrIsSafe :: TheoryModel
 lrIsSafe = tm' (cw lrIsSafe_RC)
    (tc' "isSafeLR" [qw is_safeLR, qw lRe, qw demand] ([] :: [ConceptChunk])
    [relToQD locSymbMap lrIsSafe_RC] [TCon Invariant $ (sy is_safeLR) $= (sy lRe) $> (sy demand)] [] [makeRef astm2009]) 
-   l1 [makeRef l2]
+   l1 [lrIsSafeDesc]
   where locSymbMap = cdb ([] :: [QuantityDict]) ([] :: [IdeaDict]) glassBRsymb ([] :: [UnitDefn])
 
 lrIsSafe_RC :: RelationConcept
@@ -38,18 +38,18 @@ lrIsSafe_RC = makeRC "safetyReqLR" (nounPhraseSP "Safety Req-LR")
 lrIsSafeDesc :: Sentence
 lrIsSafeDesc = tModDesc (is_safeLR) s ending
   where 
-    s = ((ch is_safePb) +:+ sParen (S "from" +:+ (makeRef pbIsSafe)) `sAnd` (ch is_safeLR))
+    s = ((ch is_safePb) +:+ sParen (S "from" +:+ (makeRef l2)) `sAnd` (ch is_safeLR))
     ending = (short lResistance) `isThe` (phrase lResistance) +:+ 
       sParen (S "also called capacity") `sC` S "as defined in" +:+. 
-      (makeRef calofCapacity) +:+ (ch demand) +:+ sParen (S "also referred as the" +:+ 
+      (makeRef calOfCapacityL) +:+ (ch demand) +:+ sParen (S "also referred as the" +:+ 
       (titleize demandq)) `isThe` (demandq ^. defn) `sC` S "as defined in" +:+ 
-      makeRef calofDemand
+      makeRef calOfDemandL
 
 pbIsSafe :: TheoryModel
 pbIsSafe = tm' (cw pbIsSafe_RC) 
   (tc' "isSafe" [qw is_safePb, qw prob_br, qw pb_tol] ([] :: [ConceptChunk])
   [] [TCon Invariant $ (sy is_safePb) $= (sy prob_br) $< (sy pb_tol)] [] [makeRef astm2009])
-  l2 [makeRef l1]
+  l2 []
 
 pbIsSafe_RC :: RelationConcept
 pbIsSafe_RC = makeRC "safetyReqPb" (nounPhraseSP "Safety Req-Pb")

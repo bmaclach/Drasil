@@ -29,8 +29,8 @@ lnames l (S _)         = []
 lnames l (Sp _)        = []
 lnames l (P _)         = []
 lnames l (Ref u _ _ _) = [labelLookup u l]
-lnames l ((:+:) a b)   = (lnames l a) ++ (lnames l a)
-lnames l (Quote a)     = lnames l a
+lnames l ((:+:) a b)   = (lnames l a) ++ (lnames l b)
+lnames l (Quote a)     = []
 lnames l (E a)         = []
 lnames l (EmptyS)      = []
 
