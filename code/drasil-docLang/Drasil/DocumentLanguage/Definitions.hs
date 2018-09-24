@@ -97,7 +97,7 @@ tConToExpr (TCon Invariant x) = x
 tConToExpr (TCon AssumedCon x) = x
 
 helpToRefField :: TheoryModel -> TraceMap -> Contents
-helpToRefField t s = mkParagraph $ foldlSent $ map makeRef 
+helpToRefField t s = mkParagraph $ foldlSent $ map mkRefFrmLbl 
   $ traceLookup ((t ^. uid) ++ "Label") s
 
 -- TODO: buildDescription gets list of constraints to expr and ignores 't'.

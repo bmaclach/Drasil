@@ -249,7 +249,7 @@ organization_of_documents_intro = foldlSent
 
 sysCtxIntro :: Contents
 sysCtxIntro = foldlSP
-  [mkRefFrmLbl sysCtxFig1 +:+ S "shows the" +:+. phrase sysCont,
+  [makeRef sysCtxFig1 +:+ S "shows the" +:+. phrase sysCont,
    S "A circle represents an external entity outside the" +:+ phrase software
    `sC` S "the", phrase user, S "in this case. A rectangle represents the",
    phrase softwareSys, S "itself", (sParen $ short chipmunk) +:+. EmptyS,
@@ -350,7 +350,7 @@ problem_description_intro_param lib app = foldlSent
   (phrase app), S "developers to include", (phrase physics), S "in their" +:+. 
   (plural product_), S "There are a few free" `sC` (phrase openSource) `sAnd` S "high quality",
   (plural lib), S "available to be used for", phrase consumer, plural product_ +:+. 
-  (sParen $ mkRefFrmLbl off_the_shelf_solutions), S "By creating a simple, lightweight, fast and portable",
+  (sParen $ makeRef off_the_shelf_solutions), S "By creating a simple, lightweight, fast and portable",
   (getAcc twoD), (phrase CP.rigidBody), (phrase lib) `sC` (phrase app),
   S "development will be more accessible to the masses" `sAnd` S "higher quality",
   (plural product_), S "will be produced"]
@@ -573,7 +573,7 @@ functional_requirements_req3 = foldlSent [S "Input the", (phrase CM.surface),
 
 functional_requirements_req4 = foldlSent [S "Verify that the", plural input_,
   S "satisfy the required", plural physicalConstraint, S "from", 
-  (makeRef SRS.solCharSpecLabel)]
+  (mkRefFrmLbl SRS.solCharSpecLabel)]
 
 functional_requirements_req5 = requirementS (QP.position) (QP.velocity) 
   (S "acted upon by a" +:+ (phrase QP.force))
@@ -637,7 +637,7 @@ off_the_shelf_solutions_intro = off_the_shelf_solutions_intro_param problem_desc
 
 off_the_shelf_solutions_intro_param :: NamedIdea n => Section -> n -> Contents
 off_the_shelf_solutions_intro_param problmDescSec lib = mkParagraph $ foldlSentCol 
-  [S "As mentioned in", (mkRefFrmLbl problmDescSec) `sC`
+  [S "As mentioned in", (makeRef problmDescSec) `sC`
   S "there already exist free", (phrase openSource), (phrase game) +:+.
   (plural lib), S "Similar", (getAcc twoD), (plural lib), S "are"]
 
@@ -701,13 +701,13 @@ traceMatFuncReq =  ["R1","R2","R3", "R4", "R5", "R6", "R7", "R8"]
 traceMatFuncReqRef = makeListRef functional_requirements_list' functional_requirements
 
 traceMatData = ["Data Constraints"]
-traceMatDataRef = [makeRef SRS.solCharSpecLabel]
+traceMatDataRef = [mkRefFrmLbl SRS.solCharSpecLabel]
 
 traceMatGoalStmt = ["GS1", "GS2", "GS3", "GS4"]
 traceMatGoalStmtRef = makeListRef goal_statements_list' problem_description
 
 traceMatGenDef = ["GD1", "GD2", "GD3", "GD4", "GD5", "GD6", "GD7"]
-traceMatGenDefRef = replicate (length traceMatGenDef) (makeRef SRS.solCharSpecLabel) -- FIXME: hack?
+traceMatGenDefRef = replicate (length traceMatGenDef) (mkRefFrmLbl SRS.solCharSpecLabel) -- FIXME: hack?
 
 traceMatLikelyChg = ["LC1", "LC2", "LC3", "LC4"]
 traceMatLikelyChgRef = makeListRef likelyChangesList' likelyChanges
@@ -755,8 +755,8 @@ traceMatTabReqGoalOther = llcc (mkLabelSame "TraceyReqGoalsOther" Tab) $ Table
   (EmptyS:(traceMatTabReqGoalOtherRowHead))
   (makeTMatrix traceMatTabReqGoalOtherColHead traceMatTabReqGoalOtherCol
   traceMatTabReqGoalOtherRow)
-  (showingCxnBw (traceyMatrix) (titleize' requirement +:+ sParen (mkRefFrmLbl requirements)
-  `sC` (titleize' goalStmt) +:+ sParen (mkRefFrmLbl problem_description) `sAnd` S "Other" +:+
+  (showingCxnBw (traceyMatrix) (titleize' requirement +:+ sParen (makeRef requirements)
+  `sC` (titleize' goalStmt) +:+ sParen (makeRef problem_description) `sAnd` S "Other" +:+
   titleize' item)) True
 
 traceMatTabAssumpCol' :: [[String]]
@@ -828,7 +828,7 @@ traceMatTabAssump = llcc (mkLabelSame "TraceyAssumpsOther" Tab) $ Table
   (EmptyS:traceMatTabAssumpRowHead)
   (makeTMatrix traceMatTabAssumpColHead traceMatTabAssumpCol' traceMatTabAssumpRow)
   (showingCxnBw (traceyMatrix) (titleize' assumption +:+ sParen 
-    (mkRefFrmLbl problem_description)
+    (makeRef problem_description)
   `sAnd` S "Other" +:+ titleize' item)) True
 
 traceMatTabDefnModelCol :: [[String]]

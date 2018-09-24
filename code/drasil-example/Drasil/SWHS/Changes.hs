@@ -22,7 +22,7 @@ import Data.Drasil.SentenceStructures (foldlSent, sAnd, ofThe)
 --------------------------------
 
 chgsStart :: (HasShortName x, Referable x, HasUID x) => x -> Sentence
-chgsStart a = makeRef a +:+ S "-"
+chgsStart a = mkRefFrmLbl a +:+ S "-"
 
 likelyChgs :: [ConceptInstance]
 likelyChgs = [likeChgUTP, likeChgTCVOD, likeChgTCVOL, likeChgDT, likeChgDITPW, likeChgTLH]

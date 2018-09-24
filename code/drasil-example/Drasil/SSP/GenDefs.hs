@@ -68,10 +68,10 @@ nmFEq_desc = foldlSent [S "For a", phrase slice, S "of", phrase mass,
   phrase slice), S "Rearranged to solve for", (phrase normForce `ofThe`
   phrase surface) +:+. ch totNrmForce, at_start force, S "equilibrium is",
   S "derived from the free body diagram of",
-  makeRef SRS.physSystLabel, S "Index i",
+  mkRefFrmLbl SRS.physSystLabel, S "Index i",
   S "refers to", (plural value `ofThe` plural property), S "for",
   phrase slice :+: S "/" :+: plural intrslce, S "following convention in" +:+.
-  makeRef SRS.physSystLabel, at_start force, phrase variable,
+  mkRefFrmLbl SRS.physSystLabel, at_start force, phrase variable,
   plural definition, S "can be found in", makeRef sliceWght, S "to",
   makeRef lengthLs]
 
@@ -92,10 +92,10 @@ bShFEq_desc = foldlSent [S "For a", phrase slice, S "of", phrase mass,
   phrase slice), S "Rearranged to solve for the", phrase shearForce,
   S "on the base" +:+. ch mobShrI, at_start force, S "equilibrium is",
   S "derived from the free body diagram of",
-  makeRef SRS.physSystLabel, S "Index", ch index,
+  mkRefFrmLbl SRS.physSystLabel, S "Index", ch index,
   S "refers to", (plural value `ofThe` plural property), S "for",
   phrase slice :+: S "/" :+: plural intrslce, S "following convention in" +:+.
-  makeRef SRS.physSystLabel, at_start force, phrase variable,
+  mkRefFrmLbl SRS.physSystLabel, at_start force, phrase variable,
   plural definition, S "can be found in", makeRef sliceWght, S "to",
   makeRef lengthLs]
 
@@ -140,7 +140,7 @@ mobShr_desc = foldlSent [
   S "and the new", phrase definition, S "of", ch shrResI `sC` S "a new",
   S "relation for", S "net mobile" +:+ phrase shearForce `ofThe` phrase slice,
   ch shearFNoIntsl, S "is found as the resistive shear", ch shrResI,
-  sParen (makeRef genDef3Label), S "divided by the factor of safety", ch fs]
+  sParen (mkRefFrmLbl genDef3Label), S "divided by the factor of safety", ch fs]
 
 --
 normShrR :: RelationConcept
@@ -177,10 +177,10 @@ momEql_desc = foldlSent [S "For a", phrase slice, S "of", phrase mass,
   S "in the direction", phrase perp,
   S "to" +:+. (S "base" +:+ phrase surface `ofThe` phrase slice),
   S "Moment equilibrium is derived from the free body diagram of" +:+.
-  makeRef SRS.physSystLabel, S "Index i refers to",
+  mkRefFrmLbl SRS.physSystLabel, S "Index i refers to",
   plural value `ofThe` plural property, S "for", phrase slice :+: S "/" :+:
   plural intrslce, S "following convention in" +:+.
-  makeRef SRS.physSystLabel, at_start variable, plural definition,
+  mkRefFrmLbl SRS.physSystLabel, at_start variable, plural definition,
   S "can be found in", makeRef sliceWght, S "to", makeRef lengthLs]
 
 --
@@ -207,7 +207,7 @@ fNety_rel = inxi fy $= (negate $ inxi slcWght) +
 
 fNet_desc :: (HasShortName l, Referable l, HasUID l) => l -> Sentence
 fNet_desc gd = foldlSent [S "This", phrase equation `andThe` phrase equation, 
-  S "in", makeRef gd, S "show the net sum of the",
+  S "in", mkRefFrmLbl gd, S "show the net sum of the",
   plural force, S "acting on a", phrase slice, 
   S "for the RFEM", phrase model, S "and the", plural force,
   S "that create an applied load on the" +:+. phrase slice, ch fx,
@@ -217,7 +217,7 @@ fNet_desc gd = foldlSent [S "This", phrase equation `andThe` phrase equation,
   S "direction parallel to the", phrase force, S "of gravity for", 
   phrase slice +:+. ch index, at_start' force, 
   S "are found in the free body diagram of" +:+.
-  makeRef SRS.physSystLabel, S "In this", phrase model,
+  mkRefFrmLbl SRS.physSystLabel, S "In this", phrase model,
   --FIXME: hacked link
   S "the", plural element, S "are not exerting", plural force,
   S "on each other" `sC` S "so the", phrase intrslce, plural force,
@@ -225,7 +225,7 @@ fNet_desc gd = foldlSent [S "This", phrase equation `andThe` phrase equation,
   +:+. phrase model, S "Index", ch index, 
   S "refers to", (plural value `ofThe` plural property), S "for",
   phrase slice :+: S "/" :+: plural intrslce, S "following", 
-  S "convention in" +:+. makeRef SRS.physSystLabel,
+  S "convention in" +:+. mkRefFrmLbl SRS.physSystLabel,
   at_start force, phrase variable, plural definition, S "can be found in",
   makeRef sliceWght, S "to", makeRef lengthLb]
 

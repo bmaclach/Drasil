@@ -101,7 +101,7 @@ eBalanceOnWtrDerivDesc1 roc tw en wt vo wvo ms wms hcs hw ht cl hfc cs ps tk hfp
     sParen (makeRef newA15) :+: S ". Assuming no volumetric", 
     S "heat generation per unit", phrase vo +:+.
     (sParen (makeRef newA16) `sC` (E $ sy vhg $= 0)), S "Therefore, the equation for",
-     makeRef rocTempSimpL, S "can be written as"]
+     mkRefFrmLbl rocTempSimpL, S "can be written as"]
 
 eBalanceOnWtrDerivDesc2 :: DataDefinition -> DataDefinition -> [Sentence]
 eBalanceOnWtrDerivDesc2 dd1 dd2 =
@@ -268,7 +268,7 @@ eBalanceOnPCMDerivDesc1 roc tempP en wt vo pcmvo pm hcs hsp hf hfp pc ps ht ass1
    S "material surface area" +:+. (E $ sy ps), S "There is no", phrase hf +:+. S "output",
    S "Assuming no volumetric", phrase ht, S "generation per unit", phrase vo,
    (sParen (makeRef ass16)) `sC` (E $ sy vhg $= 0), S ", the equation for",
-   makeRef rocTempSimpL, S "can be written as"]
+   mkRefFrmLbl rocTempSimpL, S "can be written as"]
 
 eBalanceOnPCMDerivDesc2 :: DataDefinition -> UnitalChunk -> [Sentence]
 eBalanceOnPCMDerivDesc2 dd2 hfp =

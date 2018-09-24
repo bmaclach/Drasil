@@ -63,7 +63,7 @@ inputGlassPropsDesc, checkInputWithDataConsDesc, outputValsAndKnownQuantsDesc ::
 checkGlassSafetyDesc :: NamedChunk -> Sentence
 
 inputGlassPropsDesc = foldlSent [at_start input_, S "the", plural quantity, S "from",
-  mkRefFrmLbl inputGlassPropsTable `sC` S "which define the" +:+. foldlList Comma List
+  makeRef inputGlassPropsTable `sC` S "which define the" +:+. foldlList Comma List
   [phrase glass +:+ plural dimension, (glassTy ^. defn), S "tolerable" +:+
   phrase probability `sOf` phrase failure, (plural characteristic `ofThe` 
   phrase blast)] +: S "Note", ch plate_len `sAnd` ch plate_width,
@@ -77,7 +77,7 @@ inputGlassPropsTable = llcc (mkLabelSame "InputGlassPropsReqInputs" Tab) $
   (mkTable
   [ch,
    at_start, unitToSentence] requiredInputs)
-  (S "Required Inputs following" +:+ makeRef inputGlassProps) True
+  (S "Required Inputs following" +:+ mkRefFrmLbl inputGlassProps) True
   where
     requiredInputs :: [QuantityDict]
     requiredInputs = (map qw [plate_len, plate_width, char_weight])
@@ -102,13 +102,13 @@ sysSetValsFollowingAssumpsList = [foldlList Comma List (map ch (take 4 assumptio
 
 checkInputWithDataConsDesc = foldlSent [S "The", phrase system, S "shall check the entered",
   plural inValue, S "to ensure that they do not exceed the",
-  plural datumConstraint, S "mentioned in" +:+. makeRef datConLabel, 
+  plural datumConstraint, S "mentioned in" +:+. mkRefFrmLbl datConLabel, 
   S "If any" `sOf` S "the", plural inParam, S "are out" `sOf` S "bounds" `sC`
   S "an", phrase errMsg, S "is displayed" `andThe` plural calculation, S "stop"]
 
 outputValsAndKnownQuantsDesc = foldlSent [titleize output_, S "the", plural inQty,
-  S "from", makeRef inputGlassProps `andThe` S "known", plural quantity,
-  S "from", makeRef sysSetValsFollowingAssumps]
+  S "from", mkRefFrmLbl inputGlassProps `andThe` S "known", plural quantity,
+  S "from", mkRefFrmLbl sysSetValsFollowingAssumps]
 
 checkGlassSafetyDesc cmd = foldlSent_ [S "If", (ch is_safePb), S "∧", (ch is_safeLR),
   sParen (S "from" +:+ (makeRef pbIsSafe)
@@ -132,4 +132,4 @@ outputQuantsList = sortBy (compsy `on` get2) $ (mkReqList gbrIMods) ++ (mkReqLis
     get2 (_, b, _) = b
 
 mkReqList :: (NamedIdea c, HasSymbol c, HasShortName c, HasUID c, Referable c) => [c] -> [(Sentence, Symbol, Sentence)]
-mkReqList = map (\c -> (at_start c, symbol c Implementation, sParen (makeRef c)))
+mkReqList = map (\c -> (at_start c, symbol c Implementation, sParen (mkRefFrmLbl c)))

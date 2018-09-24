@@ -87,7 +87,7 @@ eBalanceOnWtrDerivDesc1 roc tw en wt vo wvo ms wms hcs hw ht hfc cs tk ass11 ass
     (sParen (makeRef ass11)), S ". Assuming no volumetric", 
     S "heat generation per unit", phrase vo,
     (sParen (makeRef ass12)) `sC` (E $ sy vhg $= 0), S ". Therefore, the equation for",
-     makeRef rocTempSimpL, S "can be written as"]
+     mkRefFrmLbl rocTempSimpL, S "can be written as"]
 
 eBalanceOnWtrDerivDesc2 :: DataDefinition -> [Sentence]
 eBalanceOnWtrDerivDesc2 dd1 =

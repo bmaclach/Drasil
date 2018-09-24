@@ -248,7 +248,7 @@ scopeReqEnd tem te wa = foldlSent_ [S "predicts the",
 
 orgDocEnd :: CI -> CI -> CI -> Sentence
 orgDocEnd im_ od pro = foldlSent_ [S "The", phrase im_,
-  sParen (makeRef SRS.inModelLabel),
+  sParen (mkRefFrmLbl SRS.inModelLabel),
   S "to be solved is referred to as" +:+. makeRef eBalanceOnWtr,
   S "The", phrase im_, S "provides the",
   titleize od, sParen (short od), S "that model the"
@@ -354,7 +354,7 @@ assumpS3 =
 assumpS4 = 
   (foldlSent [S "The", phrase w_density, S "has no spatial variation; that is"
   `sC` S "it is constant over their entire", phrase vol, sSqBr ((makeRef rocTempSimp)`sC`
-  (makeRef likeChgTCVOD))])
+  (mkRefFrmLbl likeChgTCVOD))])
 
 newA5NoPCM :: AssumpChunk
 newA5NoPCM = assump "Density-Water-Constant-over-Volume" assumpS4 
@@ -379,7 +379,7 @@ assumpS9_npcm =
   S "of the tank" `sC` S "not discharging. The", phrase temp_W, S "can only",
   S "increase, or remain constant; it cannot decrease. This implies that the",
   phrase temp_init, S "is less than (or equal to) the", phrase temp_C,
-  sSqBr ((makeRef eBalanceOnWtr) `sC` (makeRef likeChgDT))])
+  sSqBr ((makeRef eBalanceOnWtr) `sC` (mkRefFrmLbl likeChgDT))])
 
 newA9NoPCM :: AssumpChunk
 newA9NoPCM = assump "Charging-Tank-No-Temp-Discharge" assumpS9_npcm 
@@ -549,23 +549,23 @@ reqFMExpr = ((sy w_mass) $= (sy w_vol) * (sy w_density) $= (((sy diam) / 2) *
 
 reqIIV, reqFM, reqCISPC, reqOIDQ, reqCTWOT, reqCCHEWT :: ConceptInstance
 reqIIV = cic "reqIIV" (titleize input_ +:+ S "the" +:+ plural quantity +:+
-    S "described in" +:+ mkRefFrmLbl reqIVRTable `sC` S "which define the" +:+
+    S "described in" +:+ makeRef reqIVRTable `sC` S "which define the" +:+
     plural tank_para `sC` S "material" +:+ plural property +:+
     S "and initial" +:+. plural condition) "Input-Inital-Values" funcReqDom
-reqFM = cic "reqFM" (S "Use the" +:+ plural input_ +:+ S "in" +:+ makeRef reqIIV +:+
+reqFM = cic "reqFM" (S "Use the" +:+ plural input_ +:+ S "in" +:+ mkRefFrmLbl reqIIV +:+
     S "to find the" +:+ phrase mass +:+ S "needed for" +:+ makeRef eBalanceOnWtr +:+
     S "to" +:+ makeRef eBalanceOnPCM `sC` S "as follows, where" +:+ ch w_vol `isThe`
     phrase w_vol +:+ S "and" +:+ (ch tank_vol `isThe` phrase tank_vol) :+:
     S ":" +:+ E reqFMExpr) "Find-Mass" funcReqDom  -- FIXME: Equation shouldn't be inline.
 reqCISPC = cic "reqCISPC" (S "Verify that the" +:+ plural input_ +:+
     S "satisfy the required" +:+ phrase physicalConstraint +:+
-    S "shown in" +:+. mkRefFrmLbl dataConstTable1)
+    S "shown in" +:+. makeRef dataConstTable1)
     "Check-Inputs-Satisfy-Physical-Constraints" funcReqDom
 reqOIDQ = cic "reqOIDQ" (titleize' output_ `sAnd` plural input_ 
     +:+ plural quantity +:+
     S "and derived" +:+ plural quantity +:+ S "in the following list: the" +:+
-    plural quantity +:+ S "from" +:+ (makeRef reqIIV) `sC` S "the" +:+
-    phrase mass +:+ S "from" +:+ makeRef reqFM `sAnd` ch tau_W +:+.
+    plural quantity +:+ S "from" +:+ (mkRefFrmLbl reqIIV) `sC` S "the" +:+
+    phrase mass +:+ S "from" +:+ mkRefFrmLbl reqFM `sAnd` ch tau_W +:+.
     sParen (S "from" +:+ makeRef eBalanceOnWtr)) "Output-Input-Derivied-Quantities" funcReqDom
 reqCTWOT = cic "reqCTWOT" (S "Calculate and output the" +:+ phrase temp_W +:+
     sParen (ch temp_W :+: sParen (ch time)) +:+ S "over the" +:+
@@ -694,10 +694,10 @@ traceInstaModel = ["IM1", "IM2"]
 traceInstaModelRef = map makeRef [eBalanceOnWtr, heatEInWtr]
 
 traceFuncReq = ["R1", "R2", "R3", "R4", "R5", "R6"]
-traceFuncReqRef = map makeRef reqs
+traceFuncReqRef = map mkRefFrmLbl reqs
 
 traceData = ["Data Constraints"]
-traceDataRef = [mkRefFrmLbl dataConstTable1] --FIXME: Reference section?
+traceDataRef = [makeRef dataConstTable1] --FIXME: Reference section?
 
 traceAssump = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10",
   "A11", "A12", "A13", "A14"]
@@ -713,7 +713,7 @@ traceDataDefs = ["DD1"]
 traceDataDefRef = map makeRef [dd1HtFluxC]
 
 traceLikelyChg = ["LC1", "LC2", "LC3", "LC4"]
-traceLikelyChgRef = map makeRef likelyChgs
+traceLikelyChgRef = map mkRefFrmLbl likelyChgs
 
 {-Traceability Matrix 1-}
 

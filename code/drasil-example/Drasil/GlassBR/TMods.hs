@@ -38,12 +38,12 @@ lrIsSafe_RC = makeRC "safetyReqLR" (nounPhraseSP "Safety Req-LR")
 lrIsSafeDesc :: Sentence
 lrIsSafeDesc = tModDesc (is_safeLR) s ending
   where 
-    s = ((ch is_safePb) +:+ sParen (S "from" +:+ (makeRef l2)) `sAnd` (ch is_safeLR))
+    s = ((ch is_safePb) +:+ sParen (S "from" +:+ (mkRefFrmLbl l2)) `sAnd` (ch is_safeLR))
     ending = (short lResistance) `isThe` (phrase lResistance) +:+ 
       sParen (S "also called capacity") `sC` S "as defined in" +:+. 
-      (makeRef calOfCapacityL) +:+ (ch demand) +:+ sParen (S "also referred as the" +:+ 
+      (mkRefFrmLbl calOfCapacityL) +:+ (ch demand) +:+ sParen (S "also referred as the" +:+ 
       (titleize demandq)) `isThe` (demandq ^. defn) `sC` S "as defined in" +:+ 
-      makeRef calOfDemandL
+      mkRefFrmLbl calOfDemandL
 
 pbIsSafe :: TheoryModel
 pbIsSafe = tm' (cw pbIsSafe_RC) 
@@ -59,7 +59,7 @@ pbIsSafeDesc :: Sentence
 pbIsSafeDesc = tModDesc (is_safePb) s ending
   where 
     s = (ch is_safePb) `sAnd` (ch is_safeLR) +:+ sParen (S "from" +:+
-      (makeRef l1))
+      (mkRefFrmLbl l1))
     ending = ((ch prob_br) `isThe` (phrase prob_br)) `sC` S "as calculated in" +:+.
       (mkRefFrmLbl probOfBreak) +:+ (ch pb_tol) `isThe` (phrase pb_tol) +:+ S "entered by the user"
 

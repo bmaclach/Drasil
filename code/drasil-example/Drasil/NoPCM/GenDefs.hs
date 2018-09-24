@@ -47,7 +47,7 @@ roc_temp_simp_deriv_sentences = map foldlSentCol [
 
 genDefDesc1 :: (HasShortName x, Referable x, HasUID x) => x -> UnitalChunk -> [Sentence]
 genDefDesc1 t1c vo =
-  [S "Integrating", makeRef t1c, S "over a", phrase vo, sParen (ch vo) `sC` S "we have"]
+  [S "Integrating", mkRefFrmLbl t1c, S "over a", phrase vo, sParen (ch vo) `sC` S "we have"]
 
 genDefDesc2 :: ConceptChunk -> DefinedQuantityDict -> UnitalChunk -> UnitalChunk ->
   DefinedQuantityDict -> ConceptChunk -> [Sentence]
@@ -67,7 +67,7 @@ genDefDesc4 :: UnitalChunk -> UnitalChunk -> UnitalChunk -> UnitalChunk ->
   [Sentence] -> [Sentence]
 genDefDesc4 hfi hfo iS oS den hcs te vo assumps = [S "Where", ch hfi `sC`
   ch hfo `sC` ch iS `sC` S "and", ch oS, S "are explained in" +:+.
-  makeRef rocTempSimpL, S "Assuming", ch den `sC` ch hcs `sAnd` ch te,
+  mkRefFrmLbl rocTempSimpL, S "Assuming", ch den `sC` ch hcs `sAnd` ch te,
   S "are constant over the", phrase vo `sC` S "which is true in our case by",
   (foldlList Comma List assumps) `sC` S "we have"]
 

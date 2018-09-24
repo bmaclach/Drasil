@@ -35,7 +35,7 @@ consThermE :: TheoryModel
 consThermE = tm' consThermE_rc
   (tc' "ConsThermE" [qw thFluxVect, qw gradient, qw vol_ht_gen, 
     qw density, qw heat_cap_spec, qw temp, qw time] ([] :: [ConceptChunk])
-  [] [TCon Invariant consThermERel] [] [makeRef consThemESrc]) 
+  [] [TCon Invariant consThermERel] [] [mkRefFrmLbl consThemESrc]) 
   (mkLabelSame "consThermE" (Def TM)) [consThermEdesc]
 
 consThermE_rc :: RelationConcept
@@ -62,7 +62,7 @@ consThermEdesc = foldlSent [
   ch time +:+ S "is" +:+ phrase time +:+ sParen (Sy (unit_symb time)), ch gradient +:+
   S "is the" +:+ (gradient ^. defn)], S "For this", phrase equation, S "to apply" `sC`
   S "other forms of", phrase energy `sC` S "such as", phrase mech_energy `sC`
-  S "are assumed to be negligible in the", phrase system, sParen (makeRef thermalEnergyOnlyL)]
+  S "are assumed to be negligible in the", phrase system, sParen (mkRefFrmLbl thermalEnergyOnlyL)]
 
 -------------------------
 -- Theoretical Model 2 --
@@ -71,7 +71,7 @@ sensHtE :: TheoryModel
 sensHtE = tm' sensHtE_rc
   (tc' "SensHtE" [qw sens_heat, qw htCap_S, qw mass, 
     qw deltaT, qw melt_pt, qw temp, qw htCap_L, qw boil_pt, qw htCap_V] ([] :: [ConceptChunk])
-  [] [TCon Invariant sensHtEEqn] [] [makeRef sensHtESrc]) 
+  [] [TCon Invariant sensHtEEqn] [] [mkRefFrmLbl sensHtESrc]) 
   (mkLabelSame "sensHtE" (Def TM)) [sensHtEdesc]
 
 sensHtE_rc :: RelationConcept
@@ -129,7 +129,7 @@ sensHtEdesc = foldlSent [
 latentHtE :: TheoryModel
 latentHtE = tm' latentHtE_rc
   (tc' "SensHtE" [qw latent_heat, qw time, qw tau] ([] :: [ConceptChunk])
-  [] [TCon Invariant latHtEEqn] [] [makeRef latHtESrc]) (mkLabelSame "latentHtE" (Def TM)) [latentHtEdesc]
+  [] [TCon Invariant latHtEEqn] [] [mkRefFrmLbl latHtESrc]) (mkLabelSame "latentHtE" (Def TM)) [latentHtEdesc]
 
 latentHtE_rc :: RelationConcept
 latentHtE_rc = makeRC "latentHtE_rc"

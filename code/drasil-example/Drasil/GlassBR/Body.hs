@@ -136,8 +136,8 @@ mkSRS = RefSec (RefProg intro [TUnits, tsymb [TSPurpose, SymbOrder], TAandA]) :
           , DDs ([Label, Symbol, Units] ++ stdFields) dataDefns ShowDerivation
           , IMs ([Label, Input, Output, InConstraints, OutConstraints] ++ stdFields) [probOfBreak, calofCapacity, calofDemand] HideDerivation
           , Constraints EmptyS dataConstraintUncertainty
-                        (foldlSent [makeRef SRS.valsOfAuxConsLabel, S "gives", (plural value `ofThe` S "specification"), 
-                        plural parameter, S "used in", mkRefFrmLbl inputDataConstraints])
+                        (foldlSent [mkRefFrmLbl SRS.valsOfAuxConsLabel, S "gives", (plural value `ofThe` S "specification"), 
+                        plural parameter, S "used in", makeRef inputDataConstraints])
                         [inputDataConstraints, outputDataConstraints]
           ]
         )
@@ -273,7 +273,7 @@ appStanddIR = foldlSent [S " In addition" `sC` plural reviewer, -- FIXME: space 
   S "should be familiar with the applicable", plural standard,
   S "for constructions using glass from", (foldlList Comma List
   $ map makeRef [astm2009, astm2012, astm2016]) `sIn`
-  (makeRef SRS.referenceLabel)]
+  (mkRefFrmLbl SRS.referenceLabel)]
 incScoR = foldl (+:+) EmptyS [S "getting all", plural inParam,
   S "related to the", phrase glaSlab `sAnd` S "also the", plural parameter,
   S "related to", phrase blastTy]
@@ -323,7 +323,7 @@ orgOfDocIntroEnd = foldl (+:+) EmptyS [(at_start' $ the dataDefn),
   
 sysCtxIntro :: Contents
 sysCtxIntro = foldlSP
-  [mkRefFrmLbl sysCtxFig1 +:+ S "shows the" +:+. phrase sysCont,
+  [makeRef sysCtxFig1 +:+ S "shows the" +:+. phrase sysCont,
    S "A circle represents an external entity outside the" +:+ phrase software
    `sC` S "the", phrase user, S "in this case. A rectangle represents the",
    phrase softwareSys, S "itself", (sParen $ short gLassBR) +:+. EmptyS,
@@ -385,7 +385,7 @@ prodUseCaseTableUC1, prodUseCaseTableUC2 :: [Sentence]
 
 prodUseCaseTableUC1 = [titleize user, titleize' characteristic +:+ S "of the"
   +:+ phrase glaSlab `sAnd` S "of the" +:+. phrase blast +:+ S "Details in"
-  +:+ makeRef SRS.indPRCaseLabel]
+  +:+ mkRefFrmLbl SRS.indPRCaseLabel]
 
 prodUseCaseTableUC2 = [short gLassBR, S "Whether" `sOr` S "not the" +:+
   phrase glaSlab +:+ S "is safe for the" +:+ S "calculated" +:+ phrase load
@@ -441,7 +441,7 @@ probEnding = foldl (+:+) EmptyS [S "interpret the", plural input_,
 
 termsAndDesc = termDefnF (Just (S "All" `sOf` S "the" +:+ plural term_ +:+
   S "are extracted from" +:+ makeRef astm2009 `sIn`
-  (makeRef SRS.referenceLabel))) [termsAndDescBullets]
+  (mkRefFrmLbl SRS.referenceLabel))) [termsAndDescBullets]
 
 {--Physical System Description--}
 
@@ -538,16 +538,16 @@ traceMatsAndGraphsDD =  ["DD1", "DD2", "DD3", "DD4", "DD5", "DD6", "DD7", "DD8"]
 traceMatsAndGraphsDDRef = map makeRef dataDefns
 
 traceMatsAndGraphsDataCons  = ["Data Constraints"]
-traceMatsAndGraphsDataConsRef = [makeRef SRS.datConLabel]
+traceMatsAndGraphsDataConsRef = [mkRefFrmLbl SRS.datConLabel]
 
 traceMatsAndGraphsFuncReq = ["R1", "R2", "R3", "R4", "R5", "R6"]
-traceMatsAndGraphsFuncReqRef = map makeRef funcReqs
+traceMatsAndGraphsFuncReqRef = map mkRefFrmLbl funcReqs
 
 traceMatsAndGraphsA = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
 traceMatsAndGraphsARef = map makeRef assumptions
 
 traceMatsAndGraphsLC = ["LC1", "LC2", "LC3", "LC4", "LC5"]
-traceMatsAndGraphsLCRef = map makeRef likelyChgs
+traceMatsAndGraphsLCRef = map mkRefFrmLbl likelyChgs
 
 traceMatsAndGraphsRowT1 :: [String]
 traceMatsAndGraphsRowT1 = traceMatsAndGraphsT ++ traceMatsAndGraphsIM ++ traceMatsAndGraphsDD
@@ -703,7 +703,7 @@ fig_4 = figureLabel 4 traceyMatrix
 
 appdxIntro = foldlSP [
   S "This", phrase appendix, S "holds the", plural graph,
-  sParen ((mkRefFrmLbl fig_5) `sAnd` (mkRefFrmLbl fig_6)),
+  sParen ((makeRef fig_5) `sAnd` (makeRef fig_6)),
   S "used for interpolating", plural value, S "needed in the", plural model]
 
 fig_5 = llcc (mkLabelRAFig "demandVSsod") $ fig (titleize figure +: S "5" +:+ (demandq ^. defn) +:+

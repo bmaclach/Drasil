@@ -122,7 +122,7 @@ nrmShrF_rel = (sy normFunc) $= case_ [case1,case2,case3] $=
 nrmShrF_desc :: Sentence
 nrmShrF_desc = foldlSent [ch normToShear `isThe` S "magnitude ratio",
   S "between shear and normal forces at the interslice interfaces as the", 
-  S "assumption of the Morgenstern Price method in", makeRef genDef5Label,
+  S "assumption of the Morgenstern Price method in", mkRefFrmLbl genDef5Label,
   S "The inclination function", ch scalFunc,
   S "determines the relative magnitude ratio between the",
   S "different interslices, while", ch normToShear, S "determines the" +:+.
@@ -289,7 +289,7 @@ instModIntro1 = foldlSP [S "The", titleize morPrice,
   S "The", phrase problem, S "is statically indeterminate with only these 3",
   plural equation, S "and one constitutive", phrase equation,
   sParen $ S "the Mohr Coulomb shear strength of" +:+
-  makeRef mcShrStrgth, S "so the", phrase assumption, S "of", makeRef genDef5Label,
+  makeRef mcShrStrgth, S "so the", phrase assumption, S "of", mkRefFrmLbl genDef5Label,
   S "is used. Solving for", phrase force, S "equilibrium allows",
   plural definition, S "of all", plural force, S "in terms of the",
   plural physicalProperty, S "of", makeRef sliceWght, S "to",
@@ -347,9 +347,9 @@ nrmShrDeriv = (weave [nrmShrDerivationSentences, map E nrmShrDerivEqns]) ++ nrmS
 
 nrmShrDerivSentence1 :: [Sentence]
 nrmShrDerivSentence1 = [S "Taking the last static", phrase equation,
-  S "of", makeRef equilibrium, S "with the", S "moment equilibrium" `sOf` makeRef genDef6Label,
+  S "of", makeRef equilibrium, S "with the", S "moment equilibrium" `sOf` mkRefFrmLbl genDef6Label,
   S "about", (S "midpoint" `ofThe` S "base") `sAnd` S "the",
-  phrase assumption, S "of", makeRef genDef5Label, S "results in", eqN 13]
+  phrase assumption, S "of", mkRefFrmLbl genDef5Label, S "results in", eqN 13]
 
 nrmShrDerivSentence2 :: [Sentence]
 nrmShrDerivSentence2 = [S "The", phrase equation, S "in terms of", ch normToShear,
@@ -397,19 +397,19 @@ intrSlcDeriv :: Derivation
 intrSlcDeriv = weave [intrSlcDerivationSentences, map E intrSlcDerivEqns] ++ fUnknowns
 
 intrSlcDerivSentence1 :: [Sentence]
-intrSlcDerivSentence1 = [S "Taking the", S "normal force equilibrium" `sOf` makeRef genDef1Label,
+intrSlcDerivSentence1 = [S "Taking the", S "normal force equilibrium" `sOf` mkRefFrmLbl genDef1Label,
   S "with the", S "effective stress", phrase definition, S "from", makeRef effStress,
   -- NOTE: "Taking this with that and the assumption of _
   -- to get equation #" pattern
   S "that", E (inxi totNrmForce $= inxi nrmFSubWat - inxi baseHydroForce) `sC`
-  S "and the assumption of", makeRef genDef5Label, S "the equilibrium", phrase equation, 
+  S "and the assumption of", mkRefFrmLbl genDef5Label, S "the equilibrium", phrase equation, 
   S "can be rewritten as", eqN 16]
 
 intrSlcDerivSentence2 :: [Sentence]
 intrSlcDerivSentence2 = [S "Taking the", S "base shear force equilibrium" `sOf`
-  makeRef genDef2Label, S "with the", phrase definition,
-  S "of", phrase mobShrI, S "from", makeRef genDef4Label `sAnd`
-  S "the assumption of", makeRef genDef5Label `sC`
+  mkRefFrmLbl genDef2Label, S "with the", phrase definition,
+  S "of", phrase mobShrI, S "from", mkRefFrmLbl genDef4Label `sAnd`
+  S "the assumption of", mkRefFrmLbl genDef5Label `sC`
   S "the equilibrium", phrase equation,
   S "can be rewritten as", eqN 17]
 
@@ -477,7 +477,7 @@ rigDisDerivSentence1 :: [Sentence]
 rigDisDerivSentence1 = [S "Using the net force-displacement equilibrium" +:+
   phrase equation +:+ S "of a slice from" +:+ makeRef netFDsplcmntEqbm +:+ S "with the" +:+ plural definition
   +:+ S "of the stiffness matrices" +:+ S "from" +:+ makeRef displcmntRxnF +:+ S "and the force" +:+
-  plural definition +:+ S "from" +:+ makeRef genDef7Label +:+ S "a broken down force displacement" +:+
+  plural definition +:+ S "from" +:+ mkRefFrmLbl genDef7Label +:+ S "a broken down force displacement" +:+
   S "equilibrium" +:+ phrase equation +:+. S "can be derived" +:+ eqN 22 +:+
   S "gives the broken down" +:+ phrase equation +:+ S "in the" +:+ ch xi +:+
   S "direction" `sC` S "and" +:+ eqN 23 +:+ S "gives the broken down" +:+
@@ -518,7 +518,7 @@ rigFosDerivSentence1 = [S "RFEM analysis can also be used to calculate the" +:+
   S "are solved from the system of" +:+ plural equation +:+ S "in" +:+.
   makeRef forDisEqlb +:+ S "The" +:+ phrase definition +:+ S "of" +:+ ch rotatedDispl +:+
   S "as the" +:+ S "rotation of the displacement vector" +:+ ch genDisplace +:+
-  S "is seen in" +:+. makeRef genDef9Label +:+ S "This is used to find the" +:+
+  S "is seen in" +:+. mkRefFrmLbl genDef9Label +:+ S "This is used to find the" +:+
   plural displacement +:+ S "of the slice parallel to" +:+ S "the base of the slice" 
    +:+ ch shrDispl `sIn` eqN 24 +:+ S "and normal to" +:+ 
   S "the base of the slice" +:+ ch nrmDispl +:+ S "in" +:+. eqN 25]
@@ -623,9 +623,9 @@ fctSftyDerivation = [foldlSP [S "Using", eqN 21, S "from", makeRef intsliceFs `s
 nrmShrDerivation = [
 
   foldlSP [S "Taking the last static", phrase equation,
-  S "of", makeRef equilibrium, S "with the", S "moment equilibrium" `sOf` makeRef genDef6Label,
+  S "of", makeRef equilibrium, S "with the", S "moment equilibrium" `sOf` mkRefFrmLbl genDef6Label,
   S "about", (S "midpoint" `ofThe` S "base") `sAnd` S "the",
-  phrase assumption, S "of", makeRef genDef5Label, S "results in", eqN 13],
+  phrase assumption, S "of", mkRefFrmLbl genDef5Label, S "results in", eqN 13],
   
   eqUnR' $ 0 $=
   momExpr (\ x y -> x - (sy normToShear * (inxi baseWthX / 2) * 
@@ -663,12 +663,12 @@ nrmShrDerivation = [
 
 intrSlcDerivation = [
 
-  foldlSP [S "Taking the", S "normal force equilibrium" `sOf` makeRef genDef1Label,
+  foldlSP [S "Taking the", S "normal force equilibrium" `sOf` mkRefFrmLbl genDef1Label,
   S "with the", S "effective stress", phrase definition, S "from", makeRef effStress,
   -- NOTE: "Taking this with that and the assumption of _
   -- to get equation #" pattern
   S "that", E (inxi totNrmForce $= inxi nrmFSubWat - inxi baseHydroForce) `sC`
-  S "and the assumption of", makeRef genDef5Label, S "the equilibrium", phrase equation, 
+  S "and the assumption of", mkRefFrmLbl genDef5Label, S "the equilibrium", phrase equation, 
   S "can be rewritten as", eqN 16],
   
   eqUnR' $
@@ -678,9 +678,9 @@ intrSlcDerivation = [
   - (inxi baseHydroForce),
   
   foldlSP [S "Taking the", S "base shear force equilibrium" `sOf`
-  makeRef genDef2Label, S "with the", phrase definition,
-  S "of", phrase mobShrI, S "from", makeRef genDef4Label `sAnd`
-  S "the assumption of", makeRef genDef5Label `sC`
+  mkRefFrmLbl genDef2Label, S "with the", phrase definition,
+  S "of", phrase mobShrI, S "from", mkRefFrmLbl genDef4Label `sAnd`
+  S "the assumption of", mkRefFrmLbl genDef5Label `sC`
   S "the equilibrium", phrase equation,
   S "can be rewritten as", eqN 17],
   -- NOTE: "Taking this with that and the assumption of _
@@ -738,7 +738,7 @@ rigDisDerivation = [
   foldlSP [S "Using the net force-displacement equilibrium",
   phrase equation, S "of a slice from", makeRef resShearWO, S "with", plural definition
   `ofThe` S "stiffness matrices", S "from", makeRef intrsliceF, S "and the force", 
-  plural definition, S "from", makeRef genDef7Label , S "a broken down force displacement",
+  plural definition, S "from", mkRefFrmLbl genDef7Label , S "a broken down force displacement",
   S "equilibrium", phrase equation +:+. S "can be derived", eqN 22,
   S "gives the broken down", phrase equation, S "in the", ch xi,
   S "direction" `sC` S "and", eqN 23, S "gives the broken down",
@@ -770,7 +770,7 @@ rigFoSDerivation = [
   S "are solved from the system of", plural equation, S "in" +:+.
   makeRef forDisEqlb, S "The", phrase definition, S "of", ch rotatedDispl,
   S "as", S "rotation" `ofThe` S "displacement vector", ch genDisplace,
-  S "is seen in" +:+. makeRef genDef9Label, S "This is used to find",
+  S "is seen in" +:+. mkRefFrmLbl genDef9Label, S "This is used to find",
   plural displacement `ofThe` S "slice parallel to the", S "base" `ofThe`
   S "slice", ch shrDispl `sIn` eqN 24, S "and normal to the", 
   S "base" `ofThe` S "slice", ch nrmDispl, S "in", eqN 25],

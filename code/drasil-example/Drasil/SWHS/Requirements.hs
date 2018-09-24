@@ -48,12 +48,12 @@ inputInitQuantsEqn, findMassEqn :: Expr --Fixme: rename labels
 
 inputInitQuants = cic "inputInitQuants" ( foldlSent [
   titleize input_, S "the following", plural quantity, S "described in",
-  makeRef inputInitQuantsLbl `sC` S "which define the", phrase tank,
+  mkRefFrmLbl inputInitQuantsLbl `sC` S "which define the", phrase tank,
   plural parameter `sC` S "material", plural property, S "and initial",
   plural condition]) "Input-Initial-Quantities" funcReqDom
 --
 findMass = cic "findMass" ( foldlSent [
-  S "Use the", plural input_, S "in", makeRef inputInitQuants,
+  S "Use the", plural input_, S "in", mkRefFrmLbl inputInitQuants,
   S "to find the", phrase mass, S "needed for",
   (foldlList Comma List $ map makeRef swhsIMods) `sC`
   S "using", E inputInitQuantsEqn, S "and", E findMassEqn `sC` S "where",
@@ -75,8 +75,8 @@ checkWithPhysConsts = cic "checkWithPhysConsts" ( foldlSent [
 outputInputDerivQuants = cic "outputInputDerivQuants" ( foldlSent [
   titleize output_, S "the", phrase input_, plural quantity `sAnd`
   S "derived", plural quantity +: S "in the following list",
-  S "the", plural quantity, S "from", makeRef inputInitQuants `sC` S "the",
-  plural mass, S "from", makeRef findMass `sC` ch tau_W,
+  S "the", plural quantity, S "from", mkRefFrmLbl inputInitQuants `sC` S "the",
+  plural mass, S "from", mkRefFrmLbl findMass `sC` ch tau_W,
   sParen (S "from" +:+ makeRef eBalanceOnWtr) `sC` ch eta,
   sParen (S "from" +:+ makeRef eBalanceOnWtr) `sC` ch tau_S_P,
   sParen (S "from" +:+ makeRef eBalanceOnPCM) `sAnd` ch tau_L_P,

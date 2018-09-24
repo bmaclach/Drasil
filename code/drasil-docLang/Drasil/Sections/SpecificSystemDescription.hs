@@ -67,7 +67,7 @@ physSystDesc :: Sentence -> LabelledContent -> [Contents] -> Section
 physSystDesc progName fg otherContents = SRS.physSyst ((intro):otherContents) []
   where intro = mkParagraph $ foldle (+:+) (+:) (EmptyS)
                 [S "The", (phrase physicalSystem), S "of", progName `sC`
-                S "as shown in", (mkRefFrmLbl fg) `sC` S "includes the following", 
+                S "as shown in", (makeRef fg) `sC` S "includes the following", 
                 plural element]
 
 --List all the given inputs. Might be possible to use ofThe combinator from utils.hs
@@ -80,7 +80,7 @@ goalStmtF givenInputs otherContents = SRS.goalStmt (intro:otherContents) []
 solutionCharSpecIntro :: (Idea a) => a -> Section -> Contents
 solutionCharSpecIntro progName instModelSection = foldlSP [S "The", plural inModel, 
   S "that govern", short progName, S "are presented in" +:+. 
-  mkRefFrmLbl instModelSection, S "The", phrase information, S "to understand", 
+  makeRef instModelSection, S "The", phrase information, S "to understand", 
   (S "meaning" `ofThe` plural inModel), 
   S "and their derivation is also presented, so that the", plural inModel, 
   S "can be verified"]
@@ -102,7 +102,7 @@ assumpIntro r1 r2 r3 r4 r5 r6 = mkParagraph $ foldlSent
           foldr1 sC (map (refs) (itemsAndRefs)) `sC` (refs (likelyChg, r5)) `sC` S "or", 
           refs (unlikelyChg, r6) `sC` S "in which the respective", 
           (phrase assumption), S "is used"] --FIXME: use some clever "zipWith"
-          where refs (chunk, ref) = (titleize' chunk) +:+ sSqBr (mkRefFrmLbl ref) 
+          where refs (chunk, ref) = (titleize' chunk) +:+ sSqBr (makeRef ref) 
                 itemsAndRefs = [(thModel, r1), (genDefn, r2),
                  (dataDefn, r3), (inModel, r4)]
 
@@ -149,12 +149,12 @@ inModelF probDes datDef theMod genDef otherContents = SRS.inModel
 -- just need to provide the four references in order to this function. Nothing can be input into r4 if only three tables are present
 inModelIntro :: Section -> Section -> Section -> Label -> Contents
 inModelIntro r1 r2 r3 r4 = foldlSP [S "This", phrase section_, 
-  S "transforms the", phrase problem, S "defined in", mkRefFrmLbl r1, 
+  S "transforms the", phrase problem, S "defined in", makeRef r1, 
   S "into one which is expressed in mathematical terms. It uses concrete", 
-  plural symbol_, S "defined in", mkRefFrmLbl r2, 
+  plural symbol_, S "defined in", makeRef r2, 
   S "to replace the abstract", plural symbol_, S "in the", 
-  plural model, S "identified in", (mkRefFrmLbl r3) :+: end]
-    where end = S " and" +:+ (makeRef r4)
+  plural model, S "identified in", (makeRef r3) :+: end]
+    where end = S " and" +:+ (mkRefFrmLbl r4)
 
 -- wrapper for datConPar
 datConF :: Sentence -> Sentence -> Sentence -> [LabelledContent] -> Section
@@ -174,17 +174,17 @@ dataConstraintParagraph hasUncertainty tableRef middleSent trailingSent = mkPara
 -- outputs a sentence containing references to the layout objects 
 listofTablesToRefsFromLable :: (HasShortName l, Referable l, HasUID l) => [l] -> Sentence
 listofTablesToRefsFromLable  []     = EmptyS
-listofTablesToRefsFromLable  [x]    = (makeRef x) +:+ S "shows"
-listofTablesToRefsFromLable  [x,y]  = (makeRef x) +:+ S "and" +:+ (makeRef y) +:+ S "show" -- for proper grammar with multiple tables
+listofTablesToRefsFromLable  [x]    = (mkRefFrmLbl x) +:+ S "shows"
+listofTablesToRefsFromLable  [x,y]  = (mkRefFrmLbl x) +:+ S "and" +:+ (mkRefFrmLbl y) +:+ S "show" -- for proper grammar with multiple tables
                                                                                   -- no Oxford comma in case there is only two tables to be referenced
-listofTablesToRefsFromLabel  (x:xs) = (makeRef x) `sC` listofTablesToRefsFromLabel (xs)
+listofTablesToRefsFromLabel  (x:xs) = (mkRefFrmLbl x) `sC` listofTablesToRefsFromLabel (xs)
 
 listofTablesToRefs :: (HasShortName l, Referable l, HasLabel l) => [l] -> Sentence
 listofTablesToRefs  []     = EmptyS
-listofTablesToRefs  [x]    = (mkRefFrmLbl x) +:+ S "shows"
-listofTablesToRefs  [x,y]  = (mkRefFrmLbl x) +:+ S "and" +:+ (mkRefFrmLbl y) +:+ S "show" -- for proper grammar with multiple tables
+listofTablesToRefs  [x]    = (makeRef x) +:+ S "shows"
+listofTablesToRefs  [x,y]  = (makeRef x) +:+ S "and" +:+ (makeRef y) +:+ S "show" -- for proper grammar with multiple tables
                                                                                   -- no Oxford comma in case there is only two tables to be referenced
-listofTablesToRefs  (x:xs) = (mkRefFrmLbl x) `sC` listofTablesToRefs (xs)
+listofTablesToRefs  (x:xs) = (makeRef x) `sC` listofTablesToRefs (xs)
  
 dataConstraintIntroSent :: Sentence -> Sentence
 dataConstraintIntroSent tableRef = foldlSent [tableRef, S "the", plural datumConstraint, S "on the", phrase input_, 

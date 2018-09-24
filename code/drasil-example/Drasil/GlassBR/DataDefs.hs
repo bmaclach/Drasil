@@ -236,13 +236,13 @@ qHtTlTolRef :: Sentence
 qHtTlTolRef = (ch tolLoad +:+ S "is the tolerable load defined in" +:+. makeRef tolPre)
 
 qRef :: Sentence
-qRef = (ch demand +:+ S "is the 3 second equivalent pressure, as given in" +:+. makeRef calOfDemandL)
+qRef = (ch demand +:+ S "is the 3 second equivalent pressure, as given in" +:+. mkRefFrmLbl calOfDemandL)
 
 gtfRef :: Sentence
-gtfRef = (ch gTF +:+ S "is the" +:+. (phrase gTF `sC` S "as given by" +:+ makeRef glaTyFac))
+gtfRef = (ch gTF +:+ S "is the" +:+. (phrase gTF `sC` S "as given by" +:+ mkRefFrmLbl glaTyFac))
 
 qHtRef :: Sentence
-qHtRef = (ch dimlessLoad +:+ S "is the" +:+ phrase dimlessLoad +:+ S "defined in" +:+. makeRef dimLL)
+qHtRef = (ch dimlessLoad +:+ S "is the" +:+ phrase dimlessLoad +:+ S "defined in" +:+. mkRefFrmLbl dimLL)
 
 jRef2 :: Sentence
 jRef2 = (ch stressDistFac +:+ S "is the" +:+ phrase stressDistFac `sC` 
@@ -253,4 +253,4 @@ jtolRelToPbtol :: Sentence
 jtolRelToPbtol = (ch sdf_tol +:+ S " is calculated with reference to " +:+. ch pb_tol)
 
 glassLiteRef :: Sentence 
-glassLiteRef = (ch dimlessLoad +:+ S "is calculated with reference to" +:+. makeRef glassLiteL)
+glassLiteRef = (ch dimlessLoad +:+ S "is calculated with reference to" +:+. mkRefFrmLbl glassLiteL)

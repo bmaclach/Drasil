@@ -492,10 +492,10 @@ traceInstaModelRef = map makeRef swhsIMods --FIXME: swhsIMods is a hack?
 
 traceFuncReq = ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10",
   "R11"]
-traceFuncReqRef = map makeRef funcReqs
+traceFuncReqRef = map mkRefFrmLbl funcReqs
 
 traceData = ["Data Constraints"]
-traceDataRef = [mkRefFrmLbl dataConTable1] --FIXME: Reference section?
+traceDataRef = [makeRef dataConTable1] --FIXME: Reference section?
 
 traceAssump = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10",
   "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18", "A19"]
@@ -511,7 +511,7 @@ traceDataDefs = ["DD1", "DD2", "DD3", "DD4"]
 traceDataDefRef = map makeRef swhsDDefs
 
 traceLikelyChg = ["LC1", "LC2", "LC3", "LC4", "LC5", "LC6"]
-traceLikelyChgRef = map makeRef likelyChgs
+traceLikelyChgRef = map mkRefFrmLbl likelyChgs
 
 {-Traceability Matrix 1-}
 
@@ -767,7 +767,7 @@ orgDocIntro = foldlSent [S "The", phrase organization, S "of this",
 
 orgDocEnd :: NamedIdea ni => ni -> CI -> Sentence
 orgDocEnd sp pro = foldlSent_ [S "The", plural inModel,
-  sParen (makeRef SRS.inModelLabel), S "to be solved are referred to as" +:+. 
+  sParen (mkRefFrmLbl SRS.inModelLabel), S "to be solved are referred to as" +:+. 
   (foldlList Comma List $ map makeRef swhsIMods), S "The", plural inModel,
   S "provide the", phrase ode, sParen (short ode :+: S "s") `sAnd` 
   S "algebraic", plural equation, S "that", phrase model, S "the" +:+. 
@@ -798,7 +798,7 @@ orgDocEnd sp pro = foldlSent_ [S "The", plural inModel,
 --------------------------
 
 systCContents :: CI -> Contents
-systCContents pro = foldlSP [mkRefFrmLbl sys_context_fig,
+systCContents pro = foldlSP [makeRef sys_context_fig,
  S "shows the" +:+. phrase sysCont, 
   S "A circle represents an external entity outside the",
   phrase software `sC` S "the", phrase user, S "in this case. A",
@@ -809,7 +809,7 @@ systCContents pro = foldlSP [mkRefFrmLbl sys_context_fig,
 
 sys_context_fig :: LabelledContent
 sys_context_fig = llcc (mkLabelRAFig "SysCon") $ fig (foldlSent_
-  [mkRefFrmLbl sys_context_fig +: EmptyS, titleize sysCont])
+  [makeRef sys_context_fig +: EmptyS, titleize sysCont])
   "SystemContextFigure.png"
 
 systCIntro :: CI -> NamedChunk -> Contents
@@ -960,7 +960,7 @@ genDefDeriv1 roc tem = foldlSPCol [S "Detailed derivation of simplified",
   phrase roc, S "of", phrase tem]
 
 genDefDeriv2 :: LabelledContent -> UnitalChunk -> Contents
-genDefDeriv2 t1ct vo = foldlSPCol [S "Integrating", mkRefFrmLbl t1ct,
+genDefDeriv2 t1ct vo = foldlSPCol [S "Integrating", makeRef t1ct,
   S "over a", phrase vo, sParen (ch vo) `sC` S "we have"]
 
 genDefDeriv3 = eqUnR' $ 
@@ -1232,7 +1232,7 @@ propCorSolDeriv5 eq pro rs = foldlSP [titleize' eq, S "(FIXME: Equation 7)"
   S "computed by" +:+. short pro, S "The relative",
   S "error between the results computed by", short pro `sAnd`
   S "the results calculated from the", short rs, S "of these",
-  plural eq, S "should be less than 0.001%", makeRef verifyEnergyOutput]
+  plural eq, S "should be less than 0.001%", mkRefFrmLbl verifyEnergyOutput]
 
 -- Above section only occurs in this example (although maybe it SHOULD be in
 -- the others).

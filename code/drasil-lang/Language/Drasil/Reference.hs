@@ -318,12 +318,12 @@ assumptionsFromDB am = dropNums $ sortBy (compare `on` snd) assumptions
 -- item exists in our database of referable objects.
 --FIXME: completely shift to being `HasLabel` since customref checks for 
 --  `HasShortName` and `Referable`?
-makeRef :: (HasShortName l, Referable l, HasUID l) => l -> Sentence
-makeRef r = customRef r (r ^. shortname)
+makeRef :: (HasLabel l, HasShortName l, Referable l) => l -> Sentence
+makeRef r = mkRefFrmLbl $ r ^. getLabel
 
 --FIXME: needs design (HasShortName, Referable only possible when HasLabel)
-mkRefFrmLbl :: (HasLabel l, HasShortName l, Referable l) => l -> Sentence
-mkRefFrmLbl r = makeRef $ r ^. getLabel
+mkRefFrmLbl :: (HasShortName l, Referable l, HasUID l) => l -> Sentence
+mkRefFrmLbl r = customRef r (r ^. shortname)
 
 --FIXME: should be removed from Examples once sections have labels
 -- | Create a reference with a customized 'ShortName'
