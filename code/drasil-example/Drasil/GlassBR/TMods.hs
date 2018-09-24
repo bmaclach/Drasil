@@ -49,7 +49,7 @@ pbIsSafe :: TheoryModel
 pbIsSafe = tm' (cw pbIsSafe_RC) 
   (tc' "isSafe" [qw is_safePb, qw prob_br, qw pb_tol] ([] :: [ConceptChunk])
   [] [TCon Invariant $ (sy is_safePb) $= (sy prob_br) $< (sy pb_tol)] [] [makeRef astm2009])
-  l2 []
+  l2 [pbIsSafeDesc]
 
 pbIsSafe_RC :: RelationConcept
 pbIsSafe_RC = makeRC "safetyReqPb" (nounPhraseSP "Safety Req-Pb")
@@ -61,7 +61,7 @@ pbIsSafeDesc = tModDesc (is_safePb) s ending
     s = (ch is_safePb) `sAnd` (ch is_safeLR) +:+ sParen (S "from" +:+
       (mkRefFrmLbl l1))
     ending = ((ch prob_br) `isThe` (phrase prob_br)) `sC` S "as calculated in" +:+.
-      (mkRefFrmLbl probOfBreak) +:+ (ch pb_tol) `isThe` (phrase pb_tol) +:+ S "entered by the user"
+      (makeRef probOfBreak) +:+ (ch pb_tol) `isThe` (phrase pb_tol) +:+ S "entered by the user"
 
 tModDesc :: VarChunk -> Sentence -> Sentence -> Sentence
 tModDesc main s ending = foldlSent [S "If", ch main `sC` S "the glass is" +:+.
