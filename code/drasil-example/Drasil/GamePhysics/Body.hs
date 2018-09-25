@@ -11,7 +11,8 @@ import Drasil.DocLang (DerivationDisplay(..), DocDesc, DocSection(..),
   SSDSub(SSDSubVerb, SSDSolChSpec), SolChSpec(SCSProg), SubSec, TConvention(..), 
   TSIntro(..), Verbosity(Verbose), ExistingSolnSec(..), GSDSec(..), GSDSub(..),
   assembler, dataConstraintUncertainty, inDataConstTbl, intro, mkDoc, outDataConstTbl,
-  reqF, sSubSec, siCon, siSTitl, siSent, traceMGF, tsymb, valsOfAuxConstantsF)
+  reqF, sSubSec, siCon, siSTitl, siSent, traceMGF, tsymb, valsOfAuxConstantsF
+  , generateTraceMap)
 
 import qualified Drasil.DocLang.SRS as SRS
 
@@ -58,6 +59,7 @@ import Drasil.GamePhysics.TMods (t1NewtonSL_new, t2NewtonTL_new,
   t3NewtonLUG_new, t4ChaslesThm_new, t5NewtonSLR_new, cpTMods_new)
 import Drasil.GamePhysics.Unitals (cpSymbolsAll, cpOutputConstraints,
   inputSymbols, outputSymbols, cpInputConstraints, gamephySymbols)
+import Drasil.GamePhysics.Labels (gameLabelMap)
 
 authors :: People
 authors = [alex, luthfi]
@@ -104,6 +106,9 @@ mkSRS = RefSec (RefProg intro [TUnits, tsymb tableOfSymbols, TAandA]) :
   (Bibliography : [])
     where tableOfSymbols = [TSPurpose, TypogConvention[Vector Bold], SymbOrder]
 
+game_label :: TraceMap
+game_label = generateTraceMap mkSRS gameLabelMap
+
 stdFields :: Fields
 stdFields = [DefiningEquation, Description Verbose IncludeUnits, Notes, Source, RefBy]
 
@@ -125,7 +130,8 @@ chipmunkSysInfo = SI {
   _constraints = cpInputConstraints,
   _constants = [],
   _sysinfodb = everything,
-  _refdb = cpRefDB
+  _refdb = cpRefDB,
+  _labeldb = game_label
 }
 
 symbT :: [DefinedQuantityDict]

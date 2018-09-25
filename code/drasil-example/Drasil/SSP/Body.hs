@@ -13,7 +13,7 @@ import Drasil.DocLang (DocDesc, DocSection(..), IntroSec(..), IntroSub(..),
   SCSSub(..), GSDSec(..), GSDSub(..),
   dataConstraintUncertainty, goalStmtF, inDataConstTbl, intro, mkDoc,
   mkEnumSimpleD, nonFuncReqF, outDataConstTbl, probDescF, reqF, termDefnF,
-  tsymb'', valsOfAuxConstantsF)
+  tsymb'', valsOfAuxConstantsF, generateTraceMap)
 
 import qualified Drasil.DocLang.SRS as SRS (funcReq, inModelLabel, 
   assumptLabel, physSyst)
@@ -55,6 +55,7 @@ import Drasil.SSP.Requirements (sspRequirements, sspInputDataTable)
 import Drasil.SSP.TMods (factOfSafety, equilibrium, mcShrStrgth, hookesLaw, effStress)
 import Drasil.SSP.Unitals (fs, index, numbSlices, sspConstrained, sspInputs, 
   sspOutputs, sspSymbols)
+import Drasil.SSP.Labels (sspLabelMap)
 
 --type declarations for sections--
 req, aux_cons :: Section
@@ -89,7 +90,8 @@ ssp_si = SI {
   _constraints = sspConstrained,
   _constants = [],
   _sysinfodb = sspSymMap,
-  _refdb = sspRefDB
+  _refdb = sspRefDB,
+  _labeldb  = ssp_label
 }
 
 resourcePath :: String
@@ -131,6 +133,8 @@ mkSRS = RefSec (RefProg intro
   map Verbatim [req] ++ [LCsSec $ LCsProg likelyChanges_SRS]
   ++ [UCsSec $ UCsProg unlikelyChanges_SRS] ++ [Verbatim aux_cons] ++ (Bibliography : [])
 
+ssp_label :: TraceMap
+ssp_label = generateTraceMap mkSRS sspLabelMap
 
 stdFields :: Fields
 stdFields = [DefiningEquation, Description Verbose IncludeUnits, Notes, Source, RefBy]

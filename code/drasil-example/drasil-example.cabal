@@ -184,6 +184,7 @@ executable chipmunkdocs
     , Drasil.GamePhysics.TMods
     , Drasil.GamePhysics.Unitals
     , Drasil.GamePhysics.IMods
+    , Drasil.GamePhysics.Labels
     , Drasil.GamePhysics.References
   Build-Depends:
     base >= 4.7,

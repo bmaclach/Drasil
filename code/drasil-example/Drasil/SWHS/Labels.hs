@@ -1,10 +1,35 @@
 module Drasil.SWHS.Labels where
 
 import Language.Drasil
+import qualified Data.Map as Map
+
+swhsLabelSet :: [Label]
+swhsLabelSet = [thermalEnergyOnlyL, heatTransferCoeffL, contantWaterTempL,
+ tempPcmConsL, densityWaterL, specificHeatL, newtoLawConvecL,
+ tempOverTimeL, tempOverLengthL, lawConvectiveCoolingWtrPCML,
+ chargeTankL, sameInitialL, pcmInitialSolidL, waterAlwaysLiquidL,
+ perfectInsulationL, noInternalHeatL, volumeChangeMeltL, noGaseousStatePCML,
+ atmosphericPressureTankL, volumeCoilL, dd1HtFluxCL, dd2HtFluxPL, 
+ dd3HtFusionL, dd4MeltFracL, nwtnCoolingL, rocTempSimpL, eBalanceOnWtrL,
+ eBalanceOnPCML, heatEInWtrL, heatEInPCML, likeChg1L, likeChg2L,
+ likeChg3L, likeChg4L, likeChg5L, likeChg6L, unlikeChg1L, unlikeChg2L,
+ inputInitQuantsL, useAboveFindMassL, checkWithPhysConstsL, 
+  outputInputDerivQuantsL, calcTempWtrOverTimeL, calcTempPCMOverTimeL,
+  calcChgHeatEnergyWtrOverTimeL, calcChgHeatEnergyPCMOverTimeL,
+  verifyEnergyOutputL, calcPCMMeltBeginL, calcPCMMeltEndL,
+  consThermEL, sensHtEL, latentHtEL]
+
+
+swhsLabelMap :: LabelMap
+swhsLabelMap = Map.fromList $ map getLabelPair swhsLabelSet
 
 -- Assumptions
-thermalEnergyOnlyL, lawConvectiveCoolingWtrPCML, waterAlwaysLiquidL, 
-    noGaseousStatePCML, atmosphericPressureTankL :: Label
+thermalEnergyOnlyL, heatTransferCoeffL, contantWaterTempL,
+ tempPcmConsL, densityWaterL, specificHeatL, newtoLawConvecL,
+ tempOverTimeL, tempOverLengthL, lawConvectiveCoolingWtrPCML,
+ chargeTankL, sameInitialL, pcmInitialSolidL, waterAlwaysLiquidL,
+ perfectInsulationL, noInternalHeatL, volumeChangeMeltL, noGaseousStatePCML,
+ atmosphericPressureTankL, volumeCoilL:: Label
 thermalEnergyOnlyL          = mkLabelRAAssump' "Thermal-Energy-Only"
 heatTransferCoeffL          = mkLabelRAAssump' "Heat-Transfer-Coeffs-Constant"
 contantWaterTempL           = mkLabelRAAssump' "Constant-Water-Temp-Across-Tank"
@@ -25,6 +50,12 @@ volumeChangeMeltL           = mkLabelRAAssump' "Volume-Change-Melting-PCM-Neglig
 noGaseousStatePCML          = mkLabelRAAssump' "No-Gaseous-State-PCM"
 atmosphericPressureTankL    = mkLabelRAAssump' "Atmospheric-Pressure-Tank"
 volumeCoilL                  = mkLabelRAAssump' "Volume-Coil-Negligible"
+
+-- Theory Models
+consThermEL, sensHtEL, latentHtEL :: Label
+consThermEL = mkLabelSame "consThermE" (Def TM)
+sensHtEL    = mkLabelSame "sensHtE" (Def TM)
+latentHtEL  = mkLabelSame "latentHtE" (Def TM)
 
 -- Data Definition
 dd1HtFluxCL, dd2HtFluxPL, dd3HtFusionL, dd4MeltFracL :: Label

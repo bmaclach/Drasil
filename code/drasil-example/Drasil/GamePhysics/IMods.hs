@@ -11,12 +11,8 @@ import qualified Data.Drasil.Quantities.Physics as QP (acceleration,
   time, impulseS)
 import Data.Drasil.SentenceStructures (foldlSent)
 import Data.Drasil.Utils (fmtU, foldle1)
+import Drasil.GamePhysics.Labels (transMotL, rotMotL, col2DL)
 
--- Labels
-l1, l2, l3 :: Label
-l1 = mkLabelSame "transMot" (Def Instance)
-l2 = mkLabelSame "rotMot" (Def Instance)
-l3 = mkLabelSame "col2D" (Def Instance)
 
 iModels :: [RelationConcept]
 iModels = [transMot, rotMot, col2D]
@@ -28,11 +24,11 @@ iModels_new = [im1_new, im2_new, im3_new]
 im1_new :: InstanceModel
 im1_new = im' transMot [qw vel_i, qw QP.time, qw QP.gravitationalAccel, qw force_i, qw mass_i] 
   [ TCon AssumedCon $ sy vel_i $> 0, TCon AssumedCon $ sy QP.time $> 0, TCon AssumedCon $ sy QP.gravitationalAccel $> 0, 
-  TCon AssumedCon $ sy force_i $> 0, TCon AssumedCon $ sy mass_i $> 0 ] (qw acc_i) [] [] l1
+  TCon AssumedCon $ sy force_i $> 0, TCon AssumedCon $ sy mass_i $> 0 ] (qw acc_i) [] [] transMotL
   [transMotDesc]
 
 transMot :: RelationConcept
-transMot = makeRC "transMot" transMotNP (transMotDesc +:+ transMotLeg) transMotRel l1
+transMot = makeRC "transMot" transMotNP (transMotDesc +:+ transMotLeg) transMotRel transMotL
 
 transMotNP :: NP
 transMotNP =  nounPhraseSP "Force on the translational motion of a set of 2d rigid bodies"
@@ -60,11 +56,11 @@ im2_new :: InstanceModel
 im2_new = im' rotMot [qw QP.angularVelocity, qw QP.time, qw torque_i, qw QP.momentOfInertia]
   [TCon AssumedCon $ sy QP.angularVelocity $> 0, TCon AssumedCon $ sy QP.time $> 0,
   TCon AssumedCon $ sy torque_i $> 0, TCon AssumedCon $ sy QP.momentOfInertia $> 0] 
-  (qw QP.angularAccel) [TCon AssumedCon $ sy QP.angularAccel $> 0] [] l2
+  (qw QP.angularAccel) [TCon AssumedCon $ sy QP.angularAccel $> 0] [] rotMotL
   [rotMotDesc]
 
 rotMot :: RelationConcept
-rotMot = makeRC "rotMot" (rotMotNP) (rotMotDesc +:+ rotMotLeg) rotMotRel l2
+rotMot = makeRC "rotMot" (rotMotNP) (rotMotDesc +:+ rotMotLeg) rotMotRel rotMotL
 
 rotMotNP :: NP
 rotMotNP =  nounPhraseSP "Force on the rotational motion of a set of 2D rigid body"
@@ -88,11 +84,11 @@ rotMotLeg = foldle1 (+:+) (+:+) $ map defList rotMotLegTerms
 im3_new :: InstanceModel
 im3_new = im' col2D [qw QP.time, qw QP.impulseS, qw mass_A, qw normalVect] [TCon AssumedCon $ sy QP.time $> 0,
   TCon AssumedCon $ sy QP.impulseS $> 0, TCon AssumedCon $ sy mass_A $> 0, TCon AssumedCon $ sy normalVect $> 0]
-  (qw time_c) [TCon AssumedCon $ sy vel_A $> 0, TCon AssumedCon $ sy time_c $> 0] [] l3
+  (qw time_c) [TCon AssumedCon $ sy vel_A $> 0, TCon AssumedCon $ sy time_c $> 0] [] col2DL
   [col2DDesc]
 
 col2D :: RelationConcept
-col2D = makeRC "col2D" (col2DNP) (col2DDesc +:+ col2DLeg) col2DRel l3
+col2D = makeRC "col2D" (col2DNP) (col2DDesc +:+ col2DLeg) col2DRel col2DL
 
 col2DNP :: NP
 col2DNP =  nounPhraseSP "Collisions on 2D rigid bodies"

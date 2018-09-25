@@ -1,7 +1,22 @@
 module Drasil.SSP.Labels where
 
 import Language.Drasil
+import qualified Data.Map as Map
 
+sspLabelSet :: [Label]
+sspLabelSet = [slipSurfaceL, geoSlopeMatL, soilLayerHomoL, soilLayerIsoL,
+    intersliceNormL, baseNormShearForL, stressStrainCurveL, planeStrainL,
+    effectiveNormL, surfaceBaseSliceL, sliceWghtL, baseWtrFL, surfWtrFL,
+    intersliceWtrFL, angleAL, angleBL, lengthBL,
+    lengthLbL, lengthLsL, seismicLoadFL, surfLoadsL, intrsliceFL, resShearWOL,
+    mobShearWOL, displcmntRxnFL, displcmntBaselL, netFDsplcmntEqbmL,
+    shearStiffnessL, soilStiffnessL, genDef1Label, genDef2Label,
+    genDef3Label, genDef4Label, genDef5Label, genDef6Label, 
+    genDef7Label, genDef8Label, genDef9Label, genDef10Label,
+    fctSftyL, nrmShrForL, inslideFxL, forDisEqlbL, rfemFoSL, crtSlpIdL]
+
+sspLabelMap :: LabelMap
+sspLabelMap = Map.fromList $ map getLabelPair sspLabelSet
 
 -- Assumptions
 slipSurfaceL, geoSlopeMatL, soilLayerHomoL, soilLayerIsoL,

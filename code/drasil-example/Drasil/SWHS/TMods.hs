@@ -21,7 +21,7 @@ import Data.Drasil.SI_Units (joule)
 
 import Drasil.SWHS.Concepts (transient)
 import Drasil.SWHS.DataDefs (dd3HtFusion)
-import Drasil.SWHS.Labels (thermalEnergyOnlyL)
+import Drasil.SWHS.Labels (thermalEnergyOnlyL, consThermEL, sensHtEL, latentHtEL)
 import Drasil.SWHS.Unitals (melt_frac, tau, deltaT, htCap_V, htCap_S,
   htCap_L, vol_ht_gen, thFluxVect)
 
@@ -36,12 +36,12 @@ consThermE = tm' consThermE_rc
   (tc' "ConsThermE" [qw thFluxVect, qw gradient, qw vol_ht_gen, 
     qw density, qw heat_cap_spec, qw temp, qw time] ([] :: [ConceptChunk])
   [] [TCon Invariant consThermERel] [] [mkRefFrmLbl consThemESrc]) 
-  (mkLabelSame "consThermE" (Def TM)) [consThermEdesc]
+  consThermEL [consThermEdesc]
 
 consThermE_rc :: RelationConcept
 consThermE_rc = makeRC "consThermE_rc"
   (nounPhraseSP "Conservation of thermal energy") consThermEdesc consThermERel 
-  (mkLabelSame "ConsThermE" (Def TM))
+  consThermEL
 
 consThermERel :: Relation
 consThermERel = (negate (sy gradient)) $. (sy thFluxVect) + (sy vol_ht_gen) $=
@@ -72,11 +72,11 @@ sensHtE = tm' sensHtE_rc
   (tc' "SensHtE" [qw sens_heat, qw htCap_S, qw mass, 
     qw deltaT, qw melt_pt, qw temp, qw htCap_L, qw boil_pt, qw htCap_V] ([] :: [ConceptChunk])
   [] [TCon Invariant sensHtEEqn] [] [mkRefFrmLbl sensHtESrc]) 
-  (mkLabelSame "sensHtE" (Def TM)) [sensHtEdesc]
+  sensHtEL [sensHtEdesc]
 
 sensHtE_rc :: RelationConcept
 sensHtE_rc = makeRC "sensHtE_rc" (nounPhraseSP "Sensible heat energy") sensHtEdesc sensHtEEqn
-  (mkLabelSame "SensHtE" (Def TM))
+  sensHtEL
 
 sensHtESrc :: Label
 sensHtESrc = mkURILabel "consThemESrc" "http://en.wikipedia.org/wiki/Sensible_heat" "Definition of Sensible Heat"
@@ -129,12 +129,12 @@ sensHtEdesc = foldlSent [
 latentHtE :: TheoryModel
 latentHtE = tm' latentHtE_rc
   (tc' "SensHtE" [qw latent_heat, qw time, qw tau] ([] :: [ConceptChunk])
-  [] [TCon Invariant latHtEEqn] [] [mkRefFrmLbl latHtESrc]) (mkLabelSame "latentHtE" (Def TM)) [latentHtEdesc]
+  [] [TCon Invariant latHtEEqn] [] [mkRefFrmLbl latHtESrc]) latentHtEL [latentHtEdesc]
 
 latentHtE_rc :: RelationConcept
 latentHtE_rc = makeRC "latentHtE_rc"
   (nounPhraseSP "Latent heat energy") latentHtEdesc latHtEEqn 
-  (mkLabelSame "LatHtE" (Def TM))
+  latentHtEL
 
 latHtEEqn :: Relation
 latHtEEqn = apply1 latent_heat time $= 

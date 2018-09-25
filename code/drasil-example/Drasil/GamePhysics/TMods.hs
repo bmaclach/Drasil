@@ -7,7 +7,8 @@ import Control.Lens ((^.))
 
 import Drasil.GamePhysics.Unitals (dispNorm, dispUnit, force_1, force_2,
   mass_1, mass_2, r_OB, sqrDist, vel_B, vel_O)
-
+import Drasil.GamePhysics.Labels (newtonSLL, newtonTLL, newtonLUGL,
+ chaslesThmL,  newtonSLRL)
 import Data.Drasil.SentenceStructures (foldlSent)
 import qualified Data.Drasil.Concepts.Physics as CP (rigidBody)
 import qualified Data.Drasil.Quantities.PhysicalProperties as QPP (mass)
@@ -15,13 +16,7 @@ import qualified Data.Drasil.Quantities.Physics as QP (acceleration,
   angularAccel, angularVelocity, displacement, force, gravitationalConst, 
   momentOfInertia, torque, velocity)
 
--- Labels
-l1, l2, l3, l4, l5 :: Label
-l1 = mkLabelRA' "newtonSL" "NewtonSecLawMot" (Def TM)
-l2 = mkLabelRA' "newtonTL" "NewtonThirdLawMot" (Def TM)
-l3 = mkLabelRA' "newtonLUG" "UniversalGravLaw" (Def TM)
-l4 = mkLabelRA' "chaslesThm" "ChaslesTheorem" (Def TM)
-l5 = mkLabelRA' "newtonSLR" "NewtonSecLawRotMot" (Def TM)
+
 
 ----- Theoretical Models -----
 
@@ -38,11 +33,11 @@ t1NewtonSL_new :: TheoryModel
 t1NewtonSL_new = tm' (cw newtonSL)
   (tc' "NewtonSL" [qw QP.force, qw QPP.mass, qw QP.acceleration] ([] :: [ConceptChunk])
   [] [TCon Invariant $ (sy QP.force) $= (sy QPP.mass) * (sy QP.acceleration)] [] []) 
-  l1 [newtonSLDesc]
+  newtonSLL [newtonSLDesc]
 
 newtonSL :: RelationConcept
 newtonSL = makeRC "newtonSL" (nounPhraseSP "Newton's second law of motion")
-  newtonSLDesc newtonSLRel l1
+  newtonSLDesc newtonSLRel newtonSLL
 
 newtonSLRel :: Relation
 newtonSLRel = (sy QP.force) $= (sy QPP.mass) * (sy QP.acceleration)
@@ -64,11 +59,11 @@ t2NewtonTL_new :: TheoryModel
 t2NewtonTL_new = tm' (cw newtonTL)
   (tc' "NewtonTL" [qw force_1, qw force_2] ([] :: [ConceptChunk])
   [] [TCon Invariant $ (sy force_1) $= (negate (sy force_2))] [] []) 
-  l2 [newtonTLDesc]
+  newtonTLL [newtonTLDesc]
 
 newtonTL :: RelationConcept
 newtonTL = makeRC "newtonTL" (nounPhraseSP "Newton's third law of motion")
-  newtonTLDesc newtonTLRel l2
+  newtonTLDesc newtonTLRel newtonTLL
 
 newtonTLRel :: Relation
 newtonTLRel = (sy force_1) $= (negate (sy force_2))
@@ -92,11 +87,11 @@ t3NewtonLUG_new = tm' (cw newtonLUG)
   (sy mass_2) / ((sy dispNorm) $^ (fromInteger 2))) * (sy dispUnit) $= 
   (sy QP.gravitationalConst) * ((sy mass_1) * (sy mass_2) / ((sy dispNorm) 
   $^ (fromInteger 2))) * ((sy QP.displacement) / (sy dispNorm))] [] []) 
-  l3 [newtonLUGDesc]
+  newtonLUGL [newtonLUGDesc]
 
 newtonLUG :: RelationConcept
 newtonLUG = makeRC "newtonLUG" 
-  (nounPhraseSP "Newton's law of universal gravitation") newtonLUGDesc newtonLUGRel l3
+  (nounPhraseSP "Newton's law of universal gravitation") newtonLUGDesc newtonLUGRel newtonLUGL
 
 newtonLUGRel :: Relation
 newtonLUGRel = (sy QP.force) $=
@@ -140,12 +135,12 @@ t4ChaslesThm_new :: TheoryModel
 t4ChaslesThm_new = tm' (cw chaslesThm)
   (tc' "ChaslesThm" [qw vel_B, qw vel_O, qw QP.angularVelocity, qw r_OB] 
   ([] :: [ConceptChunk]) [] [TCon Invariant $ (sy vel_B) $= (sy vel_O) + (cross 
-  (sy  QP.angularVelocity) (sy r_OB))] [] []) l4
+  (sy  QP.angularVelocity) (sy r_OB))] [] []) chaslesThmL
   [chaslesThmDesc]
 
 chaslesThm :: RelationConcept
 chaslesThm = makeRC "chaslesThm" (nounPhraseSP "Chasles' theorem")
-  chaslesThmDesc chaslesThmRel l4
+  chaslesThmDesc chaslesThmRel chaslesThmL
 
 -- Need the cross product symbol - third term should be a cross product.
 chaslesThmRel :: Relation
@@ -172,12 +167,12 @@ t5NewtonSLR_new :: TheoryModel
 t5NewtonSLR_new = tm' (cw newtonSLR)
   (tc' "NewtonSLR" [qw QP.torque, qw QP.momentOfInertia, qw QP.angularAccel] 
   ([] :: [ConceptChunk]) [] [TCon Invariant $ (sy  QP.torque) $= (sy QP.momentOfInertia) 
-  * (sy QP.angularAccel)] [] []) l5
+  * (sy QP.angularAccel)] [] []) newtonSLRL
   [newtonSLRDesc]
 
 newtonSLR :: RelationConcept
 newtonSLR = makeRC "newtonSLR" 
-  (nounPhraseSP "Newton's second law for rotational motion") newtonSLRDesc newtonSLRRel l5
+  (nounPhraseSP "Newton's second law for rotational motion") newtonSLRDesc newtonSLRRel newtonSLRL
 
 newtonSLRRel :: Relation
 newtonSLRRel = (sy  QP.torque) $= (sy QP.momentOfInertia) * (sy QP.angularAccel)

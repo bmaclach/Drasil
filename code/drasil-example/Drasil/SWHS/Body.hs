@@ -13,7 +13,8 @@ import Drasil.DocLang (AuxConstntSec (AuxConsProg), DocDesc,
   Field(..), Fields, SSDSub(..), SolChSpec (SCSProg), SSDSec(..), 
   InclUnits(..), DerivationDisplay(..), SCSSub(..), Verbosity(..),
   dataConstraintUncertainty, genSysF, inDataConstTbl, intro, mkDoc, mkEnumSimpleD,
-  outDataConstTbl, physSystDesc, reqF, termDefnF, traceGIntro, traceMGF, tsymb'')
+  outDataConstTbl, physSystDesc, reqF, termDefnF, traceGIntro, traceMGF, tsymb'',
+  generateTraceMap)
 import qualified Drasil.DocLang.SRS as SRS (funcReq, goalStmt, inModelLabel,
   likeChg, probDesc, sysCont, unlikeChg)
 
@@ -63,6 +64,7 @@ import Drasil.SWHS.Unitals (pcm_SA, temp_W, temp_PCM, pcm_HTC, pcm_E,
   specParamValList, w_density, temp_init, htCap_L_P, htFusion, pcm_density,
   temp_melt_P, pcm_vol, diam, tank_length, swhsConstrained, swhsOutputs, 
   swhsInputs, swhsSymbols, swhsSymbolsAll)
+import Drasil.SWHS.Labels (swhsLabelMap)
 
 -------------------------------------------------------------------------------
 
@@ -93,8 +95,12 @@ swhs_si = SI {
   _constraints = (swhsConstrained),
   _constants = [],
   _sysinfodb = swhsSymMap,
-  _refdb = swhsRefDB
+  _refdb = swhsRefDB,
+  _labeldb  = swhs_label
 }
+
+swhs_label :: TraceMap
+swhs_label = generateTraceMap mkSRS swhsLabelMap
 
 swhsSymMap :: ChunkDB
 swhsSymMap = cdb swhsSymbolsAll (map nw swhsSymbols ++ map nw acronymsFull)

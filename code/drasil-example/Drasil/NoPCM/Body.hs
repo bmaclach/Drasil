@@ -39,7 +39,7 @@ import Drasil.DocLang (DocDesc, Fields, Field(..), Verbosity(Verbose),
   RefSec(RefProg), RefTab(TAandA, TUnits), 
   TSIntro(SymbOrder, SymbConvention, TSPurpose), dataConstraintUncertainty,
   inDataConstTbl, intro, mkDoc, mkEnumSimpleD, outDataConstTbl, physSystDesc,
-  reqF, termDefnF, traceMGF, tsymb, valsOfAuxConstantsF)
+  reqF, termDefnF, traceMGF, tsymb, valsOfAuxConstantsF, generateTraceMap)
  
 import Data.Drasil.SentenceStructures (showingCxnBw, foldlSent_, sAnd,
   isThe, sOf, ofThe, foldlSPCol, foldlSent, foldlSP)
@@ -65,6 +65,7 @@ import Drasil.SWHS.Unitals (coil_HTC, coil_HTC_max, coil_HTC_min, coil_SA,
   tank_length, tank_length_max, tank_length_min, tank_vol, tau, tau_W, temp_C, 
   temp_env, temp_W, thFluxVect, time_final, time_final_max, vol_ht_gen, w_density, 
   w_density_max, w_density_min, w_E, w_mass, w_vol)
+import Drasil.SWHS.Labels (swhsLabelMap)
 
 import Drasil.NoPCM.DataDesc (inputMod)
 import Drasil.NoPCM.Definitions (ht_trans, srs_swhs)
@@ -165,8 +166,12 @@ nopcm_si = SI {
   _constraints = (nopcm_Constraints),        --constrained
   _constants = [],
   _sysinfodb = nopcm_SymbMap,
-  _refdb = nopcmRefDB
+  _refdb = nopcmRefDB,
+  _labeldb  = nopcm_label
 }
+
+nopcm_label :: TraceMap
+nopcm_label = generateTraceMap mkSRS swhsLabelMap
 
 nopcmRefDB :: ReferenceDB
 nopcmRefDB = rdb [] [] assumps_Nopcm_list_new [] [] referencesRefList (reqs ++
