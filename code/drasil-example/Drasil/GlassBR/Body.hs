@@ -19,7 +19,7 @@ import Drasil.DocLang (AppndxSec(..), AuxConstntSec(..), DerivationDisplay(..),
   outDataConstTbl, physSystDesc, termDefnF, traceGIntro, tsymb, generateTraceMap)
 
 import qualified Drasil.DocLang.SRS as SRS (datConLabel, dataDefnLabel, indPRCaseLabel, 
-  referenceLabel, valsOfAuxConsLabel)
+  referenceLabel, valsOfAuxConsLabel, assumptLabel)
 
 import Data.Drasil.Concepts.Computation (computerApp, inParam)
 import Data.Drasil.Concepts.Documentation as Doc (analysis, appendix, aspect, 
@@ -346,7 +346,7 @@ sysCtxUsrResp = [S "Provide the input data related to the glass slab and blast",
     S "type ensuring no errors in the data entry",
   S "Ensure that consistent units are used for input variables",
   S "Ensure required" +:+ phrase software +:+ plural assumption +:+
-    S "(FIXME REF)" +:+ S "are appropriate for any particular" +:+
+    (sParen $ mkRefFrmLbl SRS.assumptLabel) +:+ S "are appropriate for any particular" +:+
     phrase problem +:+ S "input to the" +:+ phrase software]
 
 sysCtxSysResp :: [Sentence]
