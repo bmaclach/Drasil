@@ -178,7 +178,7 @@ module Language.Drasil (
   , HasDefinitionTable, conceptMap, defTable, defLookup
   , HasUnitTable, unitMap, unitTable, collectUnits
   , TraceMap, traceLookup, HasTraceTable, traceTable, generateRefbyMap
-  , RefbyMap, refbyLookup
+  , RefbyMap, refbyLookup, HasRefbyTable, refbyTable
   -- AssumpChunk
   , AssumpChunk, assuming, assump
   -- Attribute
