@@ -74,7 +74,7 @@ import Drasil.GlassBR.Labels (glassLabelMap)
 gbSymbMap :: ChunkDB
 gbSymbMap = cdb this_symbols (map nw acronyms ++ map nw this_symbols)
   (map cw glassBRsymb ++ Doc.srsDomains)  (map unitWrapper [metre, second, kilogram]
-  ++ map unitWrapper [pascal, newton]) glassBR_label
+  ++ map unitWrapper [pascal, newton]) glassBR_label glassBR_refby
 
 gbRefDB :: ReferenceDB
 gbRefDB = rdb [] [] assumptions [] [] gbCitations $ funcReqs ++ likelyChgs ++
@@ -189,6 +189,9 @@ glassSystInfo = SI {
 
 glassBR_label :: TraceMap
 glassBR_label = generateTraceMap mkSRS glassLabelMap
+
+glassBR_refby :: RefbyMap
+glassBR_refby = generateRefbyMap glassBR_label glassLabelMap
 
 glassBR_code :: CodeSpec
 glassBR_code = codeSpec glassSystInfo allMods

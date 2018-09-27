@@ -46,7 +46,7 @@ check_si = collectUnits allSymbols symbols
 
 allSymbols :: ChunkDB
 allSymbols = cdb symbols (map nw symbols) ([] :: [ConceptChunk])-- FIXME: Fill in concepts
-  si_units (head ([] :: [TraceMap]))
+  si_units (head ([] :: [TraceMap])) (head ([] :: [RefbyMap]))
 
 printSetting :: PrintingInformation
 printSetting = PI allSymbols defaultConfiguration

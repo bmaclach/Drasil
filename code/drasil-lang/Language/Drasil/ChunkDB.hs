@@ -5,7 +5,8 @@ module Language.Drasil.ChunkDB
   , HasTermTable(..), termLookup
   , HasDefinitionTable(..), conceptMap, defLookup
   , HasUnitTable(..), unitMap, collectUnits, TraceMap,
-  traceLookup, HasTraceTable(..)
+  traceLookup, HasTraceTable(..), generateRefbyMap, RefbyMap,
+  refbyLookup, HasRefbyTable(..)
   ) where
 
 import Control.Lens ((^.), Lens', makeLenses)
@@ -21,7 +22,7 @@ import Language.Drasil.Chunk.Quantity (Quantity, QuantityDict, qw)
 import Language.Drasil.Chunk.Concept (ConceptChunk, cw)
 import Language.Drasil.Development.Unit(UnitDefn, MayHaveUnit(getUnit), unitWrapper)
 import qualified Data.Map as Map
-import Language.Drasil.Label.Core (Label, LabelMap)
+import Language.Drasil.Label.Core (Label, LabelMap, labelLookup)
 import Language.Drasil.Sentence.Extract(lnames)
 
 -- The misnomers below are not actually a bad thing, we want to ensure data can't
@@ -46,6 +47,8 @@ type UnitMap = Map.Map UID UnitDefn
 type TermMap = Map.Map UID IdeaDict
 
 type TraceMap = Map.Map UID [Label]
+
+type RefbyMap = Map.Map UID [Label]
 
 -- | Smart constructor for a 'SymbolMap'
 symbolMap :: (Quantity c) => [c] -> SymbolMap
@@ -88,6 +91,10 @@ class HasUnitTable s where
 class HasTraceTable s where
   traceTable :: Lens' s TraceMap
 
+-- Refby TABLE --
+class HasRefbyTable s where
+  refbyTable :: Lens' s RefbyMap
+
 -- | Gets a unit if it exists, or Nothing.        
 getUnitLup :: HasSymbolTable s => (HasUID c, MayHaveUnit c) => c -> s -> Maybe UnitDefn
 getUnitLup c m = getUnit $ symbLookup (c ^. uid) (m ^. symbolTable)
@@ -108,6 +115,7 @@ data ChunkDB = CDB { _csymbs :: SymbolMap
                    , _cdefs  :: ConceptMap
                    , _cunitDB :: UnitMap
                    , _ctrace :: TraceMap
+                   , _crefby :: RefbyMap
                    } --TODO: Expand and add more databases
 makeLenses ''ChunkDB
 
@@ -115,8 +123,8 @@ makeLenses ''ChunkDB
 -- (for SymbolTable), NamedIdeas (for TermTable), Concepts (for DefinitionTable),
 -- and Units (for UnitTable)
 cdb :: (Quantity q, Idea t, Concept c, IsUnit u,
-        ConceptDomain u) => [q] -> [t] -> [c] -> [u] -> TraceMap -> ChunkDB
-cdb s t c u tc = CDB (symbolMap s) (termMap t) (conceptMap c) (unitMap u) tc
+        ConceptDomain u) => [q] -> [t] -> [c] -> [u] -> TraceMap -> RefbyMap -> ChunkDB
+cdb s t c u tc rfm = CDB (symbolMap s) (termMap t) (conceptMap c) (unitMap u) tc rfm
 
 ----------------------
 instance HasSymbolTable     ChunkDB where symbolTable = csymbs
@@ -124,6 +132,7 @@ instance HasTermTable       ChunkDB where termTable   = cterms
 instance HasDefinitionTable ChunkDB where defTable    = cdefs
 instance HasUnitTable       ChunkDB where unitTable   = cunitDB
 instance HasTraceTable      ChunkDB where traceTable  = ctrace
+instance HasRefbyTable      ChunkDB where refbyTable  = crefby
 
 collectUnits :: HasSymbolTable s => (HasUID c, Quantity c) => s -> [c] -> [UnitDefn]
 collectUnits m symb = map unitWrapper $ concatMap maybeToList $ map (\x -> getUnitLup x m) symb
@@ -132,33 +141,31 @@ traceLookup :: UID -> TraceMap -> [Label]
 traceLookup c m = getT $ Map.lookup c m
   where getT = maybe (error $ "References related to : " ++ c ++ " not found in TraceMap") id
 
-type RefbyMap = Map.Map UID [UID]
-
 {--generateIndex :: TraceMap -> RefbyMap
 generateIndex tm = foldl Map.union Map.empty $ map (\x -> Map.singleton x [])
  (nub $ map (^. uid) $ concat $ Map.elems tm)--}
 
-generateRefbyMap :: TraceMap -> RefbyMap
-generateRefbyMap tm = Map.fromList $ listgrow 0 (generateIndex' tm) tm 0
+generateRefbyMap :: TraceMap -> LabelMap -> RefbyMap
+generateRefbyMap tm lm = Map.fromList $ listgrow 0 (generateIndex tm lm) tm 0 lm
 
-generateIndex' :: TraceMap -> [(UID, [UID])]
-generateIndex' tm = zip (nub $ map (^. uid) $ concat $ Map.elems tm) [[]]
+generateIndex :: TraceMap -> LabelMap -> [(UID, [Label])]
+generateIndex tm lm = zip (nub $ map (^. uid) $ concat $ Map.elems tm) [[]]
 
 
 -- initial counter number (-> size of list) -> complete tracemap -> new list
-listgrow :: Int  -> [(UID, [UID])] -> TraceMap -> Int-> [(UID, [UID])]
-listgrow size1 old tm size2 = if size2 + 1 /= length (snd $ Map.elemAt size1 tm)
-  then listgrow size1 (lookuppair old (fst $ Map.elemAt size1 tm) (((snd $ Map.elemAt size1 tm) !! size2) ^. uid)) tm (size2+1)
+listgrow :: Int  -> [(UID, [Label])] -> TraceMap -> Int-> LabelMap -> [(UID, [Label])]
+listgrow size1 old tm size2 lm = if size2 + 1 /= length (snd $ Map.elemAt size1 tm)
+  then listgrow size1 (lookuppair old (fst $ Map.elemAt size1 tm) (((snd $ Map.elemAt size1 tm) !! size2) ^. uid) lm) tm (size2+1) lm
   else if size1 + 1 /= Map.size(tm)
-    then listgrow (size1+1) old tm 0
+    then listgrow (size1+1) old tm 0 lm
     else old
 
   -- old pair -> uid has to be added -> index uid  -> new pair
-lookuppair :: [(UID, [UID])] -> UID -> UID -> [(UID, [UID])]
-lookuppair ((a, b):tl1) c d = if a == d 
-  then (a, b ++ [c]):tl1
-  else (a, b):(lookuppair tl1 c d)
-lookuppair [] c d = []
+lookuppair :: [(UID, [Label])] -> UID -> UID -> LabelMap -> [(UID, [Label])]
+lookuppair ((a, b):tl1) c d lm = if a == d 
+  then (a, b ++ [labelLookup c lm]):tl1
+  else (a, b):(lookuppair tl1 c d lm)
+lookuppair [] c d lm = []
 
 --elemAt :: Int -> Map k a -> (k, a).     to get k and a = [list]
 --size :: Map k a -> Int
@@ -168,7 +175,7 @@ lookuppair [] c d = []
 {--generateRefby :: Int -> TraceMap -> RefbyMap
 generateRefby tm = --}
 
-refbyLookup :: UID -> RefbyMap -> [UID]
+refbyLookup :: UID -> RefbyMap -> [Label]
 refbyLookup c m = getT $ Map.lookup c m
   where getT = maybe (error $ "References related to : " ++ c ++ " not found in RefbyMap") id
 

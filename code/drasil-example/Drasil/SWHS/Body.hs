@@ -101,9 +101,12 @@ swhs_si = SI {
 swhs_label :: TraceMap
 swhs_label = generateTraceMap mkSRS swhsLabelMap
 
+swhs_refby :: RefbyMap
+swhs_refby = generateRefbyMap swhs_label swhsLabelMap
+
 swhsSymMap :: ChunkDB
 swhsSymMap = cdb swhsSymbolsAll (map nw swhsSymbols ++ map nw acronymsFull)
-  (map cw swhsSymbols ++ srsDomains) this_si swhs_label
+  (map cw swhsSymbols ++ srsDomains) this_si swhs_label swhs_refby
 
 swhsRefDB :: ReferenceDB
 swhsRefDB = rdb [] [] newAssumptions [] [] swhsCitations (funcReqs ++

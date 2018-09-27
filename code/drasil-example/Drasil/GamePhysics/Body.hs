@@ -109,6 +109,9 @@ mkSRS = RefSec (RefProg intro [TUnits, tsymb tableOfSymbols, TAandA]) :
 game_label :: TraceMap
 game_label = generateTraceMap mkSRS gameLabelMap
 
+game_refby :: RefbyMap
+game_refby = generateRefbyMap game_label gameLabelMap
+
 stdFields :: Fields
 stdFields = [DefiningEquation, Description Verbose IncludeUnits, Notes, Source, RefBy]
 
@@ -157,7 +160,7 @@ chipUnits = map unitWrapper [metre, kilogram, second] ++ map unitWrapper [newton
 
 everything :: ChunkDB
 everything = cdb cpSymbolsAll (map nw cpSymbolsAll ++ map nw cpAcronyms) gamephySymbols -- FIXME: Fill in Concepts
-  chipUnits game_label
+  chipUnits game_label game_refby
 
 printSetting :: PrintingInformation
 printSetting = PI everything defaultConfiguration

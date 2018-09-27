@@ -172,6 +172,9 @@ nopcm_si = SI {
 nopcm_label :: TraceMap
 nopcm_label = generateTraceMap mkSRS swhsLabelMap
 
+nopcm_refby :: RefbyMap
+nopcm_refby = generateRefbyMap nopcm_label swhsLabelMap
+
 nopcmRefDB :: ReferenceDB
 nopcmRefDB = rdb [] [] assumps_Nopcm_list_new [] [] referencesRefList (reqs ++
   likelyChgs ++ unlikelyChgs) -- FIXME: Convert the rest to new chunk types
@@ -185,7 +188,7 @@ nopcm_srs = mkDoc mkSRS (for) nopcm_si
 
 nopcm_SymbMap :: ChunkDB
 nopcm_SymbMap = cdb nopcm_SymbolsAll (map nw nopcm_Symbols ++ map nw acronyms) (map cw nopcm_Symbols ++ srsDomains)
-  this_si nopcm_label
+  this_si nopcm_label nopcm_refby
 
 printSetting :: PrintingInformation
 printSetting = PI nopcm_SymbMap defaultConfiguration

@@ -135,6 +135,9 @@ mkSRS = RefSec (RefProg intro
 ssp_label :: TraceMap
 ssp_label = generateTraceMap mkSRS sspLabelMap
 
+ssp_refby :: RefbyMap
+ssp_refby = generateRefbyMap ssp_label sspLabelMap
+
 stdFields :: Fields
 stdFields = [DefiningEquation, Description Verbose IncludeUnits, Notes, Source, RefBy]
   
@@ -145,7 +148,7 @@ ssp_code = codeSpec ssp_si [sspInputMod]
 -- SYMBOL MAP HELPERS --
 sspSymMap :: ChunkDB
 sspSymMap = cdb sspSymbols (map nw sspSymbols ++ map nw acronyms)
-  (map cw sspSymbols ++ srsDomains) this_si ssp_label
+  (map cw sspSymbols ++ srsDomains) this_si ssp_label ssp_refby
 
 sspRefDB :: ReferenceDB
 sspRefDB = rdb [] [] newAssumptions [] [] sspCitations (sspRequirements ++
