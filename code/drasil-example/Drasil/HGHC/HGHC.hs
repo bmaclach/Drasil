@@ -1,5 +1,6 @@
 module Drasil.HGHC.HGHC (srsBody, thisCode, allSymbols, printSetting) where
 
+import Data.List (head)
 import Language.Drasil hiding (Manual) -- Citation name conflict. FIXME: Move to different namespace
 import Language.Drasil.Code (CodeSpec, codeSpec)
 import Drasil.DocLang (DocSection(RefSec, SSDSec), Literature(Lit, Manual), 
@@ -44,8 +45,8 @@ check_si :: [UnitDefn]
 check_si = collectUnits allSymbols symbols 
 
 allSymbols :: ChunkDB
-allSymbols = cdb symbols (map nw symbols) ([] :: [ConceptChunk]) -- FIXME: Fill in concepts
-  si_units
+allSymbols = cdb symbols (map nw symbols) ([] :: [ConceptChunk])-- FIXME: Fill in concepts
+  si_units (head ([] :: [TraceMap]))
 
 printSetting :: PrintingInformation
 printSetting = PI allSymbols defaultConfiguration

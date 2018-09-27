@@ -4,6 +4,7 @@ import Language.Drasil
 import Language.Drasil.Code (relToQD) -- FIXME, this should not be needed
 import Control.Lens ((^.))
 
+import Data.List (head)
 import Data.Drasil.SentenceStructures (foldlSent, isThe, sAnd)
 
 import Drasil.GlassBR.Concepts (lResistance)
@@ -29,7 +30,7 @@ lrIsSafe = tm' (cw lrIsSafe_RC)
    (tc' "isSafeLR" [qw is_safeLR, qw lRe, qw demand] ([] :: [ConceptChunk])
    [relToQD locSymbMap lrIsSafe_RC] [TCon Invariant $ (sy is_safeLR) $= (sy lRe) $> (sy demand)] [] [makeRef astm2009]) 
    l1 [lrIsSafeDesc]
-  where locSymbMap = cdb ([] :: [QuantityDict]) ([] :: [IdeaDict]) glassBRsymb ([] :: [UnitDefn])
+  where locSymbMap = cdb ([] :: [QuantityDict]) ([] :: [IdeaDict]) glassBRsymb ([] :: [UnitDefn]) (head ([] :: [TraceMap]))
 
 lrIsSafe_RC :: RelationConcept
 lrIsSafe_RC = makeRC "safetyReqLR" (nounPhraseSP "Safety Req-LR")

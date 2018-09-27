@@ -166,8 +166,7 @@ nopcm_si = SI {
   _constraints = (nopcm_Constraints),        --constrained
   _constants = [],
   _sysinfodb = nopcm_SymbMap,
-  _refdb = nopcmRefDB,
-  _labeldb  = nopcm_label
+  _refdb = nopcmRefDB
 }
 
 nopcm_label :: TraceMap
@@ -186,7 +185,7 @@ nopcm_srs = mkDoc mkSRS (for) nopcm_si
 
 nopcm_SymbMap :: ChunkDB
 nopcm_SymbMap = cdb nopcm_SymbolsAll (map nw nopcm_Symbols ++ map nw acronyms) (map cw nopcm_Symbols ++ srsDomains)
-  this_si
+  this_si nopcm_label
 
 printSetting :: PrintingInformation
 printSetting = PI nopcm_SymbMap defaultConfiguration

@@ -439,7 +439,7 @@ mkSolChSpec si (SCSProg l) =
     mkSubSCS _ (DDs _ [] _) = error "There are no Data Definitions"
     mkSubSCS _ (IMs _ [] _)  = error "There are no Instance Models"
     mkSubSCS si' (TMs fields ts) =
-      SSD.thModF (siSys si') (map LlC (map (tmodel fields (_sysinfodb si') (getLabelDB si')) ts))
+      SSD.thModF (siSys si') (map LlC (map (tmodel fields (_sysinfodb si')) ts))
     mkSubSCS si' (DDs fields dds ShowDerivation) = --FIXME: need to keep track of DD intro.
       SSD.dataDefnF EmptyS (concatMap (\x -> (LlC $ ddefn fields (_sysinfodb si') x) : derivation x) dds)
     mkSubSCS si' (DDs fields dds _) =

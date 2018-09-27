@@ -95,8 +95,7 @@ swhs_si = SI {
   _constraints = (swhsConstrained),
   _constants = [],
   _sysinfodb = swhsSymMap,
-  _refdb = swhsRefDB,
-  _labeldb  = swhs_label
+  _refdb = swhsRefDB
 }
 
 swhs_label :: TraceMap
@@ -104,7 +103,7 @@ swhs_label = generateTraceMap mkSRS swhsLabelMap
 
 swhsSymMap :: ChunkDB
 swhsSymMap = cdb swhsSymbolsAll (map nw swhsSymbols ++ map nw acronymsFull)
-  (map cw swhsSymbols ++ srsDomains) this_si
+  (map cw swhsSymbols ++ srsDomains) this_si swhs_label
 
 swhsRefDB :: ReferenceDB
 swhsRefDB = rdb [] [] newAssumptions [] [] swhsCitations (funcReqs ++

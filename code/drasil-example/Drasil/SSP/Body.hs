@@ -90,8 +90,7 @@ ssp_si = SI {
   _constraints = sspConstrained,
   _constants = [],
   _sysinfodb = sspSymMap,
-  _refdb = sspRefDB,
-  _labeldb  = ssp_label
+  _refdb = sspRefDB
 }
 
 resourcePath :: String
@@ -146,7 +145,7 @@ ssp_code = codeSpec ssp_si [sspInputMod]
 -- SYMBOL MAP HELPERS --
 sspSymMap :: ChunkDB
 sspSymMap = cdb sspSymbols (map nw sspSymbols ++ map nw acronyms)
-  (map cw sspSymbols ++ srsDomains) this_si
+  (map cw sspSymbols ++ srsDomains) this_si ssp_label
 
 sspRefDB :: ReferenceDB
 sspRefDB = rdb [] [] newAssumptions [] [] sspCitations (sspRequirements ++

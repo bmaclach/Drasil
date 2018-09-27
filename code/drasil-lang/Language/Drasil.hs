@@ -1,7 +1,7 @@
 {- re-export many things to simplify external use -}
 module Language.Drasil (
   -- SystemInformation
-    SystemInformation(..), Block(..), citeDB, getRefDB, getLabelDB
+    SystemInformation(..), Block(..), citeDB, getRefDB
   -- Expr
   , Expr(..), BinOp(..), UFunc(..), ArithOper(..), BoolOper(..), DerivType(..)
   , Relation, RealInterval(..), Inclusive(..), RTopology(..), DomainDesc(AllDD, BoundedDD)
@@ -177,7 +177,7 @@ module Language.Drasil (
   , HasTermTable, termLookup, termTable
   , HasDefinitionTable, conceptMap, defTable, defLookup
   , HasUnitTable, unitMap, unitTable, collectUnits
-  , TraceMap, traceLookup
+  , TraceMap, traceLookup, HasTraceTable, traceTable
   -- AssumpChunk
   , AssumpChunk, assuming, assump
   -- Attribute

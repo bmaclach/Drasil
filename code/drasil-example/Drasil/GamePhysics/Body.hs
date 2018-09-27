@@ -130,8 +130,7 @@ chipmunkSysInfo = SI {
   _constraints = cpInputConstraints,
   _constants = [],
   _sysinfodb = everything,
-  _refdb = cpRefDB,
-  _labeldb = game_label
+  _refdb = cpRefDB
 }
 
 symbT :: [DefinedQuantityDict]
@@ -158,7 +157,7 @@ chipUnits = map unitWrapper [metre, kilogram, second] ++ map unitWrapper [newton
 
 everything :: ChunkDB
 everything = cdb cpSymbolsAll (map nw cpSymbolsAll ++ map nw cpAcronyms) gamephySymbols -- FIXME: Fill in Concepts
-  chipUnits
+  chipUnits game_label
 
 printSetting :: PrintingInformation
 printSetting = PI everything defaultConfiguration

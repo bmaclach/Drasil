@@ -5,7 +5,7 @@ module Language.Drasil.ChunkDB
   , HasTermTable(..), termLookup
   , HasDefinitionTable(..), conceptMap, defLookup
   , HasUnitTable(..), unitMap, collectUnits, TraceMap,
-  traceLookup
+  traceLookup, HasTraceTable(..)
   ) where
 
 import Control.Lens ((^.), Lens', makeLenses)
@@ -45,6 +45,8 @@ type UnitMap = Map.Map UID UnitDefn
 -- quantities, concepts, etc.
 type TermMap = Map.Map UID IdeaDict
 
+type TraceMap = Map.Map UID [Label]
+
 -- | Smart constructor for a 'SymbolMap'
 symbolMap :: (Quantity c) => [c] -> SymbolMap
 symbolMap = Map.fromList . map (\x -> (x ^. uid, qw x))
@@ -82,6 +84,10 @@ class HasDefinitionTable s where
 class HasUnitTable s where
   unitTable :: Lens' s UnitMap
 
+-- TRACE TABLE --
+class HasTraceTable s where
+  traceTable :: Lens' s TraceMap
+
 -- | Gets a unit if it exists, or Nothing.        
 getUnitLup :: HasSymbolTable s => (HasUID c, MayHaveUnit c) => c -> s -> Maybe UnitDefn
 getUnitLup c m = getUnit $ symbLookup (c ^. uid) (m ^. symbolTable)
@@ -101,6 +107,7 @@ data ChunkDB = CDB { _csymbs :: SymbolMap
                    , _cterms :: TermMap 
                    , _cdefs  :: ConceptMap
                    , _cunitDB :: UnitMap
+                   , _ctrace :: TraceMap
                    } --TODO: Expand and add more databases
 makeLenses ''ChunkDB
 
@@ -108,20 +115,18 @@ makeLenses ''ChunkDB
 -- (for SymbolTable), NamedIdeas (for TermTable), Concepts (for DefinitionTable),
 -- and Units (for UnitTable)
 cdb :: (Quantity q, Idea t, Concept c, IsUnit u,
-        ConceptDomain u) => [q] -> [t] -> [c] -> [u] -> ChunkDB
-cdb s t c u = CDB (symbolMap s) (termMap t) (conceptMap c) (unitMap u)
+        ConceptDomain u) => [q] -> [t] -> [c] -> [u] -> TraceMap -> ChunkDB
+cdb s t c u tc = CDB (symbolMap s) (termMap t) (conceptMap c) (unitMap u) tc
 
 ----------------------
 instance HasSymbolTable     ChunkDB where symbolTable = csymbs
 instance HasTermTable       ChunkDB where termTable   = cterms
 instance HasDefinitionTable ChunkDB where defTable    = cdefs
 instance HasUnitTable       ChunkDB where unitTable   = cunitDB
+instance HasTraceTable      ChunkDB where traceTable  = ctrace
 
 collectUnits :: HasSymbolTable s => (HasUID c, Quantity c) => s -> [c] -> [UnitDefn]
 collectUnits m symb = map unitWrapper $ concatMap maybeToList $ map (\x -> getUnitLup x m) symb
-
-
-type TraceMap = Map.Map UID [Label]
 
 traceLookup :: UID -> TraceMap -> [Label]
 traceLookup c m = getT $ Map.lookup c m
@@ -133,8 +138,8 @@ type RefbyMap = Map.Map UID [UID]
 generateIndex tm = foldl Map.union Map.empty $ map (\x -> Map.singleton x [])
  (nub $ map (^. uid) $ concat $ Map.elems tm)--}
 
-generateTraceMap :: TraceMap -> RefbyMap
-generateTraceMap tm = Map.fromList $ listgrow 0 (generateIndex' tm) tm 0
+generateRefbyMap :: TraceMap -> RefbyMap
+generateRefbyMap tm = Map.fromList $ listgrow 0 (generateIndex' tm) tm 0
 
 generateIndex' :: TraceMap -> [(UID, [UID])]
 generateIndex' tm = zip (nub $ map (^. uid) $ concat $ Map.elems tm) [[]]

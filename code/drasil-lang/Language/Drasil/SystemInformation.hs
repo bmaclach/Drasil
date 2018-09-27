@@ -43,7 +43,6 @@ data SystemInformation where
   , _constants :: [QDefinition]
   , _sysinfodb :: ChunkDB
   , _refdb :: ReferenceDB
-  , _labeldb :: TraceMap
   } -> SystemInformation
   
 -- | for listing QDefs in SystemInformation
@@ -58,6 +57,6 @@ citeDB (SI {_refdb = db}) = citationsFromBibMap (db ^. citationRefTable)
 getRefDB :: SystemInformation -> ReferenceDB
 getRefDB (SI {_refdb = db}) = db
 
--- | Helper for extracting TraceMap
+{-- | Helper for extracting TraceMap
 getLabelDB :: SystemInformation -> TraceMap
-getLabelDB (SI {_labeldb = db}) = db
+getLabelDB (SI {_labeldb = db}) = db --}
