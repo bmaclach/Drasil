@@ -10,6 +10,8 @@ module Language.Drasil.ChunkDB
 
 import Control.Lens ((^.), Lens', makeLenses)
 import Data.Maybe (maybeToList)
+import Data.List (nub, concat, union, elem, length, zip)
+import Data.Tuple (fst, snd)
 import Language.Drasil.UID (UID)
 import Language.Drasil.Classes (Concept, ConceptDomain, HasUID(uid), Idea, 
     IsUnit, HasDerivation(derivations)
@@ -124,3 +126,44 @@ type TraceMap = Map.Map UID [Label]
 traceLookup :: UID -> TraceMap -> [Label]
 traceLookup c m = getT $ Map.lookup c m
   where getT = maybe (error $ "References related to : " ++ c ++ " not found in TraceMap") id
+
+type RefbyMap = Map.Map UID [UID]
+
+{--generateIndex :: TraceMap -> RefbyMap
+generateIndex tm = foldl Map.union Map.empty $ map (\x -> Map.singleton x [])
+ (nub $ map (^. uid) $ concat $ Map.elems tm)--}
+
+generateTraceMap :: TraceMap -> RefbyMap
+generateTraceMap tm = Map.fromList $ listgrow 0 (generateIndex' tm) tm 0
+
+generateIndex' :: TraceMap -> [(UID, [UID])]
+generateIndex' tm = zip (nub $ map (^. uid) $ concat $ Map.elems tm) [[]]
+
+
+-- initial counter number (-> size of list) -> complete tracemap -> new list
+listgrow :: Int  -> [(UID, [UID])] -> TraceMap -> Int-> [(UID, [UID])]
+listgrow size1 old tm size2 = if size2 + 1 /= length (snd $ Map.elemAt size1 tm)
+  then listgrow size1 (lookuppair old (fst $ Map.elemAt size1 tm) (((snd $ Map.elemAt size1 tm) !! size2) ^. uid)) tm (size2+1)
+  else if size1 + 1 /= Map.size(tm)
+    then listgrow (size1+1) old tm 0
+    else old
+
+  -- old pair -> uid has to be added -> index uid  -> new pair
+lookuppair :: [(UID, [UID])] -> UID -> UID -> [(UID, [UID])]
+lookuppair ((a, b):tl1) c d = if a == d 
+  then (a, b ++ [c]):tl1
+  else (a, b):(lookuppair tl1 c d)
+lookuppair [] c d = []
+
+--elemAt :: Int -> Map k a -> (k, a).     to get k and a = [list]
+--size :: Map k a -> Int
+-- get a.list uid -> [uid]
+-- lookup [uid] in indexed-refbymap 
+
+{--generateRefby :: Int -> TraceMap -> RefbyMap
+generateRefby tm = --}
+
+refbyLookup :: UID -> RefbyMap -> [UID]
+refbyLookup c m = getT $ Map.lookup c m
+  where getT = maybe (error $ "References related to : " ++ c ++ " not found in RefbyMap") id
+
