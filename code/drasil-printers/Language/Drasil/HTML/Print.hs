@@ -38,7 +38,7 @@ import Language.Drasil.Printing.LayoutObj (Tags, Document(Document),
   HDiv, ALUR))
 import Language.Drasil.Printing.Helpers (comm, dot, paren, sufxer, sqbrac)
 import Language.Drasil.Printing.PrintingInformation (HasPrintingOptions(..))
-
+import qualified Language.Drasil.TeX.Print as TP (p_expr)
 data OpenClose = Open | Close
 
 -- | Generate an HTML document from a Drasil 'Document'
@@ -57,6 +57,14 @@ build fn (Document t a c) =
   body (article_title (p_spec t) $$ author (p_spec a)
   $$ print c
   ))
+  
+data Option = MathJax | Html
+--  | MathJax
+--	| Html
+	
+getExprFn :: Option -> (Expr -> String)
+getExprFn MathJax = \x -> "\\(" ++ TP.p_expr x ++ "\\)"
+getExprFn Html =  p_expr
 
 -- | Helper for rendering LayoutObjects into HTML
 printLO :: LayoutObj -> Doc
@@ -92,7 +100,8 @@ title_spec s         = p_spec s
 
 -- | Renders the Sentences in the HTML body (called by 'printLO')
 p_spec :: Spec -> Doc
-p_spec (E e)             = em $ text $ p_expr e
+p_spec (E e)             = em $ text $ getExprFn (Html) e
+--p_spec (E e)             = em $ text $ p_expr e
 p_spec (a :+: b)         = p_spec a <> p_spec b
 p_spec (S s)             = text s
 p_spec (Sy s)            = text $ uSymb s
