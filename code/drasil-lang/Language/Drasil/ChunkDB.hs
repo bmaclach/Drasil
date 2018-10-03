@@ -46,8 +46,10 @@ type UnitMap = Map.Map UID UnitDefn
 -- quantities, concepts, etc.
 type TermMap = Map.Map UID IdeaDict
 
+-- The uid is label's uid
 type TraceMap = Map.Map UID [Label]
 
+-- The uid is label's uid
 type RefbyMap = Map.Map UID [Label]
 
 -- | Smart constructor for a 'SymbolMap'
@@ -141,39 +143,26 @@ traceLookup :: UID -> TraceMap -> [Label]
 traceLookup c m = getT $ Map.lookup c m
   where getT = maybe (error $ "References related to : " ++ c ++ " not found in TraceMap") id
 
-{--generateIndex :: TraceMap -> RefbyMap
-generateIndex tm = foldl Map.union Map.empty $ map (\x -> Map.singleton x [])
- (nub $ map (^. uid) $ concat $ Map.elems tm)--}
+unionwithfunc :: [RefbyMap] -> RefbyMap
+unionwithfunc = foldl (Map.unionWith (++)) Map.empty
 
 generateRefbyMap :: TraceMap -> LabelMap -> RefbyMap
-generateRefbyMap tm lm = Map.fromList $ listgrow 0 (generateIndex tm lm) tm 0 lm
+generateRefbyMap tm lm = unionwithfunc (generateSubRef (helperData tm lm))--(concatMap s2 (Map.toList tm)))
 
-generateIndex :: TraceMap -> LabelMap -> [(UID, [Label])]
-generateIndex tm lm = zip (nub $ map (^. uid) $ concat $ Map.elems tm) [[]]
+generateSubRef :: [[(UID, [Label])]] -> [RefbyMap]
+generateSubRef (hd:tl) = (Map.fromList hd) : (generateSubRef tl)
+generateSubRef (hd:[]) = [Map.fromList hd]
 
+helperData :: TraceMap -> LabelMap -> [[(UID, [Label])]]
+helperData tm lm = concatMap (restructureTraceMap lm) (Map.toList tm)
 
--- initial counter number (-> size of list) -> complete tracemap -> new list
-listgrow :: Int  -> [(UID, [Label])] -> TraceMap -> Int-> LabelMap -> [(UID, [Label])]
-listgrow size1 old tm size2 lm = if size2 + 1 /= length (snd $ Map.elemAt size1 tm)
-  then listgrow size1 (lookuppair old (fst $ Map.elemAt size1 tm) (((snd $ Map.elemAt size1 tm) !! size2) ^. uid) lm) tm (size2+1) lm
-  else if size1 + 1 /= Map.size(tm)
-    then listgrow (size1+1) old tm 0 lm
-    else old
+restructureTraceMap :: LabelMap -> (UID, [Label]) -> [[(UID, [Label])]]
+restructureTraceMap lm (uid, (hd:tl)) = [lookupRefMap uid hd lm] : (restructureTraceMap lm (uid, tl))
+restructureTraceMap lm (uid, (hd:[])) = [[lookupRefMap uid hd lm]]
+restructureTraceMap lm (_, _)         = []
 
-  -- old pair -> uid has to be added -> index uid  -> new pair
-lookuppair :: [(UID, [Label])] -> UID -> UID -> LabelMap -> [(UID, [Label])]
-lookuppair ((a, b):tl1) c d lm = if a == d 
-  then (a, b ++ [labelLookup c lm]):tl1
-  else (a, b):(lookuppair tl1 c d lm)
-lookuppair [] c d lm = []
-
---elemAt :: Int -> Map k a -> (k, a).     to get k and a = [list]
---size :: Map k a -> Int
--- get a.list uid -> [uid]
--- lookup [uid] in indexed-refbymap 
-
-{--generateRefby :: Int -> TraceMap -> RefbyMap
-generateRefby tm = --}
+lookupRefMap :: UID -> Label -> LabelMap -> (UID, [Label])
+lookupRefMap a b lm = (b ^. uid, [labelLookup a lm])
 
 refbyLookup :: UID -> RefbyMap -> [Label]
 refbyLookup c m = getT $ Map.lookup c m

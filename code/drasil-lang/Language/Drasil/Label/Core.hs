@@ -13,6 +13,7 @@ import qualified Data.Map as Map
 -- import reference address from Language.Drasil.References?
 data LblType = RefAdd String | MetaLink String | URI String
 
+-- Uid is the label's UID
 type LabelMap = Map.Map UID Label
 
 -- Used for referencing; has to be pure ASCII
