@@ -6,8 +6,8 @@ import Control.Lens (makeLenses, Lens', (^.))
 
 import Language.Drasil.Classes (HasUID(uid))
 import Language.Drasil.UID (UID)
-import Language.Drasil.Chunk.ShortName (ShortName, HasShortName(shortname))
-import Language.Drasil.RefTypes (RefType)
+import Language.Drasil.Chunk.ShortName (ShortName(..), HasShortName(shortname))
+import Language.Drasil.RefTypes (RefType(..))
 import qualified Data.Map as Map
 
 -- import reference address from Language.Drasil.References?
@@ -51,6 +51,7 @@ class HasRefAddress b where
 labelLookup :: UID -> LabelMap -> Label
 labelLookup u l = getL $ Map.lookup u l
   where getL = maybe (error $ "Label: " ++ u ++ " not found in LabelMap") id
+  --maybe (Lbl "empty" (RefAdd "empty") (ShortNm "empty") Blank) id
 
 getAdd :: LblType -> String
 getAdd (RefAdd s)   = s

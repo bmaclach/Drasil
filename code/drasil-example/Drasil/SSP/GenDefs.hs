@@ -185,7 +185,7 @@ momEql_desc = foldlSent [S "For a", phrase slice, S "of", phrase mass,
 
 --
 netForcex :: RelationConcept
-netForcex = makeRC "netForce" (nounPhraseSP "net x-component force")
+netForcex = makeRC "netForcex" (nounPhraseSP "net x-component force")
   (fNet_desc genDef8Label) fNetx_rel genDef7Label
 
 fNetx_rel :: Relation
@@ -196,7 +196,7 @@ fNetx_rel = inxi fx $= (negate $ inxi watrForceDif) -
   + (inxi surfLoad) * sin (inxi impLoadAngle)
 
 netForcey :: RelationConcept
-netForcey = makeRC "netForce" (nounPhraseSP "net y-component force")
+netForcey = makeRC "netForcey" (nounPhraseSP "net y-component force")
   (fNet_desc genDef7Label) fNety_rel genDef8Label
 
 fNety_rel :: Relation

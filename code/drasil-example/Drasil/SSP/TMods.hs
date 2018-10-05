@@ -21,14 +21,9 @@ import Drasil.SSP.Defs (factor, factorOfSafety, slope, soil)
 import Drasil.SSP.References (fredlund1977, stolle2008)
 import Drasil.SSP.Unitals (cohesion, fricAngle, fs, fx, fy, genDisplace,
   genForce, momntOfBdy, normStress, porePressure, shrStress, surfHydroForce)
-
+import Drasil.SSP.Labels (l1, l2, l3, l4, l5)
 -- Pre-defined some labels. They will be re-used for tings which are 'the same'
-l1, l2, l3, l4, l5 :: Label
-l1 = mkLabelSame "factOfSafety" (Def TM)
-l2 = mkLabelSame "equilibrium"  (Def TM)
-l3 = mkLabelSame "mcShrStrgth"  (Def TM)
-l4 = mkLabelSame "effStress"    (Def TM)
-l5 = mkLabelSame "hookesLaw"    (Def TM)
+
 
 --------------------------
 --  Theoretical Models  --
@@ -42,7 +37,7 @@ factOfSafety = tm' (cw factOfSafety_rc)
 
 ------------------------------------
 factOfSafety_rc :: RelationConcept
-factOfSafety_rc = makeRC "factOfSafety_rc" factorOfSafety factOfSafety_desc factOfSafety_rel l1
+factOfSafety_rc = makeRC "factOfSafety" factorOfSafety factOfSafety_desc factOfSafety_rel l1
 
 factOfSafety_rel :: Relation
 factOfSafety_rel = (sy fs) $= (sy shearRes) / (sy mobShear)
@@ -64,7 +59,7 @@ equilibrium = tm' (cw equilibrium_rc)
 
 ------------------------------------  
 equilibrium_rc :: RelationConcept
-equilibrium_rc = makeRC "equilibrium_rc" (nounPhraseSP "equilibrium") eq_desc eq_rel l2
+equilibrium_rc = makeRC "equilibrium" (nounPhraseSP "equilibrium") eq_desc eq_rel l2
 
 -- FIXME: Atomic "i" is a hack.  But we need to sum over something!
 eq_rel :: Relation
@@ -89,7 +84,7 @@ mcShrStrgth = tm' (cw mcShrStrgth_rc)
 
 ------------------------------------
 mcShrStrgth_rc :: RelationConcept
-mcShrStrgth_rc = makeRC "mcShrStrgth_rc" (nounPhraseSP "Mohr-Coulumb shear strength")
+mcShrStrgth_rc = makeRC "mcShrStrgth" (nounPhraseSP "Mohr-Coulumb shear strength")
   mcSS_desc mcSS_rel l3
 
 mcSS_rel :: Relation
@@ -124,7 +119,7 @@ effStress = tm' (cw effStress_rc)
 
 ------------------------------------
 effStress_rc :: RelationConcept
-effStress_rc = makeRC "effStress_rc"
+effStress_rc = makeRC "effStress"
   (nounPhraseSP "effective stress") effS_desc effS_rel l4
 
 effS_rel :: Relation
@@ -154,7 +149,7 @@ hookesLaw = tm' (cw hookesLaw_rc)
 
 ------------------------------------
 hookesLaw_rc :: RelationConcept
-hookesLaw_rc = makeRC "hookesLaw_rc"
+hookesLaw_rc = makeRC "hookesLaw"
   (nounPhraseSP "Hooke's law") hksLw_desc hksLw_rel l5
 
 hksLw_rel :: Relation

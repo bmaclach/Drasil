@@ -2,6 +2,7 @@ module Drasil.SSP.Labels where
 
 import Language.Drasil
 import qualified Data.Map as Map
+import Drasil.DocLang.SRS as SRS (physSystLabel)
 
 sspLabelSet :: [Label]
 sspLabelSet = [slipSurfaceL, geoSlopeMatL, soilLayerHomoL, soilLayerIsoL,
@@ -13,7 +14,8 @@ sspLabelSet = [slipSurfaceL, geoSlopeMatL, soilLayerHomoL, soilLayerIsoL,
     shearStiffnessL, soilStiffnessL, genDef1Label, genDef2Label,
     genDef3Label, genDef4Label, genDef5Label, genDef6Label, 
     genDef7Label, genDef8Label, genDef9Label, genDef10Label,
-    fctSftyL, nrmShrForL, inslideFxL, forDisEqlbL, rfemFoSL, crtSlpIdL]
+    fctSftyL, nrmShrForL, inslideFxL, forDisEqlbL, rfemFoSL, crtSlpIdL,
+    l1, l2, l3, l4, l5, physSystLabel]
 
 sspLabelMap :: LabelMap
 sspLabelMap = Map.fromList $ map getLabelPair sspLabelSet
@@ -38,25 +40,25 @@ sliceWghtL, baseWtrFL, surfWtrFL, intersliceWtrFL, angleAL, angleBL, lengthBL,
     lengthLbL, lengthLsL, seismicLoadFL, surfLoadsL, intrsliceFL, resShearWOL,
     mobShearWOL, displcmntRxnFL, displcmntBaselL, netFDsplcmntEqbmL,
     shearStiffnessL, soilStiffnessL :: Label
-sliceWghtL        = mkLabelSame "sliceWght" (Def DD)
-baseWtrFL         = mkLabelSame "baseWtrF" (Def DD)
-surfWtrFL         = mkLabelSame "surfWtrF" (Def DD)
-intersliceWtrFL   = mkLabelSame "intersliceWtrF" (Def DD)
-angleAL           = mkLabelSame "angleA" (Def DD)
-angleBL           = mkLabelSame "angleB" (Def DD)
-lengthBL          = mkLabelSame "lengthB" (Def DD)
-lengthLbL         = mkLabelSame "lengthLb" (Def DD)
-lengthLsL         = mkLabelSame "lengthLs" (Def DD)
-seismicLoadFL     = mkLabelSame "seismicLoadF" (Def DD)
-surfLoadsL        = mkLabelSame "surfLoads" (Def DD)
-intrsliceFL       = mkLabelSame "intrsliceF" (Def DD)
-resShearWOL       = mkLabelSame "resShearWO" (Def DD)
-mobShearWOL       = mkLabelSame "mobShearWO" (Def DD)
-displcmntRxnFL    = mkLabelSame "displcmntRxnF" (Def DD)
-displcmntBaselL   = mkLabelSame "displcmntBasel" (Def DD)
+sliceWghtL        = mkLabelSame "W_i" (Def DD)
+baseWtrFL         = mkLabelSame "U_b,i" (Def DD)
+surfWtrFL         = mkLabelSame "U_t,i" (Def DD)
+intersliceWtrFL   = mkLabelSame "H_i" (Def DD)
+angleAL           = mkLabelSame "alpha_i" (Def DD)
+angleBL           = mkLabelSame "beta_i" (Def DD)
+lengthBL          = mkLabelSame "b_i" (Def DD)
+lengthLbL         = mkLabelSame "l_b,i" (Def DD)
+lengthLsL         = mkLabelSame "l_s,i" (Def DD)
+seismicLoadFL     = mkLabelSame "K_c" (Def DD)
+surfLoadsL        = mkLabelSame "Q_i" (Def DD)
+intrsliceFL       = mkLabelSame "X_i" (Def DD)
+resShearWOL       = mkLabelSame "R_i" (Def DD)
+mobShearWOL       = mkLabelSame "T_i" (Def DD)
+displcmntRxnFL    = mkLabelSame "pressure" (Def DD)
+displcmntBaselL   = mkLabelSame "pressure" (Def DD)
 netFDsplcmntEqbmL = mkLabelSame "netFDsplcmntEqbm" (Def DD)
-shearStiffnessL   = mkLabelSame "shearStiffness" (Def DD)
-soilStiffnessL    = mkLabelSame "soilStiffness" (Def DD)
+shearStiffnessL   = mkLabelSame "K_bt,i" (Def DD)
+soilStiffnessL    = mkLabelSame "K_bn,i" (Def DD)
 
 
 -- General Definations
@@ -78,8 +80,16 @@ genDef10Label = mkLabelSame "displVect"   (Def General)
 fctSftyL, nrmShrForL, inslideFxL, forDisEqlbL, rfemFoSL, crtSlpIdL :: Label
 fctSftyL = mkLabelSame "fctSfty"    (Def Instance)
 nrmShrForL = mkLabelSame "nrmShrFor"  (Def Instance)
-inslideFxL = mkLabelSame "inslideFx"  (Def Instance)
+inslideFxL = mkLabelSame "intsliceFs"  (Def Instance)
 forDisEqlbL = mkLabelSame "forDisEqlb" (Def Instance)
 rfemFoSL = mkLabelSame "rfemFoS"    (Def Instance)
 crtSlpIdL = mkLabelSame "crtSlpId"   (Def Instance)
+
+-- Theory Models
+l1, l2, l3, l4, l5 :: Label
+l1 = mkLabelSame "factOfSafety" (Def TM)
+l2 = mkLabelSame "equilibrium"  (Def TM)
+l3 = mkLabelSame "mcShrStrgth"  (Def TM)
+l4 = mkLabelSame "effStress"    (Def TM)
+l5 = mkLabelSame "hookesLaw"    (Def TM)
 

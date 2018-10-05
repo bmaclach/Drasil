@@ -24,7 +24,7 @@ traceMapsub2 :: (HasUID l, HasDerivation l) => LabelMap -> [l] -> TraceMap
 traceMapsub2 lm = Map.fromList . map (\x -> ((x ^. uid ++ "Label"), lnames' lm (extractSFromDeriv x)))
 
 traceMap :: (HasUID l, HasDerivation l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
-traceMap lm l = Map.union (traceMapsub1 lm l) (traceMapsub2 lm l)
+traceMap lm l = Map.unionWith (++) (traceMapsub1 lm l) (traceMapsub2 lm l)
 
 getTraceMapFromDocSec :: [DocSection] -> SSDSec
 getTraceMapFromDocSec ((SSDSec ssd):_)  = ssd
@@ -65,10 +65,10 @@ getTraceMapFromIM  (hd:tl)              = getTraceMapFromIM tl
 getTraceMapFromIM []                    = []
 
 extractSFromNotes :: HasAdditionalNotes l => l -> [Sentence]
-extractSFromNotes c = fromMaybe (error "No sentence collected") (c ^. getNotes)
+extractSFromNotes c = fromMaybe [] (c ^. getNotes)
 
 extractSFromDeriv :: HasDerivation l => l -> [Sentence]
-extractSFromDeriv c = (c ^. derivations)
+extractSFromDeriv c = c ^. derivations
 
 getSCSSub :: [DocSection] -> [SCSSub]
 getSCSSub a = getTraceMapFromSolCh $ getTraceMapFromSSDSub $ getTraceMapFromSSDSec

@@ -12,7 +12,9 @@ import Data.Drasil.Citations (campidelli)
 import Data.Drasil.SentenceStructures (sAnd, sOf)
 
 import Drasil.GlassBR.Concepts (annealed, fullyT, heatS)
-import Drasil.GlassBR.Labels (calOfDemandL, glassLiteL)
+import Drasil.GlassBR.Labels (calOfDemandL, glassLiteL,
+  riskL, hFromtL, loadDFL, strDisFacL, nonFLL, glaTyFacL, 
+  dimLLL, tolPreL, tolStrDisFacL, standOffDisL, aspRatL)
 import Drasil.GlassBR.References (astm2009, beasonEtAl1998)
 import Drasil.GlassBR.Unitals (actualThicknesses, aspect_ratio, 
   demand, dimlessLoad, gTF, glassTypeAbbrsStr, glassTypeFactors, glass_type, 
@@ -46,10 +48,10 @@ riskQD :: QDefinition
 riskQD = mkQuantDef risk_fun risk_eq
 
 risk :: DataDefinition
-risk = mkDD riskQD 
+risk = mkDDL riskQD 
   [makeRef astm2009, makeRef beasonEtAl1998 +:+ sParen (S "Eq. 4-5"), 
   makeRef campidelli +:+ sParen (S "Eq. 14")] 
-  [{-derivation-}] "risk_fun"
+  [{-derivation-}] riskL
   (Just $ aGrtrThanB : hRef : ldfRef : jRef : [])
 
 --DD2--
@@ -65,7 +67,7 @@ hFromtQD :: QDefinition
 hFromtQD = mkQuantDef min_thick hFromt_eq
 
 hFromt :: DataDefinition
-hFromt = mkDD hFromtQD [makeRef astm2009] [{-derivation-}] "min_thick"
+hFromt = mkDDL hFromtQD [makeRef astm2009] [{-derivation-}] hFromtL
   (Just $ [hMin])
 
 --DD3-- (#749)
@@ -77,7 +79,7 @@ loadDFQD :: QDefinition
 loadDFQD = mkQuantDef lDurFac loadDF_eq
 
 loadDF :: DataDefinition
-loadDF = mkDD loadDFQD [makeRef astm2009] [{-derivation-}] "loadDurFactor"
+loadDF = mkDDL loadDFQD [makeRef astm2009] [{-derivation-}] loadDFL
   Nothing
 
 --DD4--
@@ -91,7 +93,7 @@ strDisFacQD :: QDefinition
 strDisFacQD = mkQuantDef stressDistFac strDisFac_eq
 
 strDisFac :: DataDefinition
-strDisFac = mkDD strDisFacQD [makeRef astm2009] [{-derivation-}] "stressDistFac"
+strDisFac = mkDDL strDisFacQD [makeRef astm2009] [{-derivation-}] strDisFacL
   (Just $ jRef2 : qHtRef : arRef : [])
 
 --DD5--
@@ -104,7 +106,7 @@ nonFLQD :: QDefinition
 nonFLQD = mkQuantDef nonFactorL nonFL_eq
 
 nonFL :: DataDefinition
-nonFL = mkDD nonFLQD [makeRef astm2009] [{-derivation-}] "nFL"
+nonFL = mkDDL nonFLQD [makeRef astm2009] [{-derivation-}] nonFLL
   (Just $ aGrtrThanB : hRef : qHtTlTolRef : [])
 
 --DD6--
@@ -119,7 +121,7 @@ glaTyFacQD :: QDefinition
 glaTyFacQD = mkQuantDef gTF glaTyFac_eq
 
 glaTyFac :: DataDefinition
-glaTyFac = mkDD glaTyFacQD [makeRef astm2009] [{-derivation-}] "gTF"
+glaTyFac = mkDDL glaTyFacQD [makeRef astm2009] [{-derivation-}] glaTyFacL
   (Just $ anGlass : ftGlass : hsGlass : [])
 
 --DD7--
@@ -132,7 +134,7 @@ dimLLQD :: QDefinition
 dimLLQD = mkQuantDef dimlessLoad dimLL_eq
 
 dimLL :: DataDefinition
-dimLL = mkDD dimLLQD [makeRef astm2009, makeRef campidelli +:+ sParen (S "Eq. 7")] [{-derivation-}] "dimlessLoad"
+dimLL = mkDDL dimLLQD [makeRef astm2009, makeRef campidelli +:+ sParen (S "Eq. 7")] [{-derivation-}] dimLLL
   (Just $ qRef : aGrtrThanB : hRef : gtfRef : glassLiteRef : [])
 
 --DD8--
@@ -145,7 +147,7 @@ tolPreQD :: QDefinition
 tolPreQD = mkQuantDef tolLoad tolPre_eq
 
 tolPre :: DataDefinition
-tolPre = mkDD tolPreQD [makeRef astm2009] [{-derivation-}] "tolLoad"
+tolPre = mkDDL tolPreQD [makeRef astm2009] [{-derivation-}] tolPreL
   (Just $ qHtTlExtra : [])
 
 --DD9--
@@ -160,7 +162,7 @@ tolStrDisFacQD :: QDefinition
 tolStrDisFacQD = mkQuantDef sdf_tol tolStrDisFac_eq
 
 tolStrDisFac :: DataDefinition
-tolStrDisFac = mkDD tolStrDisFacQD [makeRef astm2009] [{-derivation-}] "sdf_tol"
+tolStrDisFac = mkDDL tolStrDisFacQD [makeRef astm2009] [{-derivation-}] tolStrDisFacL
   (Just $ jtolRelToPbtol : aGrtrThanB : hRef : ldfRef : pbTolUsr : [])
 
 --DD10--
@@ -172,7 +174,7 @@ standOffDisQD :: QDefinition
 standOffDisQD = mkQuantDef standOffDist standOffDis_eq
 
 standOffDis :: DataDefinition
-standOffDis = mkDD standOffDisQD [makeRef astm2009] [{-derivation-}] "standOffDist"
+standOffDis = mkDDL standOffDisQD [makeRef astm2009] [{-derivation-}] standOffDisL
   Nothing
 
 --DD11--
@@ -184,7 +186,7 @@ aspRatQD :: QDefinition
 aspRatQD = mkQuantDef aspect_ratio aspRat_eq
 
 aspRat :: DataDefinition
-aspRat = mkDD aspRatQD [makeRef astm2009] [{-derivation-}] "aspect_ratio"
+aspRat = mkDDL aspRatQD [makeRef astm2009] [{-derivation-}] aspRatL
   (Just $ aGrtrThanB : [])
 
 --Additional Notes--
@@ -239,10 +241,10 @@ qRef :: Sentence
 qRef = (ch demand +:+ S "is the 3 second equivalent pressure, as given in" +:+. mkRefFrmLbl calOfDemandL)
 
 gtfRef :: Sentence
-gtfRef = (ch gTF +:+ S "is the" +:+. (phrase gTF `sC` S "as given by" +:+ mkRefFrmLbl glaTyFac))
+gtfRef = (ch gTF +:+ S "is the" +:+. (phrase gTF `sC` S "as given by" +:+ mkRefFrmLbl glaTyFacL))
 
 qHtRef :: Sentence
-qHtRef = (ch dimlessLoad +:+ S "is the" +:+ phrase dimlessLoad +:+ S "defined in" +:+. mkRefFrmLbl dimLL)
+qHtRef = (ch dimlessLoad +:+ S "is the" +:+ phrase dimlessLoad +:+ S "defined in" +:+. mkRefFrmLbl dimLLL)
 
 jRef2 :: Sentence
 jRef2 = (ch stressDistFac +:+ S "is the" +:+ phrase stressDistFac `sC` 

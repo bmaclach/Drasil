@@ -36,7 +36,7 @@ eBalanceOnWtr = im'' eBalanceOnWtr_rc [qw w_mass, qw htCap_W, qw coil_HTC, qw pc
    "eBalanceOnWtr" [balWtrDesc]
 
 eBalanceOnWtr_rc :: RelationConcept
-eBalanceOnWtr_rc = makeRC "eBalanceOnWtr_rc" (nounPhraseSP $ "Energy balance on " ++
+eBalanceOnWtr_rc = makeRC "eBalanceOnWtr" (nounPhraseSP $ "Energy balance on " ++
   "water to find the temperature of the water") balWtrDesc balWtr_Rel 
   eBalanceOnWtrL
 
@@ -201,7 +201,7 @@ eBalanceOnPCM = im'' eBalanceOnPCM_rc [qw temp_melt_P, qw time_final, qw temp_in
    "eBalanceOnPCM" [balPCMDesc_note]
 
 eBalanceOnPCM_rc :: RelationConcept
-eBalanceOnPCM_rc = makeRC "eBalanceOnPCM_rc" (nounPhraseSP
+eBalanceOnPCM_rc = makeRC "eBalanceOnPCM" (nounPhraseSP
   "Energy Balance on PCM to Find T_p")
   --FIXME: T_p should be called from symbol
   balPCMDesc balPCM_Rel eBalanceOnPCML
@@ -360,7 +360,7 @@ heatEInWtr = im'' heatEInWtr_rc [qw temp_init, qw w_mass, qw htCap_W, qw w_mass]
   [htWtrDesc]
 
 heatEInWtr_rc :: RelationConcept
-heatEInWtr_rc = makeRC "heatEInWtr_rc" (nounPhraseSP "Heat energy in the water")
+heatEInWtr_rc = makeRC "heatEInWtr" (nounPhraseSP "Heat energy in the water")
   htWtrDesc htWtr_Rel heatEInWtrL
 
 htWtr_Rel :: Relation
@@ -394,7 +394,7 @@ heatEInPCM = im' heatEInPCM_rc [qw temp_melt_P, qw time_final, qw temp_init, qw 
   heatEInPCML [htPCMDesc]
 
 heatEInPCM_rc :: RelationConcept
-heatEInPCM_rc = makeRC "heatEInPCM_rc" (nounPhraseSP "Heat energy in the PCM")
+heatEInPCM_rc = makeRC "heatEInPCM" (nounPhraseSP "Heat energy in the PCM")
   htPCMDesc htPCM_Rel heatEInPCML
 
 htPCM_Rel :: Relation

@@ -19,7 +19,7 @@ import Data.Drasil.Utils (weave)
 import Drasil.SWHS.Assumptions (newA3, newA4, newA5)
 import Drasil.SWHS.Concepts (gauss_div)
 import Drasil.SWHS.GenDefs (nwtnCooling, rocTempSimpRC, rocTempSimp_desc)
-import Drasil.SWHS.Labels (rocTempSimpL)
+import Drasil.SWHS.Labels (rocTempSimpL, consThermEL)
 import Drasil.SWHS.TMods (consThermE)
 import Drasil.SWHS.Unitals (in_SA, out_SA, vol_ht_gen, thFluxVect, ht_flux_in, 
   ht_flux_out)
@@ -31,14 +31,14 @@ rocTempSimp :: GenDefn
 rocTempSimp = gd' rocTempSimpRC (Nothing :: Maybe UnitDefn) roc_temp_simp_deriv [S "FIXME: no sources"] "rocTempSimp" [rocTempSimp_desc]
 
 roc_temp_simp_deriv :: Derivation
-roc_temp_simp_deriv =
+roc_temp_simp_deriv = 
   [S "Detailed derivation of simplified" +:+ phrase rOfChng +:+ S "of" +:+.
     phrase temp] ++
   (weave [roc_temp_simp_deriv_sentences, map E roc_temp_simp_deriv_eqns])
 
 roc_temp_simp_deriv_sentences :: [Sentence]
 roc_temp_simp_deriv_sentences = map foldlSentCol [
-  genDefDesc1 consThermE vol,
+  genDefDesc1 consThermEL vol,
   genDefDesc2 gauss_div surface vol thFluxVect uNormalVect unit_,
   genDefDesc3 vol vol_ht_gen,
   genDefDesc4 ht_flux_in ht_flux_out in_SA out_SA density QT.heat_cap_spec

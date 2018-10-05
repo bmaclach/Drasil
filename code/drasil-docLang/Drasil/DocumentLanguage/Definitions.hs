@@ -49,18 +49,18 @@ tmodel fs m t = mkRawLC (Definition TM (foldr (mkTMField t m) [] fs)) (t ^. getL
 -- | Create a data definition using a list of fields, a database of symbols, and a
 -- QDefinition (called automatically by 'SCSSub' program)
 
-ddefn :: HasSymbolTable ctx => Fields -> ctx -> DataDefinition -> LabelledContent
+ddefn :: (HasSymbolTable ctx, HasTraceTable ctx, HasRefbyTable ctx) => Fields -> ctx -> DataDefinition -> LabelledContent
 ddefn fs m d = mkRawLC (Definition DD (foldr (mkDDField d m) [] fs)) (d ^. getLabel)
 
 -- | Create a general definition using a list of fields, database of symbols,
 -- and a 'GenDefn' (general definition) chunk (called automatically by 'SCSSub'
 -- program)
-gdefn :: HasSymbolTable ctx => Fields -> ctx -> GenDefn -> LabelledContent
+gdefn :: (HasSymbolTable ctx, HasTraceTable ctx, HasRefbyTable ctx) => Fields -> ctx -> GenDefn -> LabelledContent
 gdefn fs m g = mkRawLC (Definition General (foldr (mkGDField g m) [] fs)) (g ^. getLabel)
 
 -- | Create an instance model using a list of fields, database of symbols,
 -- and an 'InstanceModel' chunk (called automatically by 'SCSSub' program)
-instanceModel :: HasSymbolTable ctx => Fields -> ctx -> InstanceModel -> LabelledContent
+instanceModel :: (HasSymbolTable ctx, HasTraceTable ctx, HasRefbyTable ctx) => Fields -> ctx -> InstanceModel -> LabelledContent
 instanceModel fs m i = mkRawLC (Definition Instance (foldr (mkIMField i m) [] fs)) (i ^. getLabel)
 
 -- | Create a derivation from a chunk's attributes. This follows the TM, DD, GD,
@@ -96,14 +96,18 @@ tConToExpr :: TheoryConstraint -> Expr
 tConToExpr (TCon Invariant x) = x
 tConToExpr (TCon AssumedCon x) = x
 
-helpToRefField :: TheoryModel -> RefbyMap -> Contents
+helpToRefField' :: (HasUID t) => t -> RefbyMap -> Contents
+helpToRefField' t s = mkParagraph $ foldlSent $ map mkRefFrmLbl 
+  $ refbyLookup (t ^. uid ++ "Label") s
+
+helpToRefField :: (HasUID t) => t -> TraceMap -> Contents
 helpToRefField t s = mkParagraph $ foldlSent $ map mkRefFrmLbl 
-  $ refbyLookup (t ^. uid) s
+  $ traceLookup (t ^. uid ++ "Label") s
 
 -- TODO: buildDescription gets list of constraints to expr and ignores 't'.
 
 -- | Create the fields for a definition from a QDefinition (used by ddefn)
-mkDDField :: (HasSymbolTable ctx) => DataDefinition -> ctx -> Field -> ModRow -> ModRow
+mkDDField :: (HasSymbolTable ctx, HasTraceTable ctx, HasRefbyTable ctx) => DataDefinition -> ctx -> Field -> ModRow -> ModRow
 mkDDField d _ l@Label fs = (show l, (mkParagraph $ at_start d):[]) : fs
 mkDDField d _ l@Symbol fs = (show l, (mkParagraph $ (P $ eqSymb d)):[]) : fs
 mkDDField d _ l@Units fs = (show l, (mkParagraph $ (unitToSentenceUnitless d)):[]) : fs
@@ -111,7 +115,7 @@ mkDDField d _ l@DefiningEquation fs = (show l, (LlC $ eqUnR (sy d $= d ^. defnEx
   (modifyLabelEqn (d ^.getLabel))) :[]) : fs 
 mkDDField d m l@(Description v u) fs =
   (show l, buildDDescription' v u d m) : fs
-mkDDField _ _ l@(RefBy) fs = (show l, fixme) : fs --FIXME: fill this in
+mkDDField d m l@(RefBy) fs = (show l, [helpToRefField d (m ^. refbyTable)]) : fs --FIXME: fill this in
 mkDDField d _ l@(Source) fs = (show l, [mkParagraph $ getSource d]) : fs
 mkDDField d _ l@(Notes) fs = maybe fs (\ss -> (show l, map mkParagraph ss) : fs) (d ^. getNotes)
 mkDDField _ _ label _ = error $ "Label " ++ show label ++ " not supported " ++
@@ -134,7 +138,7 @@ buildDDescription' Verbose u d m = map (UlC . ulcc) [Enumeration (Definitions
   (firstPair' u d : descPairs u (vars (d^.defnExpr) m)))]
 
 -- | Create the fields for a general definition from a 'GenDefn' chunk.
-mkGDField :: HasSymbolTable ctx => GenDefn -> ctx -> Field -> ModRow -> ModRow
+mkGDField :: (HasSymbolTable ctx, HasTraceTable ctx, HasRefbyTable ctx) => GenDefn -> ctx -> Field -> ModRow -> ModRow
 mkGDField g _ l@Label fs = (show l, (mkParagraph $ at_start g):[]) : fs
 mkGDField g _ l@Units fs =
   let u = gdUnit g in
@@ -144,19 +148,19 @@ mkGDField g _ l@DefiningEquation fs = (show l, (LlC $ eqUnR (g ^. relat)
   (modifyLabelEqn (g ^. getLabel))):[]) : fs
 mkGDField g m l@(Description v u) fs = (show l,
   (buildDescription v u (g ^. relat) m) []) : fs
-mkGDField _ _ l@(RefBy) fs = (show l, fixme) : fs --FIXME: fill this in
+mkGDField g m l@(RefBy) fs = (show l, [helpToRefField g (m ^. refbyTable)]) : fs --FIXME: fill this in
 mkGDField g _ l@(Source) fs = (show l, [mkParagraph $ getSource g]) : fs
 mkGDField g _ l@(Notes) fs = maybe fs (\ss -> (show l, map mkParagraph ss) : fs) (g ^. getNotes)
 mkGDField _ _ l _ = error $ "Label " ++ show l ++ " not supported for gen defs"
 
 -- | Create the fields for an instance model from an 'InstanceModel' chunk
-mkIMField :: HasSymbolTable ctx => InstanceModel -> ctx -> Field -> ModRow -> ModRow
+mkIMField :: (HasSymbolTable ctx, HasTraceTable ctx, HasRefbyTable ctx) => InstanceModel -> ctx -> Field -> ModRow -> ModRow
 mkIMField i _ l@Label fs  = (show l, (mkParagraph $ at_start i):[]) : fs
 mkIMField i _ l@DefiningEquation fs =
   (show l, (LlC $ eqUnR (i ^. relat) (modifyLabelEqn (i ^. getLabel))):[]) : fs
 mkIMField i m l@(Description v u) fs = (show l,
   foldr (\x -> buildDescription v u x m) [] [i ^. relat]) : fs
-mkIMField _ _ l@(RefBy) fs = (show l, fixme) : fs --FIXME: fill this in
+mkIMField i m l@(RefBy) fs = (show l, [helpToRefField i (m ^. refbyTable)]) : fs --FIXME: fill this in
 mkIMField i _ l@(Source) fs = (show l, [mkParagraph $ getSource i]) : fs
 mkIMField i _ l@(Output) fs = (show l, [mkParagraph x]) : fs
   where x = P . eqSymb $ i ^. imOutput

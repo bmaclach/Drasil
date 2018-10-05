@@ -20,7 +20,7 @@ import Data.Drasil.Utils (unwrap, weave)
 
 import Drasil.SWHS.Assumptions (newA2, newA3, newA4, newA5, newA6)
 import Drasil.SWHS.Concepts (gauss_div)
-import Drasil.SWHS.Labels (nwtnCoolingL, rocTempSimpL)
+import Drasil.SWHS.Labels (nwtnCoolingL, rocTempSimpL,consThermEL)
 import Drasil.SWHS.References (incroperaEtAl2007)
 import Drasil.SWHS.TMods (consThermE)
 import Drasil.SWHS.Unitals (vol_ht_gen, deltaT, temp_env, pcm_SA,
@@ -77,7 +77,8 @@ rocTempSimp_rel = (sy QPP.mass) * (sy QT.heat_cap_spec) *
   sy ht_flux_out * sy out_SA + sy vol_ht_gen * sy QPP.vol
 
 rocTempSimp_desc :: Sentence
-rocTempSimp_desc = foldlSent [S "The basic", phrase equation,
+rocTempSimp_desc = foldlSent [
+  S "The basic", phrase equation,
   S "governing the", phrase rOfChng, S "of", phrase temp `sC`
   S "for a given", phrase QPP.vol, ch QPP.vol `sC` S "with" +:+.
   phrase QP.time, ch QPP.mass `isThe` phrase QPP.mass +:+.
@@ -98,14 +99,14 @@ rocTempSimp_desc = foldlSent [S "The basic", phrase equation,
 ---------------------------------------
 
 roc_temp_simp_deriv :: Derivation
-roc_temp_simp_deriv =
+roc_temp_simp_deriv = 
   [S "Detailed derivation of simplified" +:+ phrase rOfChng +:+ S "of" +:+
     phrase temp +:+ S ":"] ++
   (weave [roc_temp_simp_deriv_sentences, map E roc_temp_simp_deriv_eqns])
 
 roc_temp_simp_deriv_sentences :: [Sentence]
 roc_temp_simp_deriv_sentences = map foldlSentCol [
-  s4_2_3_desc1 consThermE vol,
+  s4_2_3_desc1 consThermEL vol,
   s4_2_3_desc2 gauss_div surface vol thFluxVect uNormalVect unit_,
   s4_2_3_desc3 vol vol_ht_gen,
   s4_2_3_desc4 ht_flux_in ht_flux_out in_SA out_SA density QT.heat_cap_spec

@@ -11,7 +11,7 @@ module Language.Drasil.ChunkDB
 
 import Control.Lens ((^.), Lens', makeLenses)
 import Data.Maybe (maybeToList)
-import Data.List (nub, concat, union, elem, length, zip)
+import Data.List (nub, concat, union, elem, length, zip, head)
 import Data.Tuple (fst, snd)
 import Language.Drasil.UID (UID)
 import Language.Drasil.Classes (Concept, ConceptDomain, HasUID(uid), Idea, 
@@ -141,7 +141,7 @@ collectUnits m symb = map unitWrapper $ concatMap maybeToList $ map (\x -> getUn
 
 traceLookup :: UID -> TraceMap -> [Label]
 traceLookup c m = getT $ Map.lookup c m
-  where getT = maybe (error $ "References related to : " ++ c ++ " not found in TraceMap") id
+  where getT = maybe [] id
 
 unionwithfunc :: [RefbyMap] -> RefbyMap
 unionwithfunc = foldl (Map.unionWith (++)) Map.empty
@@ -152,6 +152,7 @@ generateRefbyMap tm lm = unionwithfunc (generateSubRef (helperData tm lm))--(con
 generateSubRef :: [[(UID, [Label])]] -> [RefbyMap]
 generateSubRef (hd:tl) = (Map.fromList hd) : (generateSubRef tl)
 generateSubRef (hd:[]) = [Map.fromList hd]
+generateSubRef (_) = []
 
 helperData :: TraceMap -> LabelMap -> [[(UID, [Label])]]
 helperData tm lm = concatMap (restructureTraceMap lm) (Map.toList tm)
@@ -166,5 +167,5 @@ lookupRefMap a b lm = (b ^. uid, [labelLookup a lm])
 
 refbyLookup :: UID -> RefbyMap -> [Label]
 refbyLookup c m = getT $ Map.lookup c m
-  where getT = maybe (error $ "References related to : " ++ c ++ " not found in RefbyMap") id
-
+  where getT = maybe [] id
+--(error $ "REFBY " ++ c ++ "not found in RefbyMap")
