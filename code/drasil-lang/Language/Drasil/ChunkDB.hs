@@ -143,11 +143,24 @@ traceLookup :: UID -> TraceMap -> [Label]
 traceLookup c m = getT $ Map.lookup c m
   where getT = maybe [] id
 
-unionwithfunc :: [RefbyMap] -> RefbyMap
-unionwithfunc = foldl (Map.unionWith (++)) Map.empty
+invert :: (Ord k, Ord v) => Map.Map k [v] -> Map.Map v [k]
+invert m = Map.fromListWith (++) pairs
+    where pairs = [(v, [k]) | (k, vs) <- Map.toList m, v <- vs]
+
+--Map.toList lm    -> Map.Map Label [UID] 
+transformType :: LabelMap -> [(Label, [UID])] -> [(UID, [Label])]
+transformType lm ((lb, u): tl) = ((lb ^. uid), map (\x -> labelLookup x lm) u): (transformType lm tl)
+transformType lm (_) = []
 
 generateRefbyMap :: TraceMap -> LabelMap -> RefbyMap
-generateRefbyMap tm lm = unionwithfunc (generateSubRef (helperData tm lm))--(concatMap s2 (Map.toList tm)))
+generateRefbyMap tm lm = Map.fromList $ transformType lm $ Map.toList $ invert tm
+
+
+{--unionwithfunc :: [RefbyMap] -> RefbyMap
+unionwithfunc = foldl (Map.unionWith (++)) Map.empty
+
+generateRefbyMap' :: TraceMap -> LabelMap -> RefbyMap
+generateRefbyMap' tm lm = unionwithfunc (generateSubRef (helperData tm lm))--(concatMap s2 (Map.toList tm)))
 
 generateSubRef :: [[(UID, [Label])]] -> [RefbyMap]
 generateSubRef (hd:tl) = (Map.fromList hd) : (generateSubRef tl)
@@ -160,7 +173,7 @@ helperData tm lm = concatMap (restructureTraceMap lm) (Map.toList tm)
 restructureTraceMap :: LabelMap -> (UID, [Label]) -> [[(UID, [Label])]]
 restructureTraceMap lm (uid, (hd:tl)) = [lookupRefMap uid hd lm] : (restructureTraceMap lm (uid, tl))
 restructureTraceMap lm (uid, (hd:[])) = [[lookupRefMap uid hd lm]]
-restructureTraceMap lm (_, _)         = []
+restructureTraceMap lm (_, _)         = []--}
 
 lookupRefMap :: UID -> Label -> LabelMap -> (UID, [Label])
 lookupRefMap a b lm = (b ^. uid, [labelLookup a lm])

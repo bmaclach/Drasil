@@ -25,9 +25,16 @@ data Label = Lbl
   }
 makeLenses ''Label
 
-instance HasUID       Label where uid       = uniqueID
-instance HasShortName Label where shortname = sn
+
+instance HasUID        Label where uid       = uniqueID
+instance HasShortName  Label where shortname = sn
 instance HasRefAddress Label where getRefAdd = lblType
+instance Eq            Label where (==) l1 l2 = if l1 ^.uid == l2 ^. uid then True else False
+instance Ord           Label where compare l1 l2 = compare (l1 ^.uid) (l2 ^.uid)
+
+complb :: Label -> Label -> Ordering
+complb lb1 lb2 = compare (lb1 ^. uid) (lb2 ^. uid)
+
 
 -- Label Map --
 class HasLabelTable s where
