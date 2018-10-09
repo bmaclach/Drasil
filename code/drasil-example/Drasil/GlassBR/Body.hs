@@ -1,7 +1,9 @@
 module Drasil.GlassBR.Body where
 
 import Control.Lens ((^.))
-import Data.List (nub)
+import Data.List (nub, sort)
+import qualified Data.Map as Map
+import Data.Tuple (fst,snd, swap)
 
 import Language.Drasil hiding (organization)
 import Language.Drasil.Code (CodeSpec, codeSpec, relToQD)
@@ -68,7 +70,7 @@ import Drasil.GlassBR.Unitals (aspect_ratio, blast, blastTy, bomb, capacity, cha
   gbInputs, gbOutputs, gBRSpecParamVals, glassGeo, glassTy, glassTypes, glBreakage,
   lateralLoad, load, loadTypes, pb_tol, prob_br, probBreak, sD, sdWithEqn, stressDistFac,
   termsWithAccDefn, termsWithDefsOnly, wtntWithEqn)
-import Drasil.GlassBR.Labels (glassLabelMap)
+import Drasil.GlassBR.Labels
 {--}
 
 gbSymbMap :: ChunkDB
@@ -200,9 +202,10 @@ termsAndDesc, physSystDescription, goalStmts :: Section
 
 prodUseCaseTable, physSystDescriptionList, appdxIntro :: Contents
 
-inputDataConstraints, outputDataConstraints, traceMatsAndGraphsTable1, traceMatsAndGraphsTable2, 
-  traceMatsAndGraphsTable3, fig_glassbr, fig_2, fig_3, fig_4, fig_5, fig_6 :: LabelledContent
-
+inputDataConstraints, outputDataConstraints, traceMatsAndGraphsTable1, 
+  fig_glassbr, fig_2, fig_3, fig_4, fig_5, fig_6 :: LabelledContent
+-- traceMatsAndGraphsTable2, 
+--  traceMatsAndGraphsTable3, 
 --------------------------------------------------------------------------------
 termsAndDescBullets :: Contents
 termsAndDescBullets = UlC $ ulcc $ Enumeration $ 
@@ -235,8 +238,8 @@ goalStmtsList = enumSimple 1 (short goalStmt) goalStmtsListGS1
 --Used in "Traceability Matrices and Graphs" Section--
 
 traceyMatrices :: [LabelledContent]
-traceyMatrices = [traceMatsAndGraphsTable1, traceMatsAndGraphsTable2, traceMatsAndGraphsTable3]
-
+traceyMatrices = [traceMatsAndGraphsTable1]
+--, traceMatsAndGraphsTable2, traceMatsAndGraphsTable3
 traceyGraphs :: [LabelledContent]
 traceyGraphs = [fig_2, fig_3, fig_4]
 
@@ -511,6 +514,7 @@ outputDataConstraints = outDataConstTbl [prob_br]
 
 {--TRACEABLITY MATRICES AND GRAPHS--}
 
+
 traceMatsAndGraphsTable1Desc :: Sentence
 traceMatsAndGraphsTable1Desc = foldlList Comma List (map plural (take 3 solChSpecSubsections)) +:+.
   S "with each other"
@@ -524,11 +528,13 @@ traceMatsAndGraphsTable3Desc = foldlsC (map plural (take 3 solChSpecSubsections)
   plural likelyChg `sAnd` plural requirement +:+ S "on the" +:+
   plural assumption
 
+
+
+{--traceMatsAndGraphsTRef, traceMatsAndGraphsIMRef, traceMatsAndGraphsDDRef, traceMatsAndGraphsDataConsRef, traceMatsAndGraphsFuncReqRef,
+  traceMatsAndGraphsARef, traceMatsAndGraphsLCRef :: [Sentence]
+
 traceMatsAndGraphsT, traceMatsAndGraphsIM, traceMatsAndGraphsDD, traceMatsAndGraphsDataCons, traceMatsAndGraphsFuncReq, traceMatsAndGraphsA,
   traceMatsAndGraphsLC :: [String]
-
-traceMatsAndGraphsTRef, traceMatsAndGraphsIMRef, traceMatsAndGraphsDDRef, traceMatsAndGraphsDataConsRef, traceMatsAndGraphsFuncReqRef,
-  traceMatsAndGraphsARef, traceMatsAndGraphsLCRef :: [Sentence]
 
 traceMatsAndGraphsT = ["T1", "T2"]
 traceMatsAndGraphsTRef = map makeRef gbrTMods
@@ -552,9 +558,8 @@ traceMatsAndGraphsLC = ["LC1", "LC2", "LC3", "LC4", "LC5"]
 traceMatsAndGraphsLCRef = map mkRefFrmLbl likelyChgs
 
 traceMatsAndGraphsRowT1 :: [String]
-traceMatsAndGraphsRowT1 = traceMatsAndGraphsT ++ traceMatsAndGraphsIM ++ traceMatsAndGraphsDD
+traceMatsAndGraphsRowT1 = traceMatsAndGraphsT ++ traceMatsAndGraphsIM ++ traceMatsAndGraphsDD ++ traceMatsAndGraphsA
 
--- The headers for the first row, and column
 traceMatsAndGraphsRowHdrT1 :: [Sentence]
 traceMatsAndGraphsRowHdrT1 = zipWith itemRefToSent traceMatsAndGraphsRowT1 (traceMatsAndGraphsTRef ++
   traceMatsAndGraphsIMRef ++ traceMatsAndGraphsDDRef)
@@ -583,15 +588,69 @@ traceMatsAndGraphsColsT1_DD6 = ["IM3", "DD2", "DD5"]
 traceMatsAndGraphsColsT1_DD7 = ["DD8"]
 traceMatsAndGraphsColsT1_DD8 = ["DD2"]
 
+
+--}
+
+type NameMap = Map.Map String Label
+type NameMapreverse = Map.Map Label String
+namelist :: [(String, Label)]
+namelist = [("T1", l1),("T2", l2),("IM1", probOfBreakL),("IM2", calOfCapacityL),("IM3", calOfDemandL),
+  ("DD1", riskL),("DD2", hFromtL), ("DD3", loadDFL), ("DD4", strDisFacL), ("DD5", nonFLL), ("DD6", glaTyFacL),
+   ("DD7", dimLLL), ("DD8", tolPreL), ("DD9", tolStrDisFacL), ("DD10", standOffDisL),("DD11", aspRatL),
+   ("A1",glassTypeL), ("A2", glassConditionL), ("A3",explainScenarioL), ("A4",standardValuesL), ("A5",glassLiteL),
+     ("A6", boundaryConditionsL), ("A7", responseTypeL), ("A8",ldfConstantL)]
+    {--("R1",inputGlassPropsL), ("R2",sysSetValsFollowingAssumpsL), ("R3",checkInputWithDataConsL),
+    ("R4",outputValsAndKnownQuantsL),("R5", checkGlassSafetyL),
+     ("R6",outputQuantsL),,("LC1",calcInternalBlastRiskL), ("LC2",varValsOfmkEL),
+      ("LC3",accMoreThanSingleLiteL),("LC4",accMoreBoundaryConditionsL), ("LC5",considerMoreThanFlexGlassL)]--}
+nameMap :: NameMap
+nameMap = Map.fromList namelist
+
+lookupName :: NameMap -> String -> Label
+lookupName m s = getS $ Map.lookup s m
+  where getS = maybe (error $ "Name: " ++ s ++ " not found in NameMap") id
+
+reverselist :: [(Label, String)]
+reverselist = map swap namelist
+
+reverseMap :: NameMapreverse
+reverseMap = Map.fromList reverselist
+
+lookupReverse :: NameMapreverse -> Label -> String
+lookupReverse m l = getS $ Map.lookup l m
+  where getS = maybe [] id
+
+traceMatsAndGraphsRowT1' :: [String]
+traceMatsAndGraphsRowT1' = Map.keys nameMap
+
+
+-- The headers for the first row, and column
+labelList :: [Label]
+labelList = map (lookupName nameMap) traceMatsAndGraphsRowT1'
+
+traceMatsAndGraphsRowHdrT1' :: [Sentence]
+traceMatsAndGraphsRowHdrT1' = zipWith itemRefToSent traceMatsAndGraphsRowT1' (map mkRefFrmLbl labelList)
+
+tracemapTostring :: (String, Label) -> [(UID, [Label])] -> NameMapreverse -> LabelMap -> [String]
+tracemapTostring (t@(s, l)) ((u, ll):tl) nm lm =  if s == lookupReverse nm (labelLookup u lm) 
+  then (map (lookupReverse nm) ll) else tracemapTostring t tl nm lm
+tracemapTostring t@(s, l) [] nm lm = []
+
+generateStringList :: NameMap -> TraceMap -> NameMapreverse -> LabelMap -> [[String]]
+generateStringList nm tm nrm lm = map (\x -> tracemapTostring x (Map.toList tm) nrm lm) (Map.toList nm)
+
+traceMatsAndGraphsColsT1' :: [[String]]
+traceMatsAndGraphsColsT1' = generateStringList nameMap glassBR_refby reverseMap glassLabelMap
+
 traceMatsAndGraphsTable1 = llcc (mkLabelSame "TraceyItemSecs" Tab) $ Table
-  (EmptyS:traceMatsAndGraphsRowHdrT1)
-  (makeTMatrix traceMatsAndGraphsRowHdrT1 traceMatsAndGraphsColsT1 traceMatsAndGraphsRowT1)
+  (EmptyS:traceMatsAndGraphsRowHdrT1')
+  (makeTMatrix traceMatsAndGraphsRowHdrT1' traceMatsAndGraphsColsT1' traceMatsAndGraphsRowT1')
   (showingCxnBw traceyMatrix
   (titleize' item +:+ S "of Different" +:+ titleize' section_)) True
 
 --
 
-traceMatsAndGraphsRowT2 :: [String]
+{--traceMatsAndGraphsRowT2 :: [String]
 traceMatsAndGraphsRowT2 = traceMatsAndGraphsRowT1 ++ traceMatsAndGraphsDataCons ++ traceMatsAndGraphsFuncReq
 
 traceMatsAndGraphsRowHdrT2, traceMatsAndGraphsColHdrT2 :: [Sentence]
@@ -674,7 +733,7 @@ traceMatsAndGraphsTable3 = llcc (mkLabelSame "TraceyAssumpsOthers" Tab) $ Table
   (EmptyS:traceMatsAndGraphsRowHdr3)
   (makeTMatrix traceMatsAndGraphsColHdr3 traceMatsAndGraphsColsT3 traceMatsAndGraphsRowT3)
   (showingCxnBw traceyMatrix (titleize' assumption `sAnd` S "Other"
-  +:+ titleize' item)) True
+  +:+ titleize' item)) True--}
 
 --
 traceMatsAndGraphsIntro2 :: [Contents]

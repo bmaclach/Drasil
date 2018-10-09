@@ -9,14 +9,20 @@ glassLabelSet = [glassTypeL, glassConditionL, glassLiteL,
   probOfBreakL, calOfCapacityL, calOfDemandL, l1, l2,
   rbrtsnL, astm2009L, astm2016L, astm2012L, beason1998L,
   riskL, hFromtL, loadDFL, strDisFacL, nonFLL, glaTyFacL, 
-  dimLLL, tolPreL, tolStrDisFacL, standOffDisL, aspRatL]
+  dimLLL, tolPreL, tolStrDisFacL, standOffDisL, aspRatL, explainScenarioL,
+  standardValuesL, boundaryConditionsL, responseTypeL, ldfConstantL]
 
 -- Assumptions
 glassTypeL, glassConditionL, glassLiteL :: Label
 
 glassTypeL      = mkLabelRAAssump' "glassType"
 glassConditionL = mkLabelRAAssump' "glassCondition"
+explainScenarioL = mkLabelRAAssump' "explainScenario"
+standardValuesL = mkLabelRAAssump' "standardValues"
 glassLiteL      = mkLabelRAAssump' "glassLite"
+boundaryConditionsL = mkLabelRAAssump' "boundaryConditions"
+responseTypeL   = mkLabelRAAssump' "responseType"
+ldfConstantL    = mkLabelRAAssump' "ldfConstant"
 
 -- Instance Models
 probOfBreakL, calOfCapacityL, calOfDemandL :: Label

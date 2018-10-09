@@ -216,7 +216,7 @@ module Language.Drasil (
   -- Document.Extract
   , egetDoc, getDoc
   -- Label.Core
-  , getAdd, LabelMap, getLabelPair
+  , getAdd, LabelMap, getLabelPair, labelLookup
 ) where
 
 
@@ -257,7 +257,7 @@ import Language.Drasil.Classes (HasUID(uid), NamedIdea(term), Idea(getA),
   HasReasVal(reasVal), ExprRelat(relat), HasDerivation(derivations), HasReference(getReferences), 
   DefiningExpr(defnExpr))
 import Language.Drasil.Label.Core (Label,HasLabel(getLabel), MayHaveLabel(getMaybeLabel),
- HasRefAddress(getRefAdd), LabelMap, getLabelPair)
+ HasRefAddress(getRefAdd), LabelMap, getLabelPair, labelLookup)
 import Language.Drasil.Document.GetChunk(vars, combine', vars', combine, ccss)
 import Language.Drasil.Chunk.AssumpChunk
 import Language.Drasil.Chunk.Attribute

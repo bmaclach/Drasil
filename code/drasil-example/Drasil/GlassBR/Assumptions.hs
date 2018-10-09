@@ -15,7 +15,8 @@ import Data.Drasil.Concepts.PhysicalProperties (materialProprty)
 import Drasil.GlassBR.Concepts (beam, cantilever, edge, glaSlab, glass, gLassBR, 
   lShareFac, plane, responseTy)
 import Drasil.GlassBR.DataDefs (dimLL, loadDF, nonFL, tolStrDisFac)
-import Drasil.GlassBR.Labels (probOfBreakL, calOfCapacityL, glassTypeL, glassConditionL, glassLiteL)
+import Drasil.GlassBR.Labels (probOfBreakL, calOfCapacityL, glassTypeL, glassConditionL, glassLiteL,
+  explainScenarioL,standardValuesL, boundaryConditionsL, responseTypeL, ldfConstantL)
 import Drasil.GlassBR.References (astm2009)
 import Drasil.GlassBR.Unitals (constant_K, constant_LoadDF, constant_LoadDur, 
   constant_LoadSF, constant_M, constant_ModElas, explosion, lateral, lite, load_dur)
@@ -40,17 +41,17 @@ glassType          = assump "glassTypeA"          glassTypeDesc                 
 assumpGT           = cic "assumpGT"   glassTypeDesc                     "glassType"           Doc.assumpDom  -- FIXME: Use label once ConceptInstance migrates to them
 glassCondition     = assump "glassConditionA"     glassConditionDesc               glassConditionL
 assumpGC           = cic "assumpGC"   glassConditionDesc                "glassCondition"      Doc.assumpDom  -- FIXME: Use label once ConceptInstance migrates to them
-explainScenario    = assump "explainScenarioA"    explainScenarioDesc              (mkLabelRAAssump' "explainScenario"   )
+explainScenario    = assump "explainScenarioA"    explainScenarioDesc              explainScenarioL
 assumpES           = cic "assumpES"   explainScenarioDesc               "explainScenario"     Doc.assumpDom
-standardValues     = assump "standardValuesA"    (standardValuesDesc load_dur)     (mkLabelRAAssump' "standardValues"    )
+standardValues     = assump "standardValuesA"    (standardValuesDesc load_dur)     standardValuesL
 assumpSV           = cic "assumpSV"   (standardValuesDesc load_dur)     "standardValues"      Doc.assumpDom
 glassLite          = assump "glassLiteA"          glassLiteDesc                    glassLiteL
 assumpGL           = cic "assumpGL"   glassLiteDesc                     "glassLite"           Doc.assumpDom  -- FIXME: Use label once ConceptInstance migrates to them
-boundaryConditions = assump "boundaryConditionsA" boundaryConditionsDesc           (mkLabelRAAssump' "boundaryConditions")
+boundaryConditions = assump "boundaryConditionsA" boundaryConditionsDesc           boundaryConditionsL
 assumpBC           = cic "assumpBC"   boundaryConditionsDesc            "boundaryConditions"  Doc.assumpDom
-responseType       = assump "responseTypeA"       responseTypeDesc                 (mkLabelRAAssump' "responseType"      )
+responseType       = assump "responseTypeA"       responseTypeDesc                 responseTypeL
 assumpRT           = cic "assumpRT"   responseTypeDesc                  "responseType"        Doc.assumpDom
-ldfConstant        = assump "ldfConstantA"       (ldfConstantDesc constant_LoadDF) (mkLabelRAAssump' "ldfConstant"       )
+ldfConstant        = assump "ldfConstantA"       (ldfConstantDesc constant_LoadDF) ldfConstantL
 assumpLDFC         = cic "assumpLDFC" (ldfConstantDesc constant_LoadDF) "ldfConstant"         Doc.assumpDom
 
 glassTypeDesc :: Sentence
