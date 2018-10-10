@@ -48,12 +48,16 @@ class MayHaveLabel c where
   getMaybeLabel :: c -> Maybe Label
 
  -- IsLabel is associated with String rendering
-class (HasLabel u, HasUID u) => IsLabel u where
+class (HasLabelsUID u, HasUID u) => IsLabel u where
 
 -- HasRefAddress is associated with the HasLabel class due to
 -- the current definition of a Label
 class HasRefAddress b where
   getRefAdd :: Lens' b LblType
+
+class (HasLabel c) => HasLabelsUID c where
+  hasLabelsUID :: c -> UID
+
 
 labelLookup :: UID -> LabelMap -> Label
 labelLookup u l = getL $ Map.lookup u l
