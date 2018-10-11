@@ -4,6 +4,9 @@ import Language.Drasil hiding (organization)
 import Language.Drasil.Code (CodeSpec, codeSpec)
 import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration)
 import Control.Lens ((^.))
+import Data.List (nub, sort)
+import qualified Data.Map as Map
+import Data.Tuple (snd)
 
 import Drasil.DocLang (AuxConstntSec (AuxConsProg), DocDesc, 
   DocSection (SSDSec, AuxConstntSec, Bibliography, IntroSec, RefSec, Verbatim), 
@@ -39,7 +42,7 @@ import Data.Drasil.SentenceStructures (FoldType(List), SepType(Comma), foldlList
   foldlSent, foldlSent_, foldlSP, foldlSP_, foldlSPCol, ofThe, ofThe', sAnd, 
   showingCxnBw, sOf)
 import Data.Drasil.SI_Units (metre, kilogram, second, centigrade, joule, watt)
-import Data.Drasil.Utils (enumSimple, itemRefToSent, makeTMatrix, eqUnR', noRefs)
+import Data.Drasil.Utils (enumSimple, itemRefToSent, makeTMatrix, eqUnR', noRefs, makeTMatrix')
 
 import qualified Data.Drasil.Concepts.Thermodynamics as CT (law_cons_energy, 
   heat_trans, thermal_conduction, ht_flux, heat_cap_spec, thermal_energy,
@@ -552,6 +555,19 @@ trace1IM2 = ["GD2", "DD2", "DD4", "IM1", "IM4"]
 trace1IM3 = ["T2"]
 trace1IM4 = ["T2", "T3", "DD2", "DD3", "DD4", "IM2"]
 
+{--swhs_label :: TraceMap
+swhs_refby :: RefbyMap--}
+traceMRow1' :: [UID]
+traceMRow1' = nub (Map.keys swhs_label ++ Map.keys swhs_refby)
+
+traceMRow1Label' :: [Label]
+traceMRow1Label' = nub $ concat (Map.elems swhs_label ++ Map.elems swhs_refby)
+
+traceMRowHeader1' :: [Sentence]
+traceMRowHeader1' = map mkRefFrmLbl traceMRow1Label'
+
+traceMColumns1' :: [[Label]]
+traceMColumns1' = []
 {-Traceability Matrix 2-}
 
 traceMRow2 :: [String]
@@ -1282,7 +1298,7 @@ traceTrailing3 = foldlSent_ [foldlList Comma List $ map plural (take 5 renameLis
 traceTable1 :: LabelledContent
 traceTable1 = llcc (mkLabelSame "Tracey2" Tab) $ Table
   (EmptyS:traceMRowHeader1)
-  (makeTMatrix (traceMRowHeader1) (traceMColumns1) (traceMRow1))
+  (makeTMatrix' (traceMRowHeader1') (traceMColumns1') (traceMRow1Label'))
   (showingCxnBw traceyMatrix
   (titleize' item +:+ S "of Different" +:+ titleize' section_)) True
 
