@@ -4,7 +4,7 @@ import Language.Drasil hiding (organization)
 import Language.Drasil.Code (CodeSpec, codeSpec)
 import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration)
 import Control.Lens ((^.))
-import Data.List (nub, sort)
+import Data.List (nub, sort, sortBy)
 import qualified Data.Map as Map
 import Data.Tuple (snd)
 
@@ -558,16 +558,20 @@ trace1IM4 = ["T2", "T3", "DD2", "DD3", "DD4", "IM2"]
 {--swhs_label :: TraceMap
 swhs_refby :: RefbyMap--}
 traceMRow1' :: [UID]
-traceMRow1' = nub (Map.keys swhs_label ++ Map.keys swhs_refby)
+traceMRow1' = sort $ nub (Map.keys swhs_label ++ Map.keys swhs_refby)
 
 traceMRow1Label' :: [Label]
-traceMRow1Label' = nub $ concat (Map.elems swhs_label ++ Map.elems swhs_refby)
+traceMRow1Label' = sortBy complb $ nub $ concat (Map.elems swhs_label ++ Map.elems swhs_refby)
 
 traceMRowHeader1' :: [Sentence]
 traceMRowHeader1' = map mkRefFrmLbl traceMRow1Label'
 
+helpLookup :: [Label] -> RefbyMap -> [[Label]]
+helpLookup (lh:lt) rm = (refbyLookup (lh ^. uid) rm):(helpLookup lt rm)
+helpLookup [] rm = []
+
 traceMColumns1' :: [[Label]]
-traceMColumns1' = []
+traceMColumns1' = helpLookup traceMRow1Label' swhs_refby
 {-Traceability Matrix 2-}
 
 traceMRow2 :: [String]
@@ -1297,7 +1301,7 @@ traceTrailing3 = foldlSent_ [foldlList Comma List $ map plural (take 5 renameLis
 
 traceTable1 :: LabelledContent
 traceTable1 = llcc (mkLabelSame "Tracey2" Tab) $ Table
-  (EmptyS:traceMRowHeader1)
+  (EmptyS:traceMRowHeader1')
   (makeTMatrix' (traceMRowHeader1') (traceMColumns1') (traceMRow1Label'))
   (showingCxnBw traceyMatrix
   (titleize' item +:+ S "of Different" +:+ titleize' section_)) True
