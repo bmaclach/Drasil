@@ -31,8 +31,6 @@ instance HasShortName  Label where shortname = sn
 instance HasRefAddress Label where getRefAdd = lblType
 instance Eq            Label where (==) l1 l2 = if l1 ^.uid == l2 ^. uid then True else False
 instance Ord           Label where compare l1 l2 = compare (l1 ^.uid) (l2 ^.uid)
-instance HasLabelsUID  Label where hasLabelsUID = uniqueID
-instance IsLabel       Label where isLabel c = c ^. uid == c ^. hasLabelsUID
 
 complb :: Label -> Label -> Ordering
 complb lb1 lb2 = compare (lb1 ^. uid) (lb2 ^. uid)
@@ -51,14 +49,14 @@ class MayHaveLabel c where
 
  -- IsLabel is associated with String rendering
 class (HasLabelsUID u, HasUID u) => IsLabel u where
-  isLabel :: c -> Bool
+
 -- HasRefAddress is associated with the HasLabel class due to
 -- the current definition of a Label
 class HasRefAddress b where
   getRefAdd :: Lens' b LblType
 
-class HasLabelsUID c where
-  hasLabelsUID :: Lens' c Label
+class (HasLabel c) => HasLabelsUID c where
+  hasLabelsUID :: c -> UID
 
 
 labelLookup :: UID -> LabelMap -> Label
