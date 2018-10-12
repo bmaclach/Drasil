@@ -323,17 +323,20 @@ assumptionsFromDB am = dropNums $ sortBy (compare `on` snd) assumptions
 -- item exists in our database of referable objects.
 --FIXME: completely shift to being `HasLabel` since customref checks for 
 --  `HasShortName` and `Referable`?
-makeRef :: (HasLabel l, HasShortName l, Referable l) => l -> Sentence
-makeRef r = mkRefFrmLbl $ r ^. getLabel
+-- This function is suppose to make ref from chunk
+makeRef :: (HasLabel l, HasShortName l, Referable l, HasUID l) => l -> Sentence
+makeRef r = customRef r (r ^. shortname)
 
 --FIXME: needs design (HasShortName, Referable only possible when HasLabel)
-mkRefFrmLbl :: (HasShortName l, Referable l, HasUID l) => l -> Sentence
+-- This function is suppose to make ref from label
+mkRefFrmLbl :: (HasShortName l, Referable l, HasUID l, IsLabel l, HasLabelsUID l) => l -> Sentence
 mkRefFrmLbl r = customRef r (r ^. shortname)
 
 --FIXME: should be removed from Examples once sections have labels
 -- | Create a reference with a customized 'ShortName'
 customRef :: (HasShortName l, Referable l, HasUID l) => l -> ShortName -> Sentence
-customRef r n = Ref (r ^. uid) (fixupRType $ rType r) (refAdd r) (getAcc' (rType r) n)
+customRef r n = if isLabel r then Ref (r ^. uid) (fixupRType $ rType r) (refAdd r) (getAcc' (rType r) n)
+  else Ref (r ^. uid ++ "Label") (fixupRType $ rType r) (refAdd r) (getAcc' (rType r) n)
   where 
     getAcc' :: RefType -> ShortName -> ShortName
     getAcc' (Def dtp) sn = shortname' $ (getDefName dtp) ++ " " ++ (getStringSN sn)
