@@ -15,16 +15,9 @@ import Data.List (sortBy)
 import Data.Maybe (fromMaybe)
 import Data.Drasil.SentenceStructures (foldlSent)
 
-{--type TraceMap = Map.Map UID [Label]--}
 
-traceMapsub1 :: (HasUID l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
-traceMapsub1 lm = Map.fromList . map (\x -> ((x ^. uid ++ "Label"), lnames' lm (extractSFromNotes x)))
-
-traceMapsub2 :: (HasUID l, HasDerivation l) => LabelMap -> [l] -> TraceMap
-traceMapsub2 lm = Map.fromList . map (\x -> ((x ^. uid ++ "Label"), lnames' lm (extractSFromDeriv x)))
-
-traceMap :: (HasUID l, HasDerivation l, HasAdditionalNotes l) => LabelMap -> [l] -> TraceMap
-traceMap lm l = Map.unionWith (++) (traceMapsub1 lm l) (traceMapsub2 lm l)
+traceMap :: (HasUID l) => (l -> [Sentence]) -> LabelMap -> [l] -> TraceMap
+traceMap f lm = Map.fromList . map (\x -> ((x ^. uid ++ "Label"), lnames' lm (f x)))
 
 getTraceMapFromDocSec :: [DocSection] -> SSDSec
 getTraceMapFromDocSec ((SSDSec ssd):_)  = ssd
@@ -75,12 +68,18 @@ getSCSSub a = getTraceMapFromSolCh $ getTraceMapFromSSDSub $ getTraceMapFromSSDS
  $ getTraceMapFromDocSec a
 
 generateTraceMap :: [DocSection] -> LabelMap -> TraceMap
-generateTraceMap a lm = mergeMaps [(traceMapsub1 lm (getTraceMapFromTM $ getSCSSub a)), 
-  (traceMap lm (getTraceMapFromGD $ getSCSSub a)), (traceMap lm (getTraceMapFromDD $ getSCSSub a)),
-  (traceMap lm (getTraceMapFromIM $ getSCSSub a))]
+generateTraceMap a lm = Map.unionsWith (++) [(traceMap extractSFromNotes lm (getTraceMapFromTM $ getSCSSub a)),
+  (traceMap extractSFromNotes lm gd), (traceMap extractSFromNotes lm dd),
+  (traceMap extractSFromNotes lm im), (traceMap extractSFromDeriv lm gd),
+  (traceMap extractSFromDeriv lm dd), (traceMap extractSFromDeriv lm im)]
+  where
+  	tm = getTraceMapFromTM $ getSCSSub a
+  	gd = getTraceMapFromGD $ getSCSSub a
+  	im = getTraceMapFromIM $ getSCSSub a
+  	dd = getTraceMapFromDD $ getSCSSub a
 
-mergeMaps :: [TraceMap] -> TraceMap
-mergeMaps = foldl Map.union Map.empty
+--mergeMaps :: [TraceMap] -> TraceMap
+--mergeMaps = foldl $ Map.unionWith (++) Map.empty
 
 
 
