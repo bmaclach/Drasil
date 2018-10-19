@@ -693,10 +693,6 @@ off_the_shelf_solutions_3dlist = enumBullet [
 -- SECTION 8 : Traceability Matrices and Graph    --
 -----------------------------------------------------
 
-traceability_matrices_and_graph :: Section
-traceability_matrices_and_graph = traceMGF [traceMatTabReqGoalOther, traceMatTabAssump,
-  traceMatTabDefnModel] traceability_matrices_and_graph_traces
-  (map LlC [traceMatTabReqGoalOther, traceMatTabAssump, traceMatTabDefnModel]) []
 
 traceability_matrices_and_graph_traces, traceability_matrices_and_graph_trace1,
   traceability_matrices_and_graph_trace2, traceability_matrices_and_graph_trace3 :: [Sentence]
