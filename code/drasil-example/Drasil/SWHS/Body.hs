@@ -17,7 +17,7 @@ import Drasil.DocLang (AuxConstntSec (AuxConsProg), DocDesc,
   TraceabilitySec(TraceabilityProg), 
   dataConstraintUncertainty, genSysF, inDataConstTbl, intro, mkDoc, mkEnumSimpleD,
   outDataConstTbl, physSystDesc, reqF, termDefnF, traceGIntro, traceMGF, tsymb'',
-  generateTraceMap)
+  generateTraceMap, generateTraceTable)
 import qualified Drasil.DocLang.SRS as SRS (funcReq, goalStmt, inModelLabel,
   likeChg, probDesc, sysCont, unlikeChg)
 
@@ -1300,11 +1300,7 @@ traceTrailing3 = foldlSent_ [foldlList Comma List $ map plural (take 5 renameLis
   S "on the", plural assumption]
 
 traceTable1 :: LabelledContent
-traceTable1 = llcc (mkLabelSame "Tracey2" Tab) $ Table
-  (EmptyS:traceMRowHeader1')
-  (makeTMatrix' (traceMRowHeader1') (traceMColumns1') (traceMRow1Label'))
-  (showingCxnBw traceyMatrix
-  (titleize' item +:+ S "of Different" +:+ titleize' section_)) True
+traceTable1 = generateTraceTable swhs_label swhs_refby
 
 traceTable3 :: LabelledContent
 traceTable3 = llcc (mkLabelSame "Tracey3" Tab) $ Table

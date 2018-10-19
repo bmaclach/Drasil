@@ -13,7 +13,7 @@ import Drasil.DocLang (DerivationDisplay(..), DocDesc, DocSection(..),
   TraceabilitySec(TraceabilityProg), assembler, dataConstraintUncertainty,
   inDataConstTbl, intro, mkDoc, outDataConstTbl,
   reqF, sSubSec, siCon, siSTitl, siSent, traceMGF, tsymb, valsOfAuxConstantsF
-  , generateTraceMap, mkEnumSimpleD)
+  , generateTraceMap, mkEnumSimpleD, generateTraceTable)
 
 import qualified Drasil.DocLang.SRS as SRS
 
@@ -107,7 +107,7 @@ mkSRS = RefSec (RefProg intro [TUnits, tsymb tableOfSymbols, TAandA]) :
   (map Verbatim [requirements, likelyChanges, unlikelyChanges]) ++
   [ExistingSolnSec (ExistSolnVerb  off_the_shelf_solutions)] ++
   TraceabilitySec
-    (TraceabilityProg [traceMatTabReqGoalOther, traceMatTabAssump,
+    (TraceabilityProg [traceTable1, traceMatTabReqGoalOther, traceMatTabAssump,
   traceMatTabDefnModel] traceability_matrices_and_graph_traces (map LlC [traceMatTabReqGoalOther, traceMatTabAssump, traceMatTabDefnModel]) []) :
   ([Verbatim values_of_auxiliary_constatnts]) ++
   (Bibliography : [])
@@ -275,7 +275,6 @@ organization_of_documents_intro = foldlSent
 --------------------------
 -- 3.1 : System Context --
 --------------------------
-
 sysCtxIntro :: Contents
 sysCtxIntro = foldlSP
   [makeRef sysCtxFig1 +:+ S "shows the" +:+. phrase sysCont,
@@ -782,6 +781,9 @@ traceMatTabReqGoalOtherCol = [traceMatTabReqGoalOtherGS1, traceMatTabReqGoalOthe
   traceMatTabReqGoalOtherReq2, traceMatTabReqGoalOtherReq3, traceMatTabReqGoalOtherReq4,
   traceMatTabReqGoalOtherReq5, traceMatTabReqGoalOtherReq6, traceMatTabReqGoalOtherReq7,
   traceMatTabReqGoalOtherReq8]
+
+traceTable1 :: LabelledContent
+traceTable1 = generateTraceTable game_label game_refby
 
 traceMatTabReqGoalOther :: LabelledContent
 traceMatTabReqGoalOther = llcc (mkLabelSame "TraceyReqGoalsOther" Tab) $ Table

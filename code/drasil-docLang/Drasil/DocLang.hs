@@ -15,6 +15,7 @@ module Drasil.DocLang (
     -- DocumentLanguage.RefHelpers 
     ModelDB, ddRefDB, mdb,
     -- DocumentLanguage.TraceabilityMatrix
+    generateTraceTable,
     -- Sections.AuxiliaryConstants
     valsOfAuxConstantsF,
     -- Sections.GeneralSystDesc
@@ -68,6 +69,6 @@ import Drasil.Sections.SpecificSystemDescription (assumpF,
 --import Drasil.Sections.TableOfAbbAndAcronyms
 --import Drasil.Sections.TableOfSymbols
 --import Drasil.Sections.TableOfUnits
-import Drasil.Sections.TraceabilityMandGs (traceGIntro, traceMGF)
+import Drasil.Sections.TraceabilityMandGs (traceGIntro, traceMGF, generateTraceTable)
 import Drasil.TraceTable (generateTraceMap)
 -- Commented out modules aren't used - uncomment if this changes
