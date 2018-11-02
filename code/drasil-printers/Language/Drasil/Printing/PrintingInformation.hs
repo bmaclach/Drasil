@@ -35,3 +35,18 @@ instance HasPrintingOptions  PrintingInformation where getSetting  = configurati
 
 defaultConfiguration :: PrintingConfiguration
 defaultConfiguration = PC Engineering
+
+data Option = MathJax
+            | Html
+
+class HasOptions c where
+    getOption :: Lens' c Option
+	
+data OptionConfigurations = OC 
+                            { _option :: Option
+							}
+makeLenses ''OptionConfigurations
+
+instance HasOptions OptionConfigurations where getOption = option
+
+

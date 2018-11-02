@@ -2,7 +2,7 @@ module Drasil.SWHS.Body where
 
 import Language.Drasil hiding (organization)
 import Language.Drasil.Code (CodeSpec, codeSpec)
-import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration)
+import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration, OptionConfigurations(..), Option(MathJax, Html))
 import Control.Lens ((^.))
 
 import Drasil.DocLang (AuxConstntSec (AuxConsProg), DocDesc, 
@@ -106,6 +106,9 @@ swhsRefDB = rdb [] [] newAssumptions [] [] swhsCitations (funcReqs ++
 
 printSetting :: PrintingInformation
 printSetting = PI swhsSymMap defaultConfiguration
+
+printOption :: OptionConfigurations
+printOption = OC MathJax
 
   --Note: The second swhsSymbols here is
     -- Redundant b/c the unitals are not really concepts (yet). There

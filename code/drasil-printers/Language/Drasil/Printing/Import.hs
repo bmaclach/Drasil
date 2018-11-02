@@ -9,7 +9,7 @@ import qualified Language.Drasil.Printing.AST as P
 import qualified Language.Drasil.Printing.Citation as P
 import qualified Language.Drasil.Printing.LayoutObj as T
 import Language.Drasil.Printing.PrintingInformation (HasPrintingOptions(..),
-  Notation(Scientific, Engineering))
+  Notation(Scientific, Engineering), HasOptions(..), Option(MathJax, Html))
 
 import Numeric (floatToDigits)
 import Data.Tuple(fst, snd)
@@ -258,7 +258,7 @@ renderRealInt st s (UpFrom (Exc,a))  = P.Row [ symbol s, P.MO P.Gt, expr a st]
 
 
 -- | Translates Sentence to the Printing representation of Sentence ('Spec')
-spec :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s) =>
+spec :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
   s -> Sentence -> P.Spec
   -- make sure these optimizations are clear
 spec sm (EmptyS :+: b) = spec sm b
@@ -280,24 +280,24 @@ lookupDeferredSN ctx (FromCC u) = maybe "" (\x -> x ++ ": ") $
   getA $ defLookup u $ ctx ^. defTable
 
 -- | Translates from Document to the Printing representation of Document
-makeDocument :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+makeDocument :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> Document -> T.Document
 makeDocument sm (Document titleLb authorName sections) =
   T.Document (spec sm titleLb) (spec sm authorName) (createLayout sm sections)
 
 -- | Translates from LayoutObj to the Printing representation of LayoutObj
-layout :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+layout :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> Int -> SecCons -> T.LayoutObj
 layout sm currDepth (Sub s) = sec sm (currDepth+1) s
 layout sm _         (Con c) = lay sm c
 
 -- | Helper function for creating sections as layout objects
-createLayout :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+createLayout :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> [Section] -> [T.LayoutObj]
 createLayout sm = map (sec sm 0)
 
 -- | Helper function for creating sections at the appropriate depth
-sec :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+sec :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> Int -> Section -> T.LayoutObj
 sec sm depth x@(Section titleLb contents _) = --FIXME: should ShortName be used somewhere?
   let ref = P.S (refAdd x) in
@@ -307,12 +307,12 @@ sec sm depth x@(Section titleLb contents _) = --FIXME: should ShortName be used 
 
 -- | Translates from Contents to the Printing Representation of LayoutObj.
 -- Called internally by layout.
-lay :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+lay :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> Contents -> T.LayoutObj
 lay sm (LlC x) = layLabelled sm x
 lay sm (UlC x) = layUnlabelled sm (x ^. accessContents) 
 
-layLabelled :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+layLabelled :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> LabelledContent -> T.LayoutObj
 layLabelled sm x@(LblC _ (Table hdr lls t b)) = T.Table ["table"]
   ((map (spec sm) hdr) : (map (map (spec sm)) lls)) 
@@ -350,7 +350,7 @@ layLabelled sm (LblC _ (Bib bib))               = T.Bib $ map (layCite sm) bib
 
 -- | Translates from Contents to the Printing Representation of LayoutObj.
 -- Called internally by layout.
-layUnlabelled :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+layUnlabelled :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> RawContent -> T.LayoutObj
 layUnlabelled sm (Table hdr lls t b) = T.Table ["table"]
   ((map (spec sm) hdr) : (map (map (spec sm)) lls)) (P.S "nolabel0") b (spec sm t)
@@ -373,11 +373,11 @@ layUnlabelled sm (Definition dtyp pairs)  = T.Definition dtyp (layPairs pairs) (
 layUnlabelled sm (Bib bib)              = T.Bib $ map (layCite sm) bib
 
 -- | For importing bibliography
-layCite ::(HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+layCite ::(HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> Citation -> P.Citation
 layCite sm c = P.Cite (citeID c) (externRefT c) (map (layField sm) (c ^. getFields))
 
-layField :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+layField :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> CiteField -> P.CiteField
 layField sm (Address      s) = P.Address      $ spec sm s
 layField  _ (Author       p) = P.Author       p
@@ -403,7 +403,7 @@ layField sm (HowPublished (URL  u)) = P.HowPublished (P.URL  $ spec sm u)
 layField sm (HowPublished (Verb v)) = P.HowPublished (P.Verb $ spec sm v)
 
 -- | Translates lists
-makeL :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+makeL :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> ListType -> P.ListType
 makeL sm (Bullet bs)      = P.Unordered   $ map (\(x,y) -> (item sm x, labref y)) bs
 makeL sm (Numeric ns)     = P.Ordered     $ map (\(x,y) -> (item sm x, labref y)) ns
@@ -412,7 +412,7 @@ makeL sm (Desc ps)        = P.Desc        $ map (\(x,y,z) -> (spec sm x, item sm
 makeL sm (Definitions ps) = P.Definitions $ map (\(x,y,z) -> (spec sm x, item sm y, labref z)) ps
 
 -- | Helper for translating list items
-item :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx) =>
+item :: (HasSymbolTable ctx, HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
   ctx -> ItemType -> P.ItemType
 item sm (Flat i)     = P.Flat $ spec sm i
 item sm (Nested t s) = P.Nested (spec sm t) (makeL sm s)
