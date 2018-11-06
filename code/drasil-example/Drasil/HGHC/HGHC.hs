@@ -16,7 +16,7 @@ import Data.Drasil.SI_Units (si_units)
 import Data.Drasil.People (spencerSmith)
 import Data.Drasil.Concepts.Documentation (srs)
 import Data.Drasil.Phrase (for)
-import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration)
+import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration, ExprFormat(MathJax, Html))
 
 thisCode :: CodeSpec
 thisCode = codeSpec thisSI []
@@ -48,7 +48,7 @@ allSymbols = cdb symbols (map nw symbols) ([] :: [ConceptChunk]) -- FIXME: Fill 
   si_units
 
 printSetting :: PrintingInformation
-printSetting = PI allSymbols defaultConfiguration
+printSetting = PI allSymbols defaultConfiguration Html
   
 thisSRS :: DocDesc
 thisSRS = RefSec (RefProg intro 

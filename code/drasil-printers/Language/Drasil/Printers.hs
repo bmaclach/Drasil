@@ -8,9 +8,7 @@ module Language.Drasil.Printers (
   , makeCSS
     -- Print 
   , genHTML
-  , OptionConfigurations(..)
-  , HasOptions(..)
-  , Option(MathJax, Html)
+  , ExprFormat(MathJax, Html)
   -- Make
     -- Print
   , genMake
@@ -33,4 +31,4 @@ import Language.Drasil.Make.Print (genMake)
 import Language.Drasil.TeX.Print (genTeX)
 import Language.Drasil.Printing.PrintingInformation (PrintingInformation(..),
   HasPrintingOptions(..), Notation(Scientific, Engineering), defaultConfiguration,
-  OptionConfigurations(..), HasOptions(..), Option(MathJax, Html))
+  ExprFormat(MathJax, Html))

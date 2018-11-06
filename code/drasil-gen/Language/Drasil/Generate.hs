@@ -9,16 +9,16 @@ import System.Directory (createDirectoryIfMissing, getCurrentDirectory,
 import Language.Drasil
 import Language.Drasil.Printers (Format(TeX, HTML), DocSpec(DocSpec), 
   DocType(SRS, MG, MIS, Website), Filename, makeCSS, genMake, genHTML,
-  genTeX, HasPrintingOptions, HasOptions)
+  genTeX, HasPrintingOptions)
 import Language.Drasil.Code (generator, generateCode, Choices, CodeSpec)
 
 -- | Generate a number of artifacts based on a list of recipes.
-gen :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+gen :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s) =>
   DocSpec -> Document -> s -> IO ()
 gen ds fn sm = prnt sm ds fn
 
 -- | Generate the output artifacts (TeX+Makefile or HTML)
-prnt :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+prnt :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s) =>
   s -> DocSpec -> Document -> IO ()
 prnt sm dt@(DocSpec Website fn) body =
   do prntDoc dt body sm
@@ -30,7 +30,7 @@ prnt sm dt@(DocSpec _ _) body =
      prntMake dt
 
 -- | Helper for writing the documents (TeX / HTML) to file
-prntDoc :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+prntDoc :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s) =>
   DocSpec -> Document -> s -> IO ()
 prntDoc (DocSpec dt fn) body sm = prntDoc' dt fn (fmt dt) body sm
   where fmt SRS = TeX
@@ -38,7 +38,7 @@ prntDoc (DocSpec dt fn) body sm = prntDoc' dt fn (fmt dt) body sm
         fmt MIS = TeX
         fmt Website = HTML
 
-prntDoc' :: (HasSymbolTable s, HasDefinitionTable s, Show a, HasPrintingOptions s, HasOptions s) =>
+prntDoc' :: (HasSymbolTable s, HasDefinitionTable s, Show a, HasPrintingOptions s) =>
   a -> String -> Format -> Document -> s -> IO ()
 prntDoc' dt' fn format body' sm = do
   createDirectoryIfMissing False $ show dt'
@@ -57,7 +57,7 @@ prntMake ds@(DocSpec dt _) =
      hClose outh
 
 -- | Renders the documents
-writeDoc :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+writeDoc :: (HasSymbolTable s, HasDefinitionTable s, HasPrintingOptions s) =>
   s -> Format -> Filename -> Document -> Doc
 writeDoc s TeX  _  doc = genTeX doc s
 writeDoc s HTML fn doc = genHTML s fn doc

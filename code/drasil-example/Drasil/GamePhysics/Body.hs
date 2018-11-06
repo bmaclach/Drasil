@@ -2,7 +2,7 @@ module Drasil.GamePhysics.Body where
 
 import Language.Drasil hiding (Vector, organization)
 import Language.Drasil.Code (CodeSpec, codeSpec)
-import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration)
+import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration, ExprFormat(MathJax, Html))
 import Control.Lens ((^.))
 
 import Drasil.DocLang (DerivationDisplay(..), DocDesc, DocSection(..), 
@@ -155,7 +155,7 @@ everything = cdb cpSymbolsAll (map nw cpSymbolsAll ++ map nw cpAcronyms) gamephy
   chipUnits
 
 printSetting :: PrintingInformation
-printSetting = PI everything defaultConfiguration
+printSetting = PI everything defaultConfiguration Html
 
 chipCode :: CodeSpec
 chipCode = codeSpec chipmunkSysInfo []

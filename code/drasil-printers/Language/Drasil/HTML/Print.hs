@@ -1,4 +1,3 @@
---{-# LANGUAGE TemplateHaskell #-}
 module Language.Drasil.HTML.Print(genHTML) where
 
 import Prelude hiding (print)
@@ -6,7 +5,7 @@ import Data.List (sortBy,partition,intersperse)
 import Text.PrettyPrint hiding (render, Str)
 import Numeric (showEFloat)
 import Control.Arrow (second)
-import Control.Lens ((^.), makeLenses, view, Lens')
+import Control.Lens ((^.))
 
 import qualified Language.Drasil as L (People, Person, 
   CitationKind(Misc, Book, MThesis, PhDThesis, Article), 
@@ -39,24 +38,24 @@ import Language.Drasil.Printing.LayoutObj (Tags, Document(Document),
   LayoutObj(Graph, Bib, List, Header, Figure, Definition, Table, EqnBlock, Paragraph, 
   HDiv, ALUR))
 import Language.Drasil.Printing.Helpers (comm, dot, paren, sufxer, sqbrac)
-import Language.Drasil.Printing.PrintingInformation (HasPrintingOptions(..), HasOptions(..), Option(MathJax, Html))
+import Language.Drasil.Printing.PrintingInformation (HasPrintingOptions(..), ExprFormat(MathJax, Html))
 import qualified Language.Drasil.TeX.Print as TP (p_expr)
 data OpenClose = Open | Close
 
 -- | Generate an HTML document from a Drasil 'Document'
-genHTML :: (L.HasSymbolTable ctx, L.HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
+genHTML :: (L.HasSymbolTable ctx, L.HasDefinitionTable ctx, HasPrintingOptions ctx) =>
   ctx -> F.Filename -> L.Document -> Doc
 genHTML sm fn doc = build sm fn (makeDocument sm doc)
 
 -- | Build the HTML Document, called by genHTML
-build :: HasOptions s => s -> String -> Document -> Doc
+build :: HasPrintingOptions s => s -> String -> Document -> Doc
 build s fn (Document t a c) =
   text ( "<!DOCTYPE html>") $$
   html ( head_tag ((linkCSS fn) $$ title (title_spec s t) $$
   text ("<meta charset=\"utf-8\">") $$
   text ("<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/"++
           "2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'></script>")) $$
-  body (article_title (p_spec t s) $$ author (p_spec a s)
+  body (article_title (p_spec s t) $$ author (p_spec s a)
   $$ print s c
   ))
     
@@ -66,25 +65,25 @@ build s fn (Document t a c) =
 --getExprFn Html =  p_expr
   
 -- | Helper for rendering LayoutObjects into HTML
-printLO :: HasOptions s => s -> LayoutObj -> Doc
-printLO s (HDiv ts layoutObs l) = refwrap (p_spec l s) $
+printLO :: HasPrintingOptions s => s -> LayoutObj -> Doc
+printLO s (HDiv ts layoutObs l) = refwrap (p_spec s l) $
                                  div_tag ts (vcat (map (printLO s) layoutObs))
-printLO s (Paragraph contents)  = paragraph $ p_spec contents s
-printLO s (EqnBlock contents)     = p_spec contents s
-printLO s (Table ts rows r b t)   = makeTable s ts rows (p_spec r s) b (p_spec t s)
-printLO s (Definition dt ssPs l)  = makeDefn s dt ssPs (p_spec l s)
-printLO s (Header n contents _)   = h (n + 1) $ p_spec contents s -- FIXME
+printLO s (Paragraph contents)  = paragraph $ p_spec s contents
+printLO s (EqnBlock contents)     = p_spec s contents
+printLO s (Table ts rows r b t)   = makeTable s ts rows (p_spec s r) b (p_spec s t)
+printLO s (Definition dt ssPs l)  = makeDefn s dt ssPs (p_spec s l)
+printLO s (Header n contents _)   = h (n + 1) $ p_spec s contents -- FIXME
 printLO s (List t)                = makeList s t
-printLO s (Figure r c f wp)       = makeFigure (p_spec r s) (p_spec c s) (text f) wp
+printLO s (Figure r c f wp)       = makeFigure (p_spec s r) (p_spec s c) (text f) wp
 printLO s (ALUR _ x l i)          = wrap "ul" ["hide-list-style"] $
-  makeRefList (p_spec x s) (p_spec l s) (p_spec i s)
+  makeRefList (p_spec s x) (p_spec s l) (p_spec s i)
 printLO s (Bib bib)               = makeBib s bib
 printLO _ (Graph _ _ _ _ _)       = empty -- FIXME
 
 
 -- | Called by build, uses 'printLO' to render the layout
 -- objects in Doc format.
-print :: HasOptions s => s -> [LayoutObj] -> Doc
+print :: HasPrintingOptions s => s -> [LayoutObj] -> Doc
 print s l = foldr ($$) empty $ map (printLO s) l
 
 -----------------------------------------------------------------
@@ -92,27 +91,27 @@ print s l = foldr ($$) empty $ map (printLO s) l
 -----------------------------------------------------------------
 -- | Renders the title of the document. Different than body rendering
 -- because newline can't be rendered in an HTML title.
-title_spec :: HasOptions s => s -> Spec -> Doc
+title_spec :: HasPrintingOptions s => s -> Spec -> Doc
 title_spec s (a :+: b)  = title_spec s a <> title_spec s b
 title_spec _ HARDNL    = empty
-title_spec sm s         = p_spec s sm
+title_spec sm s         = p_spec sm s
 
 -- | Renders the Sentences in the HTML body (called by 'printLO')
-p_spec :: HasOptions s => Spec -> s -> Doc
+p_spec :: HasPrintingOptions s => s -> Spec -> Doc
 --p_spec (E e)           _  = em $ text $ getExprFn e
 --p_spec (E e)             = em $ text $ p_expr e           
-p_spec (E e)       s = case s ^. getOption of
+p_spec s (E e)        = case s ^. getOption of
   MathJax -> em $ text $ "\\(" ++ TP.p_expr e ++ "\\)"
   Html -> em $ text $ p_expr e
-p_spec (a :+: b)        s = p_spec a s <> p_spec b s
-p_spec (S s)            _ = text s 
-p_spec (Sy s)           _ = text $ uSymb s
-p_spec (Sp s)           _ = text $ unPH $ L.special s
-p_spec HARDNL           _ = text "<br />"
-p_spec (Ref L.Link r a _) s = reflinkURI r $ p_spec a s
-p_spec (Ref _      r a _) s = reflink    r $ p_spec a s
-p_spec EmptyS           _ = text "" -- Expected in the output
-p_spec (Quote q)        s = text "&quot;" <> p_spec q s <> text "&quot;"
+p_spec s (a :+: b)         = p_spec s a <> p_spec s b
+p_spec _ (S s)             = text s 
+p_spec _ (Sy s)            = text $ uSymb s
+p_spec _ (Sp s)            = text $ unPH $ L.special s
+p_spec _ HARDNL            = text "<br />"
+p_spec s (Ref L.Link r a _)  = reflinkURI r $ p_spec s a
+p_spec s (Ref _      r a _)  = reflink    r $ p_spec s a
+p_spec _ EmptyS            = text "" -- Expected in the output
+p_spec s (Quote q)         = text "&quot;" <> p_spec s q <> text "&quot;"
 -- p_spec (Acc Grave c)     = text $ '&' : c : "grave;" --Only works on vowels.
 -- p_spec (Acc Acute c)     = text $ '&' : c : "acute;" --Only works on vowels.
 
@@ -239,28 +238,28 @@ p_in (x:xs) = p_in [x] ++ p_in xs
 -----------------------------------------------------------------
 
 -- | Renders HTML table, called by 'printLO'
-makeTable :: HasOptions s => s -> Tags -> [[Spec]] -> Doc -> Bool -> Doc -> Doc
+makeTable :: HasPrintingOptions s => s -> Tags -> [[Spec]] -> Doc -> Bool -> Doc -> Doc
 makeTable _ _ [] _ _ _       = error "No table to print (see PrintHTML)"
 makeTable s ts (l:lls) r b t = refwrap r (wrap "table" ts (
     tr (makeHeaderCols s l) $$ makeRows s lls) $$ if b then caption t else empty)
 
 -- | Helper for creating table rows
-makeRows :: HasOptions s => s ->  [[Spec]] -> Doc
+makeRows :: HasPrintingOptions s => s ->  [[Spec]] -> Doc
 makeRows s = foldr ($$) empty . map (tr . makeColumns s)
 
-makeColumns, makeHeaderCols :: HasOptions s => s -> [Spec] -> Doc
+makeColumns, makeHeaderCols :: HasPrintingOptions s => s -> [Spec] -> Doc
 -- | Helper for creating table header row (each of the column header cells)
-makeHeaderCols s = vcat . map (\a -> th $ p_spec a s)
+makeHeaderCols s = vcat . map (th . p_spec s)
 
 -- | Helper for creating table columns
-makeColumns s = vcat . map (\a -> td $ p_spec a s)
+makeColumns s = vcat . map (td . p_spec s)
 
 -----------------------------------------------------------------
 ------------------BEGIN DEFINITION PRINTING----------------------
 -----------------------------------------------------------------
 
 -- | Renders definition tables (Data, General, Theory, etc.)
-makeDefn :: HasOptions s => s ->  L.DType -> [(String,[LayoutObj])] -> Doc -> Doc
+makeDefn :: HasPrintingOptions s => s ->  L.DType -> [(String,[LayoutObj])] -> Doc -> Doc
 makeDefn _ _ [] _  = error "L.Empty definition"
 makeDefn s dt ps l = refwrap l $ wrap "table" [dtag dt] (makeDRows s ps)
   where dtag (L.General)  = "gdefn"
@@ -269,7 +268,7 @@ makeDefn s dt ps l = refwrap l $ wrap "table" [dtag dt] (makeDRows s ps)
         dtag (L.DD)       = "ddefn"
 
 -- | Helper for making the definition table rows
-makeDRows :: HasOptions s => s -> [(String,[LayoutObj])] -> Doc
+makeDRows :: HasPrintingOptions s => s -> [(String,[LayoutObj])] -> Doc
 makeDRows _ []         = error "No fields to create defn table"
 makeDRows s ((f,d):[]) = tr (th (text f) $$ td (vcat $ map (printLO s) d))
 makeDRows s ((f,d):ps) = tr (th (text f) $$ td (vcat $ map (printLO s) d)) $$ makeDRows s ps
@@ -279,29 +278,29 @@ makeDRows s ((f,d):ps) = tr (th (text f) $$ td (vcat $ map (printLO s) d)) $$ ma
 -----------------------------------------------------------------
 
 -- | Renders lists
-makeList :: HasOptions s => s -> ListType -> Doc -- FIXME: ref id's should be folded into the li
+makeList :: HasPrintingOptions s => s -> ListType -> Doc -- FIXME: ref id's should be folded into the li
 makeList s (Simple items) = div_tag ["list"] $
-  vcat $ map (\(b,e,l) -> wrap "p" [] $ mlref s l $ p_spec b s <> text ": "
+  vcat $ map (\(b,e,l) -> wrap "p" [] $ mlref s l $ p_spec s b <> text ": "
    <> p_item s e) items
 makeList s (Desc items)   = div_tag ["list"] $
-  vcat $ map (\(b,e,l) -> wrap "p" [] $ mlref s l $ wrap "b" [] $ p_spec b s
+  vcat $ map (\(b,e,l) -> wrap "p" [] $ mlref s l $ wrap "b" [] $ p_spec s b
    <> text ": " <> p_item s e) items
 makeList s (Ordered items) = wrap "ol" ["list"] (vcat $ map
   (wrap "li" [] . \(i,l) -> mlref s l $ p_item s i) items)
 makeList s (Unordered items) = wrap "ul" ["list"] (vcat $ map
   (wrap "li" [] . \(i,l) -> mlref s l $ p_item s i) items)
 makeList s (Definitions items) = wrap "ul" ["hide-list-style-no-indent"] $
-  vcat $ map (\(b,e,l) -> wrap "li" [] $ mlref s l $ p_spec b s <> text " is the"
+  vcat $ map (\(b,e,l) -> wrap "li" [] $ mlref s l $ p_spec s b <> text " is the"
    <+> p_item s e) items
 
 -- | Helper for setting up references
-mlref :: HasOptions s => s -> Maybe Label -> Doc -> Doc
-mlref s = maybe id $ \a -> refwrap $ p_spec a s
+mlref :: HasPrintingOptions s => s -> Maybe Label -> Doc -> Doc
+mlref s = maybe id $ refwrap . p_spec s
 
 -- | Helper for rendering list items
-p_item :: HasOptions s => s -> ItemType -> Doc
-p_item sm (Flat s)     = p_spec s sm
-p_item sm (Nested s l) = vcat [p_spec s sm, makeList sm l]
+p_item :: HasPrintingOptions s => s -> ItemType -> Doc
+p_item sm (Flat s)     = p_spec sm s
+p_item sm (Nested s l) = vcat [p_spec sm s, makeList sm l]
 
 -----------------------------------------------------------------
 ------------------BEGIN FIGURE PRINTING--------------------------
@@ -319,13 +318,13 @@ makeRefList a l i = wrap "li" [] (refwrap l (i <> text ": " <> a))
 ---------------------
 -- **THE MAIN FUNCTION**
 
-makeBib :: HasOptions s => s -> BibRef -> Doc
+makeBib :: HasPrintingOptions s => s -> BibRef -> Doc
 makeBib s = wrap "ul" ["hide-list-style"] . vcat .
   map (\(x,(y,z)) -> makeRefList z y x) .
   zip [text $ sqbrac $ show x | x <- ([1..] :: [Int])] . map (renderCite s) 
 
 --for when we add other things to reference like website, newspaper
-renderCite :: HasOptions s => s -> Citation -> (Doc, Doc)
+renderCite :: HasPrintingOptions s => s -> Citation -> (Doc, Doc)
 renderCite s (Cite e L.Book cfs) = (text e, renderF cfs (useStyleBk s) <> text " Print.")
 renderCite s (Cite e L.Article cfs) = (text e, renderF cfs (useStyleArtcl s) <> text " Print.")
 renderCite s (Cite e L.MThesis cfs) = (text e, renderF cfs (useStyleBk s) <> text " Print.")
@@ -382,76 +381,76 @@ compCiteField _ (Note       _) = GT
 compCiteField (Type       _) _ = LT
 
 -- Config helpers --
-useStyleBk :: HasOptions s => s -> StyleGuide -> (CiteField -> Doc)
+useStyleBk :: HasPrintingOptions s => s -> StyleGuide -> (CiteField -> Doc)
 useStyleBk s MLA     = bookMLA s
 useStyleBk s APA     = bookAPA s
 useStyleBk s Chicago = bookChicago s
 
-useStyleArtcl :: HasOptions s => s -> StyleGuide -> (CiteField -> Doc)
+useStyleArtcl :: HasPrintingOptions s => s -> StyleGuide -> (CiteField -> Doc)
 useStyleArtcl s MLA     = artclMLA s
 useStyleArtcl s APA     = artclAPA s
 useStyleArtcl s Chicago = artclChicago s
 
 -- FIXME: move these show functions and use tags, combinators
-bookMLA :: HasOptions s => s -> CiteField -> Doc
-bookMLA sm (Address s)     = p_spec s sm <> text ":"
+bookMLA :: HasPrintingOptions s => s -> CiteField -> Doc
+bookMLA sm (Address s)     = p_spec sm s <> text ":"
 bookMLA _ (Edition    s)  = comm $ text $ show s ++ sufxer s ++ " ed."
-bookMLA sm (Series     s)  = dot $ em $ p_spec s sm
-bookMLA sm (Title      s)  = dot $ em $ p_spec s sm --If there is a series or collection, this should be in quotes, not italics
+bookMLA sm (Series     s)  = dot $ em $ p_spec sm s
+bookMLA sm (Title      s)  = dot $ em $ p_spec sm s --If there is a series or collection, this should be in quotes, not italics
 bookMLA _ (Volume     s)  = comm $ text $ "vol. " ++ show s
-bookMLA sm (Publisher  s)  = comm $ p_spec s sm
-bookMLA sm (Author     p)  = dot $ p_spec (rendPeople' p) sm
+bookMLA sm (Publisher  s)  = comm $ p_spec sm s
+bookMLA sm (Author     p)  = dot $ p_spec sm (rendPeople' p)
 bookMLA _ (Year       y)  = dot $ text $ show y
 --bookMLA (Date    d m y) = dot $ unwords [show d, show m, show y]
 --bookMLA (URLdate d m y) = "Web. " ++ bookMLA (Date d m y) sm
-bookMLA sm (BookTitle s)   = dot $ em $ p_spec s sm
-bookMLA sm (Journal    s)  = comm $ em $ p_spec s sm
+bookMLA sm (BookTitle s)   = dot $ em $ p_spec sm s
+bookMLA sm (Journal    s)  = comm $ em $ p_spec sm s
 bookMLA _ (Pages      [n]) = dot $ text $ "p. " ++ show n
 bookMLA _ (Pages  (a:b:[])) = dot $ text $ "pp. " ++ show a ++ "&ndash;" ++ show b
 bookMLA _ (Pages _) = error "Page range specified is empty or has more than two items"
-bookMLA sm (Note       s)    = p_spec s sm
+bookMLA sm (Note       s)    = p_spec sm s
 bookMLA _ (Number      n)   = comm $ text $ ("no. " ++ show n)
-bookMLA sm (School     s)    = comm $ p_spec s sm
+bookMLA sm (School     s)    = comm $ p_spec sm s
 --bookMLA (Thesis     t)  = comm $ show t
 --bookMLA (URL        s)  = dot $ p_spec s
-bookMLA sm (HowPublished (Verb s)) = comm $ p_spec s sm
-bookMLA sm (HowPublished (URL s))  = dot $ p_spec s sm
-bookMLA sm (Editor     p)  = comm $ text "Edited by " <> p_spec (foldlList (map (S . L.nameStr) p)) sm
+bookMLA sm (HowPublished (Verb s)) = comm $ p_spec sm s
+bookMLA sm (HowPublished (URL s))  = dot $ p_spec sm s
+bookMLA sm (Editor     p)  = comm $ text "Edited by " <> p_spec sm (foldlList (map (S . L.nameStr) p))
 bookMLA _ (Chapter _)       = text ""
-bookMLA sm (Institution i)  = comm $ p_spec i sm
-bookMLA sm (Organization i)  = comm $ p_spec i sm
+bookMLA sm (Institution i)  = comm $ p_spec sm i
+bookMLA sm (Organization i)  = comm $ p_spec sm i
 bookMLA _ (Month m)         = comm $ text $ show m
-bookMLA sm (Type t)          = comm $ p_spec t sm
+bookMLA sm (Type t)          = comm $ p_spec sm t
 
-bookAPA :: HasOptions s => s -> CiteField -> Doc --FIXME: year needs to come after author in L.APA
-bookAPA s (Author   p) = p_spec (rendPeople L.rendPersLFM' p) s --L.APA uses initals rather than full name
+bookAPA :: HasPrintingOptions s => s -> CiteField -> Doc --FIXME: year needs to come after author in L.APA
+bookAPA s (Author   p) = p_spec s (rendPeople L.rendPersLFM' p) --L.APA uses initals rather than full name
 bookAPA _ (Year     y) = dot $ text $ paren $ show y --L.APA puts "()" around the year
 --bookAPA (Date _ _ y) = bookAPA (Year y) --L.APA doesn't care about the day or month
 --bookAPA (URLdate d m y) = "Retrieved, " ++ (comm $ unwords [show d, show m, show y])
 bookAPA _ (Pages     [n])  = dot $ text $ show n
 bookAPA _ (Pages (a:b:[])) = dot $ text $ show a ++ "&ndash;" ++ show b
 bookAPA _ (Pages _) = error "Page range specified is empty or has more than two items"
-bookAPA s (Editor   p) = dot $ p_spec (foldlList $ map (S . L.nameStr) p) s <> text " (Ed.)"
+bookAPA s (Editor   p) = dot $ p_spec s (foldlList $ map (S . L.nameStr) p) <> text " (Ed.)"
 bookAPA s i = bookMLA s i --Most items are rendered the same as L.MLA
 
-bookChicago :: HasOptions s => s -> CiteField -> Doc
-bookChicago s (Author   p) = p_spec (rendPeople L.rendPersLFM'' p) s --L.APA uses middle initals rather than full name
+bookChicago :: HasPrintingOptions s => s -> CiteField -> Doc
+bookChicago s (Author   p) = p_spec s (rendPeople L.rendPersLFM'' p) --L.APA uses middle initals rather than full name
 bookChicago s p@(Pages  _) = bookAPA s p
-bookChicago s (Editor   p) = dot $ p_spec (foldlList $ map (S . L.nameStr) p) s <> (text $ toPlural p " ed")
+bookChicago s (Editor   p) = dot $ p_spec s (foldlList $ map (S . L.nameStr) p) <> (text $ toPlural p " ed")
 bookChicago s i = bookMLA s i --Most items are rendered the same as L.MLA
 
 -- for article renderings
-artclMLA :: HasOptions s => s -> CiteField -> Doc
-artclMLA sm (Title s) = doubleQuotes $ dot $ p_spec s sm
+artclMLA :: HasPrintingOptions s => s -> CiteField -> Doc
+artclMLA sm (Title s) = doubleQuotes $ dot $ p_spec sm s
 artclMLA s i         = bookMLA s i
 
-artclAPA :: HasOptions s => s -> CiteField -> Doc
-artclAPA sm (Title  s) = dot $ p_spec s sm
+artclAPA :: HasPrintingOptions s => s -> CiteField -> Doc
+artclAPA sm (Title  s) = dot $ p_spec sm s
 artclAPA _ (Volume n)  = em $ text $ show n
 artclAPA _ (Number  n) = comm $ text $ paren $ show n
 artclAPA s i           = bookAPA s i
 
-artclChicago :: HasOptions s => s -> CiteField -> Doc
+artclChicago :: HasPrintingOptions s => s -> CiteField -> Doc
 artclChicago s i@(Title    _)  = artclMLA s i 
 artclChicago _ (Volume     n)  = comm $ text $ show n
 artclChicago _ (Number      n)  = text $ "no. " ++ show n

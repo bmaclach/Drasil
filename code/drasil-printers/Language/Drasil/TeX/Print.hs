@@ -41,13 +41,13 @@ import Language.Drasil.TeX.Monad (D, MathContext(Curr, Math, Text), (<>), vcat, 
   toMath, switch, unPL, lub, hpunctuate, toText, ($+$), runPrint)
 import Language.Drasil.TeX.Preamble (genPreamble)
 import qualified Language.Drasil.RefTypes as RT
-import Language.Drasil.Printing.PrintingInformation (HasPrintingOptions(..), HasOptions(..))
+import Language.Drasil.Printing.PrintingInformation (HasPrintingOptions(..))
 
-genTeX :: (L.HasSymbolTable ctx, L.HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
+genTeX :: (L.HasSymbolTable ctx, L.HasDefinitionTable ctx, HasPrintingOptions ctx) =>
   L.Document -> ctx -> TP.Doc
 genTeX doc sm = runPrint (buildStd sm $ I.makeDocument sm doc) Text
 
-buildStd :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+buildStd :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   s -> Document -> D
 buildStd sm (Document t a c) =
   genPreamble c %%
@@ -56,7 +56,7 @@ buildStd sm (Document t a c) =
   document (maketitle %% maketoc %% newpage %% print sm c)
 
 -- clean until here; lo needs its sub-functions fixed first though
-lo :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+lo :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   LayoutObj -> s -> D
 lo (Header d t l)       _  = sec d (spec t) %% label (spec l)
 lo (HDiv _ con _)       sm = print sm con -- FIXME ignoring 2 arguments?
@@ -77,7 +77,7 @@ lo (Graph ps w h c l)   _  = toText $ makeGraph
   (pure $ text $ maybe "" (\x -> "minimum height = " ++ show x ++ "em, ") h)
   (spec c) (spec l)
 
-print :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) => s -> [LayoutObj] -> D
+print :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) => s -> [LayoutObj] -> D
 print sm l = foldr ($+$) empty $ map (flip lo sm) l
 
 ------------------ Symbol ----------------------------
@@ -331,7 +331,7 @@ p_unit (UDiv n d) = toMath $
 ------------------ DATA DEFINITION PRINTING-----------------
 -----------------------------------------------------------------
 
-makeDefn :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+makeDefn :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   s -> [(String,[LayoutObj])] -> D -> D
 makeDefn _  [] _ = error "Empty definition"
 makeDefn sm ps l = beginDefn %% makeDefTable sm ps l %% endDefn
@@ -343,7 +343,7 @@ beginDefn = (pure $ text "~") <> newline
 endDefn :: D
 endDefn = pure $ text "\\end{minipage}" TP.<> dbs
 
-makeDefTable :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+makeDefTable :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   s -> [(String,[LayoutObj])] -> D -> D
 makeDefTable _ [] _ = error "Trying to make empty Data Defn"
 makeDefTable sm ps l = vcat [
@@ -355,7 +355,7 @@ makeDefTable sm ps l = vcat [
   pure $ dbs <+> text ("\\bottomrule \\end{tabular}")
   ]
 
-makeDRows :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+makeDRows :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   s -> [(String,[LayoutObj])] -> D
 makeDRows _  []         = error "No fields to create Defn table"
 makeDRows sm ((f,d):[]) = dBoilerplate %% (pure $ text (f ++ " & ")) <>
@@ -488,7 +488,7 @@ makeGraph ps w h c l =
 -- Bibliography Printing --
 ---------------------------
 -- **THE MAIN FUNCTION** --
-makeBib :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+makeBib :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   s -> BibRef -> D
 makeBib sm bib = spec $
   S ("\\begin{filecontents*}{"++bibFname++".bib}\n") :+:
@@ -502,11 +502,11 @@ bibLines =
   "\\bibstyle{" ++ bibStyleT ++ "}\n" ++
   "\\printbibliography[heading=none]"
 
-mkBibRef :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+mkBibRef :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   s -> BibRef -> Spec
 mkBibRef sm = foldl1 (\x y -> x :+: S "\n\n" :+: y) . map (renderF sm)
 
-renderF :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+renderF :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   s -> Citation -> Spec
 renderF sm (Cite cid refType fields) =
   S (showT refType) :+: S ("{" ++ cid ++ ",\n") :+:
@@ -527,7 +527,7 @@ showT L.Proceedings   = "@proceedings"
 showT L.TechReport    = "@techreport"
 showT L.Unpublished   = "@unpublished"
 
-showBibTeX :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s, HasOptions s) =>
+showBibTeX :: (L.HasSymbolTable s, L.HasDefinitionTable s, HasPrintingOptions s) =>
   s -> CiteField -> Spec
 showBibTeX  _ (Address      s) = showField "address" s
 showBibTeX sm (Author       p) = showField "author" (rendPeople sm p)
@@ -561,7 +561,7 @@ showBibTeX  _ (HowPublished (Verb v)) = showField "howpublished" v
 showField :: String -> Spec -> Spec
 showField f s = S f :+: S "={" :+: s :+: S "}"
 
-rendPeople :: (L.HasSymbolTable ctx, L.HasDefinitionTable ctx, HasPrintingOptions ctx, HasOptions ctx) =>
+rendPeople :: (L.HasSymbolTable ctx, L.HasDefinitionTable ctx, HasPrintingOptions ctx) =>
   ctx -> L.People -> Spec
 rendPeople _ []  = S "N.a." -- "No authors given"
 rendPeople sm people = I.spec sm $

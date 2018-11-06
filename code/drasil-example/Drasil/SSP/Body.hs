@@ -2,7 +2,7 @@ module Drasil.SSP.Body (ssp_srs, ssp_code, sspSymMap, printSetting) where
 
 import Language.Drasil hiding (organization, Verb)
 import Language.Drasil.Code (CodeSpec, codeSpec)
-import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration)
+import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration, ExprFormat(MathJax, Html))
 import Control.Lens ((^.))
 import Prelude hiding (sin, cos, tan)
 
@@ -149,7 +149,7 @@ sspRefDB = rdb [] [] newAssumptions [] [] sspCitations (sspRequirements ++
   likelyChgs ++ unlikelyChgs)
 
 printSetting :: PrintingInformation
-printSetting = PI sspSymMap defaultConfiguration
+printSetting = PI sspSymMap defaultConfiguration Html
 
 symbT :: [DefinedQuantityDict]
 symbT = ccss (getDoc ssp_srs) (egetDoc ssp_srs) sspSymMap

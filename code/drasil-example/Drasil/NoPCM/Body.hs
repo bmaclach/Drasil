@@ -2,7 +2,7 @@ module Drasil.NoPCM.Body where
 
 import Language.Drasil
 import Language.Drasil.Code (CodeSpec, codeSpec)
-import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration)
+import Language.Drasil.Printers (PrintingInformation(..), defaultConfiguration, ExprFormat(MathJax, Html))
 import Control.Lens ((^.))
 
 import Data.Drasil.People (thulasi)
@@ -184,7 +184,7 @@ nopcm_SymbMap = cdb nopcm_SymbolsAll (map nw nopcm_Symbols ++ map nw acronyms) (
   this_si
 
 printSetting :: PrintingInformation
-printSetting = PI nopcm_SymbMap defaultConfiguration
+printSetting = PI nopcm_SymbMap defaultConfiguration Html
 
 assumps_Nopcm_list_new :: [AssumpChunk]
 assumps_Nopcm_list_new = [newA1, newA2, newA3, newA5NoPCM, newA6NoPCM,
