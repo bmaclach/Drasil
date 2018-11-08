@@ -184,7 +184,7 @@ nopcm_SymbMap = cdb nopcm_SymbolsAll (map nw nopcm_Symbols ++ map nw acronyms) (
   this_si
 
 printSetting :: PrintingInformation
-printSetting = PI nopcm_SymbMap defaultConfiguration Html
+printSetting = PI nopcm_SymbMap defaultConfiguration MathJax
 
 assumps_Nopcm_list_new :: [AssumpChunk]
 assumps_Nopcm_list_new = [newA1, newA2, newA3, newA5NoPCM, newA6NoPCM,

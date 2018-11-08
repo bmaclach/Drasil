@@ -155,7 +155,7 @@ everything = cdb cpSymbolsAll (map nw cpSymbolsAll ++ map nw cpAcronyms) gamephy
   chipUnits
 
 printSetting :: PrintingInformation
-printSetting = PI everything defaultConfiguration Html
+printSetting = PI everything defaultConfiguration MathJax
 
 chipCode :: CodeSpec
 chipCode = codeSpec chipmunkSysInfo []

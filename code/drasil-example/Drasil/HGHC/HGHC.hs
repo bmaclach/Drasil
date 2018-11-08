@@ -48,7 +48,7 @@ allSymbols = cdb symbols (map nw symbols) ([] :: [ConceptChunk]) -- FIXME: Fill 
   si_units
 
 printSetting :: PrintingInformation
-printSetting = PI allSymbols defaultConfiguration Html
+printSetting = PI allSymbols defaultConfiguration MathJax
   
 thisSRS :: DocDesc
 thisSRS = RefSec (RefProg intro 

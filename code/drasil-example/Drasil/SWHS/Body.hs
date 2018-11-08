@@ -105,7 +105,7 @@ swhsRefDB = rdb [] [] newAssumptions [] [] swhsCitations (funcReqs ++
   likelyChgs ++ unlikelyChgs)
 
 printSetting :: PrintingInformation
-printSetting = PI swhsSymMap defaultConfiguration Html
+printSetting = PI swhsSymMap defaultConfiguration MathJax
 
 
   --Note: The second swhsSymbols here is

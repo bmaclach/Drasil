@@ -81,7 +81,7 @@ gbRefDB = rdb [] [] assumptions [] [] gbCitations $ funcReqs ++ likelyChgs ++
   unlikelyChgs
 
 printSetting :: PrintingInformation
-printSetting = PI gbSymbMap defaultConfiguration Html
+printSetting = PI gbSymbMap defaultConfiguration MathJax
 
 ccss'' :: Sentence -> [DefinedQuantityDict]
 ccss'' s = combine s gbSymbMap

@@ -149,7 +149,7 @@ sspRefDB = rdb [] [] newAssumptions [] [] sspCitations (sspRequirements ++
   likelyChgs ++ unlikelyChgs)
 
 printSetting :: PrintingInformation
-printSetting = PI sspSymMap defaultConfiguration Html
+printSetting = PI sspSymMap defaultConfiguration MathJax
 
 symbT :: [DefinedQuantityDict]
 symbT = ccss (getDoc ssp_srs) (egetDoc ssp_srs) sspSymMap

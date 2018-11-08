@@ -106,7 +106,7 @@ w_mass = uc' "w_mass" (nounPhraseSP "mass of water")
 
 thFluxVect = uc' "thFluxVect" (nounPhraseSP "thermal flux vector")
   "Vector denoting the direction of thermal flux through a surface"
-  (vec lQ) UT.thermal_flux
+  lQ UT.thermal_flux
 
 ht_flux_C = uc' "ht_flux_C"
   (nounPhraseSP "heat flux into the water from the coil")
