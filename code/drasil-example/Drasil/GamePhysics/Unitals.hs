@@ -134,7 +134,7 @@ iVect = ucFromDQD ivec
 -- FIXME: parametrized hack
 jVect       = ucFromDQD ivec
   where ivec = dqdEL (dccWDS "unitVectJ" (compoundPhrase' (cn "vertical")
-               (QM.unitVect ^. term)) (phrase QM.unitVect)) (hat lJ) Real metre
+               (QM.unitVect ^. term)) (phrase QM.unitVect)) (vec $ hat lJ) Real metre
 -- FIXME: parametrized hack
 normalVect  = ucFromDQD normVect
   where normVect = dqdEL (dccWDS "normalVect" (compoundPhrase' (cn "collision")
@@ -143,7 +143,7 @@ normalVect  = ucFromDQD normVect
 
 dispUnit = ucFromDQD dispVect
   where dispVect = dqdEL (dccWDS "dispUnit" (cn "displacement unit vector") 
-                   (S "displacement" +:+ (phrase QM.unitVect))) (lR) Real metre
+                   (S "displacement" +:+ (phrase QM.unitVect))) (vec (hat lR)) Real metre
 
 -- FIXME: parametrized hack
 dispNorm = ucFromDQD norm
